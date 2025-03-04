@@ -20,6 +20,19 @@ namespace Sopromil.Controlador
             File.AppendAllText(logPath, mensaje);
         }
 
+        public async Task DevolverProductosAsync(List<int> idDetallesVenta)
+        {
+            try
+            {
+                await _ventaRepository.DevolverProductosAsync(idDetallesVenta);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, nameof(DevolverProductosAsync));
+                throw;  // Se relanza para que el formulario lo maneje
+            }
+        }
+
         public async Task<int> RegistrarVentaAsync(Venta venta)
         {
             try
@@ -103,7 +116,7 @@ namespace Sopromil.Controlador
                 if (esCredito)
                 {
                     var creditoController = new CreditoController();
-                    await creditoController.ActualizarSaldoCreditoAsync(venta.IDCliente, -venta.MontoTotal);
+                   // await creditoController.ActualizarSaldoCreditoAsync(venta.IDCliente, -venta.MontoTotal);
                 }
 
                 return true;

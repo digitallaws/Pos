@@ -1,21 +1,20 @@
 ﻿using OfficeOpenXml;
 using Sopromil.Controlador;
 using Sopromil.Modelo;
-using Sopromil.Utils;
 
 namespace Sopromil.Vista.Productos
 {
-    public partial class Productos : Form
+    public partial class FormProductos : Form
     {
         private readonly ProductoController _productoController;
         private List<Producto> productosImportados;
         private List<Producto> productosOriginales = new List<Producto>();
 
-        public Productos()
+        public FormProductos()
         {
             InitializeComponent();
             _productoController = new ProductoController();
-            
+
 
             // Eventos
             btnAgregar.Click += BtnAgregar_Click;
@@ -477,6 +476,6 @@ namespace Sopromil.Vista.Productos
             }
         }
 
-        
+
     }
 }

@@ -117,7 +117,7 @@ namespace Sopromil.Vista.Ventas
 
         private async Task CargarCupoDisponibleAsync()
         {
-            var creditos = await _creditoController.ObtenerCreditosActivosAsync();
+            var creditos = await _creditoController.ObtenerTodosLosCreditosActivosAsync();
             var credito = creditos.FirstOrDefault(c => c.IDCliente == IDCliente && c.Estado == "Pendiente");
 
             if (credito == null)

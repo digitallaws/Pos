@@ -1,6 +1,6 @@
 ﻿namespace Sopromil.Vista.Productos
 {
-    partial class Productos
+    partial class FormProductos
     {
         /// <summary>
         /// Required designer variable.

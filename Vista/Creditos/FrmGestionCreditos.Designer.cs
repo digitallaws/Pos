@@ -38,7 +38,7 @@
             txtBuscar = new TextBox();
             panel2 = new Panel();
             btnRegistrar = new Button();
-            btnRegistrarA = new Button();
+            btnReporte = new Button();
             panel1 = new Panel();
             pictureBox1 = new PictureBox();
             label3 = new Label();
@@ -144,7 +144,7 @@
             // 
             panel2.BackColor = Color.White;
             panel2.Controls.Add(btnRegistrar);
-            panel2.Controls.Add(btnRegistrarA);
+            panel2.Controls.Add(btnReporte);
             panel2.Dock = DockStyle.Left;
             panel2.Location = new Point(0, 114);
             panel2.Name = "panel2";
@@ -163,17 +163,17 @@
             btnRegistrar.Text = "Nuevo Credito";
             btnRegistrar.UseVisualStyleBackColor = false;
             // 
-            // btnRegistrarA
+            // btnReporte
             // 
-            btnRegistrarA.BackColor = Color.DodgerBlue;
-            btnRegistrarA.FlatStyle = FlatStyle.Popup;
-            btnRegistrarA.ForeColor = Color.White;
-            btnRegistrarA.Location = new Point(24, 219);
-            btnRegistrarA.Name = "btnRegistrarA";
-            btnRegistrarA.Size = new Size(286, 55);
-            btnRegistrarA.TabIndex = 19;
-            btnRegistrarA.Text = "Reportes";
-            btnRegistrarA.UseVisualStyleBackColor = false;
+            btnReporte.BackColor = Color.DodgerBlue;
+            btnReporte.FlatStyle = FlatStyle.Popup;
+            btnReporte.ForeColor = Color.White;
+            btnReporte.Location = new Point(24, 219);
+            btnReporte.Name = "btnReporte";
+            btnReporte.Size = new Size(286, 55);
+            btnReporte.TabIndex = 19;
+            btnReporte.Text = "Reportes";
+            btnReporte.UseVisualStyleBackColor = false;
             // 
             // panel1
             // 
@@ -244,7 +244,7 @@
         private TextBox txtBuscar;
         private Panel panel2;
         private Button btnRegistrar;
-        private Button btnRegistrarA;
+        private Button btnReporte;
         private Panel panel1;
         private PictureBox pictureBox1;
         private Label label3;

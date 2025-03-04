@@ -1,6 +1,6 @@
 ﻿namespace Sopromil.Vista.Ventas
 {
-    partial class Devoluciones
+    partial class frmDevoluciones
     {
         /// <summary>
         /// Required designer variable.
@@ -31,30 +31,33 @@
             panel3 = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
             panel2 = new Panel();
+            lblTotalDevuelto = new Label();
+            lblTotalOriginal = new Label();
             panel4 = new Panel();
-            dtVenta = new DataGridView();
+            dgvDetalleVenta = new DataGridView();
             panel5 = new Panel();
             panel7 = new Panel();
             panel8 = new Panel();
             pictureBox6 = new PictureBox();
-            btnActualizar = new Button();
+            btnDevolverSeleccionados = new Button();
             lblTotal = new Label();
             label1 = new Label();
             panel6 = new Panel();
-            pictureBox2 = new PictureBox();
+            btnBuscarVenta = new PictureBox();
             label5 = new Label();
-            txtBuscarProducto = new TextBox();
+            txtNumeroVenta = new TextBox();
             panel1 = new Panel();
             pictureBox1 = new PictureBox();
             label3 = new Label();
             panel3.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
+            panel2.SuspendLayout();
             panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dtVenta).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvDetalleVenta).BeginInit();
             panel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox6).BeginInit();
             panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)btnBuscarVenta).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -87,15 +90,37 @@
             // 
             // panel2
             // 
+            panel2.Controls.Add(lblTotalDevuelto);
+            panel2.Controls.Add(lblTotalOriginal);
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(3, 3);
             panel2.Name = "panel2";
             panel2.Size = new Size(315, 589);
             panel2.TabIndex = 2;
             // 
+            // lblTotalDevuelto
+            // 
+            lblTotalDevuelto.AutoSize = true;
+            lblTotalDevuelto.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
+            lblTotalDevuelto.Location = new Point(41, 238);
+            lblTotalDevuelto.Name = "lblTotalDevuelto";
+            lblTotalDevuelto.Size = new Size(76, 31);
+            lblTotalDevuelto.TabIndex = 28;
+            lblTotalDevuelto.Text = "label7";
+            // 
+            // lblTotalOriginal
+            // 
+            lblTotalOriginal.AutoSize = true;
+            lblTotalOriginal.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
+            lblTotalOriginal.Location = new Point(41, 172);
+            lblTotalOriginal.Name = "lblTotalOriginal";
+            lblTotalOriginal.Size = new Size(76, 31);
+            lblTotalOriginal.TabIndex = 26;
+            lblTotalOriginal.Text = "label7";
+            // 
             // panel4
             // 
-            panel4.Controls.Add(dtVenta);
+            panel4.Controls.Add(dgvDetalleVenta);
             panel4.Controls.Add(panel5);
             panel4.Controls.Add(panel7);
             panel4.Controls.Add(panel8);
@@ -106,17 +131,17 @@
             panel4.Size = new Size(1045, 589);
             panel4.TabIndex = 1;
             // 
-            // dtVenta
+            // dgvDetalleVenta
             // 
-            dtVenta.BackgroundColor = Color.White;
-            dtVenta.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dtVenta.Dock = DockStyle.Fill;
-            dtVenta.Location = new Point(107, 103);
-            dtVenta.Name = "dtVenta";
-            dtVenta.RowHeadersVisible = false;
-            dtVenta.RowHeadersWidth = 51;
-            dtVenta.Size = new Size(827, 302);
-            dtVenta.TabIndex = 7;
+            dgvDetalleVenta.BackgroundColor = Color.White;
+            dgvDetalleVenta.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvDetalleVenta.Dock = DockStyle.Fill;
+            dgvDetalleVenta.Location = new Point(107, 103);
+            dgvDetalleVenta.Name = "dgvDetalleVenta";
+            dgvDetalleVenta.RowHeadersVisible = false;
+            dgvDetalleVenta.RowHeadersWidth = 51;
+            dgvDetalleVenta.Size = new Size(827, 302);
+            dgvDetalleVenta.TabIndex = 7;
             // 
             // panel5
             // 
@@ -137,7 +162,7 @@
             // panel8
             // 
             panel8.Controls.Add(pictureBox6);
-            panel8.Controls.Add(btnActualizar);
+            panel8.Controls.Add(btnDevolverSeleccionados);
             panel8.Controls.Add(lblTotal);
             panel8.Controls.Add(label1);
             panel8.Dock = DockStyle.Bottom;
@@ -156,18 +181,18 @@
             pictureBox6.TabIndex = 39;
             pictureBox6.TabStop = false;
             // 
-            // btnActualizar
+            // btnDevolverSeleccionados
             // 
-            btnActualizar.BackColor = Color.DodgerBlue;
-            btnActualizar.FlatStyle = FlatStyle.Popup;
-            btnActualizar.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnActualizar.ForeColor = Color.White;
-            btnActualizar.Location = new Point(461, 34);
-            btnActualizar.Name = "btnActualizar";
-            btnActualizar.Size = new Size(132, 72);
-            btnActualizar.TabIndex = 32;
-            btnActualizar.Text = "Registrar Devolución";
-            btnActualizar.UseVisualStyleBackColor = false;
+            btnDevolverSeleccionados.BackColor = Color.DodgerBlue;
+            btnDevolverSeleccionados.FlatStyle = FlatStyle.Popup;
+            btnDevolverSeleccionados.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnDevolverSeleccionados.ForeColor = Color.White;
+            btnDevolverSeleccionados.Location = new Point(461, 34);
+            btnDevolverSeleccionados.Name = "btnDevolverSeleccionados";
+            btnDevolverSeleccionados.Size = new Size(132, 72);
+            btnDevolverSeleccionados.TabIndex = 32;
+            btnDevolverSeleccionados.Text = "Registrar Devolución";
+            btnDevolverSeleccionados.UseVisualStyleBackColor = false;
             // 
             // lblTotal
             // 
@@ -193,25 +218,25 @@
             // 
             // panel6
             // 
-            panel6.Controls.Add(pictureBox2);
+            panel6.Controls.Add(btnBuscarVenta);
             panel6.Controls.Add(label5);
-            panel6.Controls.Add(txtBuscarProducto);
+            panel6.Controls.Add(txtNumeroVenta);
             panel6.Dock = DockStyle.Top;
             panel6.Location = new Point(0, 0);
             panel6.Name = "panel6";
             panel6.Size = new Size(1045, 103);
             panel6.TabIndex = 1;
             // 
-            // pictureBox2
+            // btnBuscarVenta
             // 
-            pictureBox2.BackColor = Color.White;
-            pictureBox2.Image = Properties.Resources.buscar;
-            pictureBox2.Location = new Point(461, 47);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(35, 31);
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.TabIndex = 21;
-            pictureBox2.TabStop = false;
+            btnBuscarVenta.BackColor = Color.White;
+            btnBuscarVenta.Image = Properties.Resources.buscar;
+            btnBuscarVenta.Location = new Point(461, 47);
+            btnBuscarVenta.Name = "btnBuscarVenta";
+            btnBuscarVenta.Size = new Size(35, 31);
+            btnBuscarVenta.SizeMode = PictureBoxSizeMode.Zoom;
+            btnBuscarVenta.TabIndex = 21;
+            btnBuscarVenta.TabStop = false;
             // 
             // label5
             // 
@@ -223,16 +248,16 @@
             label5.TabIndex = 22;
             label5.Text = "Buscar";
             // 
-            // txtBuscarProducto
+            // txtNumeroVenta
             // 
-            txtBuscarProducto.BorderStyle = BorderStyle.FixedSingle;
-            txtBuscarProducto.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtBuscarProducto.Location = new Point(169, 47);
-            txtBuscarProducto.Name = "txtBuscarProducto";
-            txtBuscarProducto.Size = new Size(286, 31);
-            txtBuscarProducto.TabIndex = 23;
-            txtBuscarProducto.Tag = "4";
-            txtBuscarProducto.TextAlign = HorizontalAlignment.Center;
+            txtNumeroVenta.BorderStyle = BorderStyle.FixedSingle;
+            txtNumeroVenta.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtNumeroVenta.Location = new Point(169, 47);
+            txtNumeroVenta.Name = "txtNumeroVenta";
+            txtNumeroVenta.Size = new Size(286, 31);
+            txtNumeroVenta.TabIndex = 23;
+            txtNumeroVenta.Tag = "4";
+            txtNumeroVenta.TextAlign = HorizontalAlignment.Center;
             // 
             // panel1
             // 
@@ -270,25 +295,27 @@
             label3.Text = "Regitrar devolución";
             label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // Devoluciones
+            // frmDevoluciones
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1372, 709);
             Controls.Add(panel3);
             Controls.Add(panel1);
-            Name = "Devoluciones";
+            Name = "frmDevoluciones";
             Text = "Devoluciones";
             panel3.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             panel4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dtVenta).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvDetalleVenta).EndInit();
             panel8.ResumeLayout(false);
             panel8.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox6).EndInit();
             panel6.ResumeLayout(false);
             panel6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)btnBuscarVenta).EndInit();
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
@@ -300,20 +327,22 @@
         private TableLayoutPanel tableLayoutPanel1;
         private Panel panel2;
         private Panel panel4;
-        private DataGridView dtVenta;
+        private DataGridView dgvDetalleVenta;
         private Panel panel5;
         private Panel panel7;
         private Panel panel8;
         private PictureBox pictureBox6;
-        private Button btnActualizar;
+        private Button btnDevolverSeleccionados;
         private Label lblTotal;
         private Label label1;
         private Panel panel6;
-        private PictureBox pictureBox2;
+        private PictureBox btnBuscarVenta;
         private Label label5;
-        private TextBox txtBuscarProducto;
+        private TextBox txtNumeroVenta;
         private Panel panel1;
         private PictureBox pictureBox1;
         private Label label3;
+        private Label lblTotalDevuelto;
+        private Label lblTotalOriginal;
     }
 }

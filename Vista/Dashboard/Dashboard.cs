@@ -306,7 +306,7 @@ namespace Sopromil.Vista.Dashboard
                 "Ventas" => new Ventas.FormVenta(),
                 "Creditos" => new Creditos.FrmGestionCreditos(),
                 "Categorias" => new Categorias(),
-                "Inventario" => new Productos.Productos(),
+                "Inventario" => new Productos.FormProductos(),
                 _ => null
             };
 

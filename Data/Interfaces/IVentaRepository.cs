@@ -9,6 +9,7 @@ namespace Sopromil.Data.Interfaces
         Task<List<Venta>> ObtenerVentasAsync();
         Task<List<DetalleVenta>> ObtenerDetalleVentaAsync(int idVenta);
         Task DevolverVentaAsync(int idDetalleVenta);
+        Task DevolverProductosAsync(List<int> idDetallesVenta);
         Task RegistrarVentaConCreditoAsync(Venta venta, List<DetalleVenta> detalles, int idCliente);
     }
 }

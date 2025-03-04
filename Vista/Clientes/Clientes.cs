@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Sopromil.Vista.Usuarios;
 
 namespace Sopromil.Vista.Clientes
 {

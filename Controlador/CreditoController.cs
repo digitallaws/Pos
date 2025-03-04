@@ -15,123 +15,242 @@ namespace Sopromil.Controlador
 
         private void LogError(Exception ex, string metodo)
         {
-            string logPath = "logErrores.txt";
-            string mensaje = $"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}] Error en {metodo}: {ex.Message}{Environment.NewLine}";
-            File.AppendAllText(logPath, mensaje);
-        }
-
-        // Nuevo método usando el SP que valida cupo y evita créditos duplicados
-        public async Task<string> RegistrarOActualizarCreditoAsync(Credito credito)
-        {
             try
             {
-                if (credito.IDCliente <= 0)
-                    throw new ArgumentException("ID de cliente inválido.");
-                if (credito.Total <= 0)
-                    throw new ArgumentException("El monto debe ser mayor a cero.");
-
-                return await _creditoRepository.RegistrarOActualizarCreditoAsync(credito);
+                string logPath = "logErrores.txt";
+                string mensaje = $"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}] Error en {metodo}: {ex.Message}{Environment.NewLine}";
+                System.IO.File.AppendAllText(logPath, mensaje);
             }
-            catch (Exception ex)
+            catch
             {
-                LogError(ex, nameof(RegistrarOActualizarCreditoAsync));
-                return "Error al procesar el crédito.";
+                // No interrumpir al usuario si el log falla
             }
         }
 
-        public async Task<bool> RegistrarPagoAsync(int idCredito, decimal montoPagado, decimal interesAplicado)
+        private void MostrarError(string mensaje, string metodo)
         {
+            MessageBox.Show($"Ocurrió un error en {metodo}:\n{mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        // ======================
+        // Verificar crédito pendiente
+        // ======================
+        public async Task<bool> VerificarCreditoPendienteAsync(int idCliente)
+        {
+            if (idCliente <= 0)
+            {
+                MessageBox.Show("El ID del cliente es inválido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
             try
             {
-                if (idCredito <= 0) throw new ArgumentException("ID de crédito inválido.");
-                if (montoPagado <= 0) throw new ArgumentException("El monto pagado debe ser mayor a cero.");
-
-                await _creditoRepository.RegistrarPagoAsync(idCredito, montoPagado, interesAplicado);
-
-                // Validar si el crédito queda saldo cero y cancelarlo automáticamente
-                var creditos = await _creditoRepository.ObtenerCreditosActivosAsync();
-                var credito = creditos.FirstOrDefault(c => c.IDCredito == idCredito);
-
-                if (credito != null && credito.Saldo <= 0)
-                {
-                    await _creditoRepository.CancelarCreditoAsync(idCredito);
-                }
-
-                return true;
+                return await _creditoRepository.VerificarCreditoPendienteAsync(idCliente);
             }
             catch (Exception ex)
             {
-                LogError(ex, nameof(RegistrarPagoAsync));
+                LogError(ex, nameof(VerificarCreditoPendienteAsync));
+                MostrarError(ex.Message, nameof(VerificarCreditoPendienteAsync));
                 return false;
             }
         }
 
-        public async Task<decimal> ObtenerSaldoPendienteAsync(int? idCliente, string documento = null)
+        // ======================
+        // Registrar un nuevo crédito
+        // ======================
+        public async Task<bool> RegistrarCreditoAsync(Credito credito)
         {
+            if (!ValidarCredito(credito)) return false;
+
             try
             {
-                if (idCliente == null && string.IsNullOrWhiteSpace(documento))
-                    throw new ArgumentException("Debe proporcionar el IDCliente o el Documento.");
-
-                return await _creditoRepository.ObtenerSaldoPendienteAsync(idCliente, documento);
+                await _creditoRepository.RegistrarCreditoAsync(credito);
+                return true; // Indica éxito
             }
             catch (Exception ex)
             {
-                LogError(ex, nameof(ObtenerSaldoPendienteAsync));
-                return 0;
+                LogError(ex, nameof(RegistrarCreditoAsync));
+                MostrarError(ex.Message, nameof(RegistrarCreditoAsync));
+                return false; // Indica error
             }
         }
 
-        public async Task<List<Credito>> ObtenerCreditosActivosAsync()
+        // ======================
+        // Obtener créditos activos del cliente
+        // ======================
+        public async Task<List<Credito>> ObtenerCreditosActivosClienteAsync(int idCliente)
         {
+            if (idCliente <= 0)
+            {
+                MessageBox.Show("El ID del cliente es inválido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return new List<Credito>();
+            }
+
             try
             {
-                return await _creditoRepository.ObtenerCreditosActivosAsync();
+                return await _creditoRepository.ObtenerCreditosActivosClienteAsync(idCliente);
             }
             catch (Exception ex)
             {
-                LogError(ex, nameof(ObtenerCreditosActivosAsync));
+                LogError(ex, nameof(ObtenerCreditosActivosClienteAsync));
+                MostrarError(ex.Message, nameof(ObtenerCreditosActivosClienteAsync));
                 return new List<Credito>();
             }
         }
 
-        public async Task<List<PagoCredito>> ObtenerPagosCreditoAsync(int idCredito)
+        // ======================
+        // Obtener saldo pendiente
+        // ======================
+        public async Task<decimal> ObtenerSaldoPendienteClienteAsync(int idCliente)
         {
+            if (idCliente <= 0)
+            {
+                MessageBox.Show("El ID del cliente es inválido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return 0;
+            }
+
             try
             {
-                if (idCredito <= 0) throw new ArgumentException("ID de crédito inválido.");
+                return await _creditoRepository.ObtenerSaldoPendienteClienteAsync(idCliente);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, nameof(ObtenerSaldoPendienteClienteAsync));
+                MostrarError(ex.Message, nameof(ObtenerSaldoPendienteClienteAsync));
+                return 0;
+            }
+        }
 
+        // ======================
+        // Registrar pago a crédito
+        // ======================
+        public async Task RegistrarPagoCreditoAsync(int idCredito, decimal montoPagado, decimal interesAplicado)
+        {
+            if (idCredito <= 0 || montoPagado <= 0)
+            {
+                MessageBox.Show("Datos inválidos para registrar el pago.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                await _creditoRepository.RegistrarPagoCreditoAsync(idCredito, montoPagado, interesAplicado);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, nameof(RegistrarPagoCreditoAsync));
+                MostrarError(ex.Message, nameof(RegistrarPagoCreditoAsync));
+            }
+        }
+
+        // ======================
+        // Obtener historial de pagos
+        // ======================
+        public async Task<List<PagoCredito>> ObtenerPagosCreditoAsync(int idCredito)
+        {
+            if (idCredito <= 0)
+            {
+                MessageBox.Show("El ID del crédito es inválido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return new List<PagoCredito>();
+            }
+
+            try
+            {
                 return await _creditoRepository.ObtenerPagosCreditoAsync(idCredito);
             }
             catch (Exception ex)
             {
                 LogError(ex, nameof(ObtenerPagosCreditoAsync));
+                MostrarError(ex.Message, nameof(ObtenerPagosCreditoAsync));
                 return new List<PagoCredito>();
             }
         }
 
-        public async Task<bool> CancelarCreditoAsync(int idCredito)
+        // ======================
+        // Cancelar crédito
+        // ======================
+        public async Task CancelarCreditoAsync(int idCredito)
         {
+            if (idCredito <= 0)
+            {
+                MessageBox.Show("El ID del crédito es inválido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             try
             {
-                if (idCredito <= 0) throw new ArgumentException("ID de crédito inválido.");
-
                 await _creditoRepository.CancelarCreditoAsync(idCredito);
-                return true;
             }
             catch (Exception ex)
             {
                 LogError(ex, nameof(CancelarCreditoAsync));
+                MostrarError(ex.Message, nameof(CancelarCreditoAsync));
+            }
+        }
+
+        // ======================
+        // Obtener todos los créditos activos (para admin)
+        // ======================
+        public async Task<List<Credito>> ObtenerTodosLosCreditosActivosAsync()
+        {
+            try
+            {
+                return await _creditoRepository.ObtenerTodosLosCreditosActivosAsync();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, nameof(ObtenerTodosLosCreditosActivosAsync));
+                MostrarError(ex.Message, nameof(ObtenerTodosLosCreditosActivosAsync));
+                return new List<Credito>();
+            }
+        }
+
+        // ======================
+        // Validación básica de crédito
+        // ======================
+        private bool ValidarCredito(Credito credito)
+        {
+            if (credito == null)
+            {
+                MessageBox.Show("La información del crédito es inválida.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
+
+            if (credito.IDCliente <= 0)
+            {
+                MessageBox.Show("El cliente es inválido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (credito.Total <= 0)
+            {
+                MessageBox.Show("El monto total debe ser mayor a cero.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (credito.FechaVencimiento <= DateTime.Now.Date)
+            {
+                MessageBox.Show("La fecha de vencimiento debe ser posterior a hoy.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (credito.AplicaInteres && (credito.TasaInteres < 0 || credito.TasaInteres > 100))
+            {
+                MessageBox.Show("La tasa de interés debe estar entre 0% y 100%.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            return true;
         }
 
         public async Task<bool> ActualizarSaldoCreditoAsync(int idCliente, decimal monto)
         {
             try
             {
-                if (idCliente <= 0) throw new ArgumentException("ID de cliente inválido.");
-                if (monto <= 0) throw new ArgumentException("El monto debe ser mayor a cero.");
+                if (idCliente <= 0 || monto <= 0)
+                {
+                    throw new ArgumentException("ID de cliente o monto inválido.");
+                }
 
                 await _creditoRepository.ActualizarSaldoCreditoAsync(idCliente, monto);
                 return true;
@@ -139,8 +258,10 @@ namespace Sopromil.Controlador
             catch (Exception ex)
             {
                 LogError(ex, nameof(ActualizarSaldoCreditoAsync));
+                MostrarError("Error al actualizar el saldo del crédito.", nameof(ActualizarSaldoCreditoAsync));
                 return false;
             }
         }
+
     }
 }

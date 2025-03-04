@@ -9,5 +9,10 @@ namespace Sopromil.Data.Interfaces
         Task<MovimientoCaja> ObtenerCajaAbiertaAsync();
         Task<string> ObtenerImpresoraAsync();
         Task<decimal> CalcularVentasDesdeAperturaCajaAsync();
+
+        // Nuevos métodos para movimientos extra
+        Task RegistrarMovimientoExtraAsync(int idMovimiento, string tipo, decimal monto, string descripcion);
+        Task<decimal> CalcularMovimientosExtraDesdeAperturaAsync();
+        Task<List<MovimientoCajaDetalle>> ObtenerMovimientosExtraDeCajaAsync(int idMovimiento);
     }
 }

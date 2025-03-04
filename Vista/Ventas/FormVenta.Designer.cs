@@ -30,11 +30,13 @@
         {
             components = new System.ComponentModel.Container();
             panel1 = new Panel();
-            pictureBox1 = new PictureBox();
             label3 = new Label();
             panel3 = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
             panel2 = new Panel();
+            btnProducto = new Button();
+            btnCreditos = new Button();
+            btnMovimiento = new Button();
             panel9 = new Panel();
             lblVenta = new Label();
             label6 = new Label();
@@ -49,6 +51,7 @@
             panel8 = new Panel();
             pictureBox6 = new PictureBox();
             btnActualizar = new Button();
+            button3 = new Button();
             lblTotal = new Label();
             label1 = new Label();
             panel6 = new Panel();
@@ -57,7 +60,6 @@
             txtBuscarProducto = new TextBox();
             relojTimer = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel3.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             panel2.SuspendLayout();
@@ -73,25 +75,12 @@
             // panel1
             // 
             panel1.BackColor = Color.White;
-            panel1.Controls.Add(pictureBox1);
             panel1.Controls.Add(label3);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
             panel1.Size = new Size(1419, 114);
             panel1.TabIndex = 9;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.BackColor = Color.DodgerBlue;
-            pictureBox1.Dock = DockStyle.Right;
-            pictureBox1.Image = Properties.Resources.agregar_usuario;
-            pictureBox1.Location = new Point(1255, 0);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(164, 114);
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox1.TabIndex = 2;
-            pictureBox1.TabStop = false;
             // 
             // label3
             // 
@@ -134,6 +123,9 @@
             // 
             // panel2
             // 
+            panel2.Controls.Add(btnProducto);
+            panel2.Controls.Add(btnCreditos);
+            panel2.Controls.Add(btnMovimiento);
             panel2.Controls.Add(panel9);
             panel2.Controls.Add(label2);
             panel2.Controls.Add(cmbClientes);
@@ -142,6 +134,48 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(327, 627);
             panel2.TabIndex = 2;
+            // 
+            // btnProducto
+            // 
+            btnProducto.BackColor = Color.DodgerBlue;
+            btnProducto.FlatStyle = FlatStyle.Popup;
+            btnProducto.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnProducto.ForeColor = Color.White;
+            btnProducto.Location = new Point(162, 228);
+            btnProducto.Name = "btnProducto";
+            btnProducto.Size = new Size(147, 72);
+            btnProducto.TabIndex = 43;
+            btnProducto.Text = "Consultar Producto";
+            btnProducto.UseVisualStyleBackColor = false;
+            btnProducto.Click += btnProducto_Click;
+            // 
+            // btnCreditos
+            // 
+            btnCreditos.BackColor = Color.DodgerBlue;
+            btnCreditos.FlatStyle = FlatStyle.Popup;
+            btnCreditos.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnCreditos.ForeColor = Color.White;
+            btnCreditos.Location = new Point(162, 135);
+            btnCreditos.Name = "btnCreditos";
+            btnCreditos.Size = new Size(147, 72);
+            btnCreditos.TabIndex = 42;
+            btnCreditos.Text = "Consultar Credito";
+            btnCreditos.UseVisualStyleBackColor = false;
+            btnCreditos.Click += btnCreditos_Click;
+            // 
+            // btnMovimiento
+            // 
+            btnMovimiento.BackColor = Color.DodgerBlue;
+            btnMovimiento.FlatStyle = FlatStyle.Popup;
+            btnMovimiento.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnMovimiento.ForeColor = Color.White;
+            btnMovimiento.Location = new Point(9, 135);
+            btnMovimiento.Name = "btnMovimiento";
+            btnMovimiento.Size = new Size(147, 72);
+            btnMovimiento.TabIndex = 40;
+            btnMovimiento.Text = "Registrar Movimiento";
+            btnMovimiento.UseVisualStyleBackColor = false;
+            btnMovimiento.Click += btnMovimiento_Click;
             // 
             // panel9
             // 
@@ -264,6 +298,7 @@
             // 
             panel8.Controls.Add(pictureBox6);
             panel8.Controls.Add(btnActualizar);
+            panel8.Controls.Add(button3);
             panel8.Controls.Add(lblTotal);
             panel8.Controls.Add(label1);
             panel8.Dock = DockStyle.Bottom;
@@ -295,6 +330,20 @@
             btnActualizar.Text = "Facturar";
             btnActualizar.UseVisualStyleBackColor = false;
             btnActualizar.Click += btnFacturar_Click;
+            // 
+            // button3
+            // 
+            button3.BackColor = Color.DodgerBlue;
+            button3.FlatStyle = FlatStyle.Popup;
+            button3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button3.ForeColor = Color.White;
+            button3.Location = new Point(349, 24);
+            button3.Name = "button3";
+            button3.Size = new Size(147, 72);
+            button3.TabIndex = 41;
+            button3.Text = "Devoluciones";
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += btnDevolucion_Click;
             // 
             // lblTotal
             // 
@@ -362,18 +411,17 @@
             txtBuscarProducto.TextAlign = HorizontalAlignment.Center;
             txtBuscarProducto.KeyDown += txtBuscarProducto_KeyDown;
             // 
-            // Venta
+            // FormVenta
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1419, 747);
             Controls.Add(panel3);
             Controls.Add(panel1);
-            Name = "Venta";
+            Name = "FormVenta";
             Text = "Venta";
             Load += Venta_Load;
             panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel3.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
@@ -393,7 +441,6 @@
 
         #endregion
         private Panel panel1;
-        private PictureBox pictureBox1;
         private Label label3;
         private Panel panel3;
         private TableLayoutPanel tableLayoutPanel1;
@@ -420,5 +467,9 @@
         private Button button1;
         private Label lblVenta;
         private Label label6;
+        private Button btnProducto;
+        private Button btnCreditos;
+        private Button btnMovimiento;
+        private Button button3;
     }
 }

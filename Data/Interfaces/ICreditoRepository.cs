@@ -4,13 +4,14 @@ namespace Sopromil.Data.Interfaces
 {
     public interface ICreditoRepository
     {
-        Task<string> RegistrarOActualizarCreditoAsync(Credito credito);
+        Task<bool> VerificarCreditoPendienteAsync(int idCliente);
         Task RegistrarCreditoAsync(Credito credito);
-        Task RegistrarPagoAsync(int idCredito, decimal montoPagado, decimal interesAplicado);
-        Task<decimal> ObtenerSaldoPendienteAsync(int? idCliente, string documento = null);
-        Task<List<Credito>> ObtenerCreditosActivosAsync();
+        Task<List<Credito>> ObtenerCreditosActivosClienteAsync(int idCliente);
+        Task<decimal> ObtenerSaldoPendienteClienteAsync(int idCliente);
+        Task RegistrarPagoCreditoAsync(int idCredito, decimal montoPagado, decimal interesAplicado);
         Task<List<PagoCredito>> ObtenerPagosCreditoAsync(int idCredito);
         Task CancelarCreditoAsync(int idCredito);
+        Task<List<Credito>> ObtenerTodosLosCreditosActivosAsync();
         Task ActualizarSaldoCreditoAsync(int idCliente, decimal monto);
     }
 }

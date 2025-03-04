@@ -29,19 +29,14 @@
         private void InitializeComponent()
         {
             panel3 = new Panel();
-            btnCerrar = new Button();
             dgvHistorialPagos = new DataGridView();
             groupBox3 = new GroupBox();
             txtGananciaIntereses = new TextBox();
-            txtPorcentajeConsumido = new TextBox();
             txtTotalPagado = new TextBox();
-            label11 = new Label();
             label12 = new Label();
             label13 = new Label();
-            btnActualizarFecha = new Button();
-            btnCancelarCredito = new Button();
             groupBox2 = new GroupBox();
-            dtpFechaVencimiento = new DateTimePicker();
+            txtFechaVencimiento = new TextBox();
             txtTasaInteres = new TextBox();
             txtDiasRestantes = new TextBox();
             txtEstadoCredito = new TextBox();
@@ -63,7 +58,6 @@
             label2 = new Label();
             lblDocumentoCliente = new Label();
             btnRegistrarPago = new Button();
-            btnAmpliarCredito = new Button();
             dtCreditos = new DataGridView();
             lblIDCliente = new Label();
             panel1 = new Panel();
@@ -80,33 +74,17 @@
             // panel3
             // 
             panel3.BackColor = Color.White;
-            panel3.Controls.Add(btnCerrar);
             panel3.Controls.Add(dgvHistorialPagos);
             panel3.Controls.Add(groupBox3);
-            panel3.Controls.Add(btnActualizarFecha);
-            panel3.Controls.Add(btnCancelarCredito);
             panel3.Controls.Add(groupBox2);
             panel3.Controls.Add(groupBox1);
             panel3.Controls.Add(btnRegistrarPago);
-            panel3.Controls.Add(btnAmpliarCredito);
             panel3.Controls.Add(dtCreditos);
             panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(0, 114);
             panel3.Name = "panel3";
             panel3.Size = new Size(1531, 786);
             panel3.TabIndex = 10;
-            // 
-            // btnCerrar
-            // 
-            btnCerrar.BackColor = Color.Red;
-            btnCerrar.FlatStyle = FlatStyle.Popup;
-            btnCerrar.ForeColor = Color.White;
-            btnCerrar.Location = new Point(1062, 623);
-            btnCerrar.Name = "btnCerrar";
-            btnCerrar.Size = new Size(170, 55);
-            btnCerrar.TabIndex = 67;
-            btnCerrar.Text = "Cerrar";
-            btnCerrar.UseVisualStyleBackColor = false;
             // 
             // dgvHistorialPagos
             // 
@@ -120,9 +98,7 @@
             // groupBox3
             // 
             groupBox3.Controls.Add(txtGananciaIntereses);
-            groupBox3.Controls.Add(txtPorcentajeConsumido);
             groupBox3.Controls.Add(txtTotalPagado);
-            groupBox3.Controls.Add(label11);
             groupBox3.Controls.Add(label12);
             groupBox3.Controls.Add(label13);
             groupBox3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
@@ -140,30 +116,12 @@
             txtGananciaIntereses.Size = new Size(151, 34);
             txtGananciaIntereses.TabIndex = 55;
             // 
-            // txtPorcentajeConsumido
-            // 
-            txtPorcentajeConsumido.Location = new Point(143, 125);
-            txtPorcentajeConsumido.Name = "txtPorcentajeConsumido";
-            txtPorcentajeConsumido.Size = new Size(214, 34);
-            txtPorcentajeConsumido.TabIndex = 68;
-            // 
             // txtTotalPagado
             // 
             txtTotalPagado.Location = new Point(147, 48);
             txtTotalPagado.Name = "txtTotalPagado";
             txtTotalPagado.Size = new Size(210, 34);
             txtTotalPagado.TabIndex = 54;
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.FlatStyle = FlatStyle.System;
-            label11.Font = new Font("Microsoft Sans Serif", 12F);
-            label11.Location = new Point(6, 128);
-            label11.Name = "label11";
-            label11.Size = new Size(141, 25);
-            label11.TabIndex = 50;
-            label11.Text = "% Consumido:";
             // 
             // label12
             // 
@@ -185,33 +143,9 @@
             label13.TabIndex = 46;
             label13.Text = "Total Pagado:";
             // 
-            // btnActualizarFecha
-            // 
-            btnActualizarFecha.BackColor = Color.Red;
-            btnActualizarFecha.FlatStyle = FlatStyle.Popup;
-            btnActualizarFecha.ForeColor = Color.White;
-            btnActualizarFecha.Location = new Point(865, 623);
-            btnActualizarFecha.Name = "btnActualizarFecha";
-            btnActualizarFecha.Size = new Size(170, 55);
-            btnActualizarFecha.TabIndex = 65;
-            btnActualizarFecha.Text = "Actualizar fecha";
-            btnActualizarFecha.UseVisualStyleBackColor = false;
-            // 
-            // btnCancelarCredito
-            // 
-            btnCancelarCredito.BackColor = Color.Red;
-            btnCancelarCredito.FlatStyle = FlatStyle.Popup;
-            btnCancelarCredito.ForeColor = Color.White;
-            btnCancelarCredito.Location = new Point(669, 623);
-            btnCancelarCredito.Name = "btnCancelarCredito";
-            btnCancelarCredito.Size = new Size(170, 55);
-            btnCancelarCredito.TabIndex = 64;
-            btnCancelarCredito.Text = "Cancelar Credito";
-            btnCancelarCredito.UseVisualStyleBackColor = false;
-            // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(dtpFechaVencimiento);
+            groupBox2.Controls.Add(txtFechaVencimiento);
             groupBox2.Controls.Add(txtTasaInteres);
             groupBox2.Controls.Add(txtDiasRestantes);
             groupBox2.Controls.Add(txtEstadoCredito);
@@ -233,12 +167,12 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Datos del Crédito";
             // 
-            // dtpFechaVencimiento
+            // txtFechaVencimiento
             // 
-            dtpFechaVencimiento.Location = new Point(198, 88);
-            dtpFechaVencimiento.Name = "dtpFechaVencimiento";
-            dtpFechaVencimiento.Size = new Size(257, 34);
-            dtpFechaVencimiento.TabIndex = 63;
+            txtFechaVencimiento.Location = new Point(187, 88);
+            txtFechaVencimiento.Name = "txtFechaVencimiento";
+            txtFechaVencimiento.Size = new Size(268, 34);
+            txtFechaVencimiento.TabIndex = 63;
             // 
             // txtTasaInteres
             // 
@@ -424,24 +358,13 @@
             btnRegistrarPago.BackColor = Color.Red;
             btnRegistrarPago.FlatStyle = FlatStyle.Popup;
             btnRegistrarPago.ForeColor = Color.White;
-            btnRegistrarPago.Location = new Point(473, 623);
+            btnRegistrarPago.Location = new Point(643, 644);
             btnRegistrarPago.Name = "btnRegistrarPago";
             btnRegistrarPago.Size = new Size(170, 55);
             btnRegistrarPago.TabIndex = 63;
             btnRegistrarPago.Text = "Registrar Pago";
             btnRegistrarPago.UseVisualStyleBackColor = false;
-            // 
-            // btnAmpliarCredito
-            // 
-            btnAmpliarCredito.BackColor = Color.DodgerBlue;
-            btnAmpliarCredito.FlatStyle = FlatStyle.Popup;
-            btnAmpliarCredito.ForeColor = Color.White;
-            btnAmpliarCredito.Location = new Point(272, 623);
-            btnAmpliarCredito.Name = "btnAmpliarCredito";
-            btnAmpliarCredito.Size = new Size(170, 55);
-            btnAmpliarCredito.TabIndex = 58;
-            btnAmpliarCredito.Text = "Ampliar Credito";
-            btnAmpliarCredito.UseVisualStyleBackColor = false;
+            btnRegistrarPago.Click += btnRegistrarPago_Click_1;
             // 
             // dtCreditos
             // 
@@ -523,7 +446,6 @@
         private Panel panel3;
         private Button btnRegistrarPago;
         private Label lblIDCliente;
-        private Button btnAmpliarCredito;
         private Label lblDocumentoCliente;
         private DataGridView dtCreditos;
         private Panel panel1;
@@ -536,19 +458,14 @@
         private Label label9;
         private Label label1;
         private GroupBox groupBox3;
-        private Label label11;
         private Label label12;
         private Label label13;
-        private Button btnActualizarFecha;
-        private Button btnCancelarCredito;
         private Label label10;
         private Label label8;
         private Label label6;
         private Label label4;
         private DataGridView dgvHistorialPagos;
-        private Button btnCerrar;
         private TextBox txtGananciaIntereses;
-        private TextBox txtPorcentajeConsumido;
         private TextBox txtTotalPagado;
         private TextBox txtTelefonoCliente;
         private TextBox txtDocumentoCliente;
@@ -559,6 +476,6 @@
         private TextBox txtSaldoDisponible;
         private TextBox txtMontoTotal;
         private TextBox txtFechaRegistro;
-        private DateTimePicker dtpFechaVencimiento;
+        private TextBox txtFechaVencimiento;
     }
 }

@@ -10,6 +10,15 @@ namespace Sopromil.Modelo
     {
     }
 
+    public class MovimientoCajaDetalle
+    {
+        public int IDDetalleMovimiento { get; set; }
+        public int IDMovimiento { get; set; }
+        public string TipoMovimiento { get; set; }  // IngresoExtra o EgresoExtra
+        public decimal Monto { get; set; }
+        public string Descripcion { get; set; }
+        public DateTime FechaRegistro { get; set; }
+    }
     public class Empresa
     {
         public int IDEmpresa { get; set; } = 1;

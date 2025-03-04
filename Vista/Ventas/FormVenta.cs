@@ -1,5 +1,7 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Modelo;
+using Sopromil.Vista.Caja;
+using Sopromil.Vista.Productos;
 using System.Drawing.Printing;
 using System.Globalization;
 
@@ -13,6 +15,8 @@ namespace Sopromil.Vista.Ventas
         private readonly CajaController _cajaController;
         private List<Producto> _productosDisponibles;
         private readonly CultureInfo culturaColombiana = new CultureInfo("es-CO");
+        private string impresoraConfigurada;
+
 
         public FormVenta()
         {
@@ -29,7 +33,99 @@ namespace Sopromil.Vista.Ventas
             await CargarProductos();
             ConfigurarTablaVenta();
             InicializarReloj();
+            impresoraConfigurada = await _cajaController.ObtenerImpresoraAsync();
         }
+
+        private void ImprimirRecibo(int idVenta, Venta venta, decimal devuelta)
+        {
+            try
+            {
+                var printDocument = new PrintDocument();
+                printDocument.PrinterSettings.PrinterName = impresoraConfigurada;
+                printDocument.PrintPage += (s, e) => ImprimirReciboContenido(e.Graphics, idVenta, venta, devuelta);
+                printDocument.Print();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, nameof(ImprimirRecibo));
+                MessageBox.Show($"Error al imprimir el recibo de la venta.\n{ex.Message}", "Error de impresión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ImprimirReciboContenido(Graphics g, int idVenta, Venta venta, decimal devuelta)
+        {
+            try
+            {
+                int y = 10;
+                Font fontNormal = new Font("Arial", 9);
+                Font fontBold = new Font("Arial", 11, FontStyle.Bold);
+                Font fontLarge = new Font("Arial", 12, FontStyle.Bold);
+
+                // Encabezado
+                g.DrawString("SOPROMIL - TIENDA", fontLarge, Brushes.Black, 30, y);
+                y += 25;
+                g.DrawString($"Venta No: {idVenta}", fontBold, Brushes.Black, 0, y);
+                y += 20;
+                g.DrawString($"Fecha: {DateTime.Now:dd/MM/yyyy HH:mm:ss}", fontNormal, Brushes.Black, 0, y);
+                y += 20;
+
+                g.DrawString("================================", fontNormal, Brushes.Black, 0, y);
+                y += 20;
+
+                // Encabezado de productos
+                g.DrawString("Producto        Cant   Subtotal", fontBold, Brushes.Black, 0, y);
+                y += 20;
+                g.DrawString("--------------------------------", fontNormal, Brushes.Black, 0, y);
+                y += 15;
+
+                // Recorrer productos
+                foreach (DataGridViewRow row in dtVenta.Rows)
+                {
+                    if (row.IsNewRow) continue;
+
+                    string descripcion = row.Cells["Descripcion"].Value?.ToString()?.Trim() ?? "SIN DESC.";
+                    string cantidad = row.Cells["Cantidad"].Value?.ToString()?.Trim() ?? "0";
+                    string subtotal = row.Cells["Subtotal"].Value?.ToString()?.Trim() ?? "$0";
+
+                    // Limpiar formato de moneda y evitar errores
+                    decimal subtotalDecimal = 0;
+                    decimal.TryParse(subtotal.Replace("$", "").Replace(".", "").Replace(",", ""), out subtotalDecimal);
+                    string subtotalFormateado = subtotalDecimal.ToString("C0", culturaColombiana);
+
+                    // Ajustar descripción a 15 caracteres (evitar desbordes en térmica)
+                    if (descripcion.Length > 15)
+                        descripcion = descripcion.Substring(0, 15);
+
+                    string lineaProducto = $"{descripcion.PadRight(15)} {cantidad.PadLeft(4)} {subtotalFormateado.PadLeft(10)}";
+
+                    g.DrawString(lineaProducto, fontNormal, Brushes.Black, 0, y);
+                    y += 20;
+                }
+
+                // Línea final
+                g.DrawString("================================", fontNormal, Brushes.Black, 0, y);
+                y += 20;
+
+                // Totales
+                g.DrawString($"TOTAL: {venta.MontoTotal.ToString("C0", culturaColombiana)}", fontBold, Brushes.Black, 0, y);
+                y += 20;
+
+                if (venta.TipoPago == "Efectivo")
+                {
+                    g.DrawString($"Devuelta: {devuelta.ToString("C0", culturaColombiana)}", fontBold, Brushes.Black, 0, y);
+                    y += 20;
+                }
+
+                g.DrawString("¡Gracias por su compra!", fontNormal, Brushes.Black, 0, y);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, nameof(ImprimirReciboContenido));
+                // Nota: NO imprimo errores en el ticket físico. Mejor solo al log.
+            }
+        }
+
+
 
         private void InicializarReloj()
         {
@@ -234,102 +330,77 @@ namespace Sopromil.Vista.Ventas
             await creditoController.ActualizarSaldoCreditoAsync(idCliente, monto);
         }
 
-        private void ImprimirRecibo(int idVenta, Modelo.Venta venta, decimal devuelta)
-        {
-            var doc = new PrintDocument();
-            doc.PrintPage += (s, e) => ImprimirReciboContenido(e.Graphics, idVenta, venta, devuelta);
-            doc.Print();
-        }
-
-        private void ImprimirReciboContenido(Graphics g, int idVenta, Modelo.Venta venta, decimal devuelta)
+        private async void btnMovimiento_Click(object sender, EventArgs e)
         {
             try
             {
-                int y = 10; // Margen superior
-                Font tituloFont = new Font("Arial", 12, FontStyle.Bold);
-                Font normalFont = new Font("Arial", 10);
-                Font negritaFont = new Font("Arial", 10, FontStyle.Bold);
+                CajaController cajaController = new CajaController();
+                var cajaAbierta = await cajaController.ObtenerCajaAbiertaAsync();
 
-                // Encabezado
-                g.DrawString("SOPROMIL - FACTURA", tituloFont, Brushes.Black, 0, y);
-                y += 25;
-
-                g.DrawString($"Venta No: {idVenta}", negritaFont, Brushes.Black, 0, y);
-                y += 20;
-
-                g.DrawString($"Fecha: {DateTime.Now:dd/MM/yyyy HH:mm:ss}", normalFont, Brushes.Black, 0, y);
-                y += 25;
-
-                g.DrawString("================================", normalFont, Brushes.Black, 0, y);
-                y += 20;
-
-                // Encabezado de productos
-                g.DrawString("Producto         Cant  Subtotal", negritaFont, Brushes.Black, 0, y);
-                y += 20;
-                g.DrawString("--------------------------------", normalFont, Brushes.Black, 0, y);
-                y += 15;
-
-                // Recorrer productos
-                foreach (DataGridViewRow row in dtVenta.Rows)
+                if (cajaAbierta == null)
                 {
-                    try
-                    {
-                        string descripcion = row.Cells["Descripcion"].Value?.ToString() ?? string.Empty;
-                        string cantidad = row.Cells["Cantidad"].Value?.ToString() ?? "0";
-                        string subtotalTexto = row.Cells["Subtotal"].Value?.ToString() ?? "0";
-
-                        // Limpiar el formato de moneda que viene con caracteres especiales
-                        decimal subtotal = 0;
-
-                        if (decimal.TryParse(
-                            subtotalTexto.Replace("$", "").Replace(".", "").Replace(",", "").Trim(),
-                            NumberStyles.Number,
-                            CultureInfo.InvariantCulture,
-                            out subtotal))
-                        {
-                            string subtotalFormateado = subtotal.ToString("C0", culturaColombiana);
-
-                            // Ajustar descripción a 15 caracteres
-                            if (descripcion.Length > 15)
-                                descripcion = descripcion.Substring(0, 15);
-
-                            g.DrawString($"{descripcion.PadRight(15)} {cantidad.PadLeft(4)} {subtotalFormateado.PadLeft(10)}", normalFont, Brushes.Black, 0, y);
-                            y += 20;
-                        }
-                        else
-                        {
-                            g.DrawString($"ERROR FORMATO PRODUCTO", normalFont, Brushes.Red, 0, y);
-                            y += 20;
-                        }
-                    }
-                    catch (Exception exProd)
-                    {
-                        g.DrawString($"ERROR PRODUCTO: {exProd.Message}", normalFont, Brushes.Red, 0, y);
-                        y += 20;
-                    }
+                    MessageBox.Show("No hay una caja abierta actualmente. No es posible registrar movimientos extra.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
 
-                // Línea final
-                g.DrawString("================================", normalFont, Brushes.Black, 0, y);
-                y += 20;
-
-                // Totales
-                g.DrawString($"TOTAL: {venta.MontoTotal.ToString("C0", culturaColombiana)}", negritaFont, Brushes.Black, 0, y);
-                y += 20;
-
-                if (venta.TipoPago == "Efectivo")
+                using (var formMovimiento = new frmMovimientoExtraCaja(cajaAbierta.IDMovimiento))
                 {
-                    g.DrawString($"Devuelta: {devuelta.ToString("C0", culturaColombiana)}", negritaFont, Brushes.Black, 0, y);
-                    y += 20;
+                    formMovimiento.ShowDialog();
                 }
-
-                g.DrawString("Gracias por su compra!", normalFont, Brushes.Black, 0, y);
             }
             catch (Exception ex)
             {
-                g.DrawString($"ERROR IMPRIMIENDO RECIBO", new Font("Arial", 10, FontStyle.Bold), Brushes.Red, 0, 0);
-                g.DrawString(ex.Message, new Font("Arial", 8), Brushes.Red, 0, 20);
+                LogError(ex, nameof(btnMovimiento_Click));
+                MessageBox.Show($"Ocurrió un error al intentar abrir el formulario de movimiento extra.\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void LogError(Exception ex, string metodo)
+        {
+            try
+            {
+                string logPath = "logErrores.txt";
+                string mensaje = $"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}] Error en {metodo}: {ex.Message}{Environment.NewLine}";
+                System.IO.File.AppendAllText(logPath, mensaje);
+            }
+            catch
+            {
+            }
+        }
+
+        private void btnDevolucion_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var frm = new frmDevoluciones();
+                frm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, nameof(btnDevolucion_Click));
+                MessageBox.Show($"Ocurrió un error al abrir el formulario de devoluciones.\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnProducto_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var frm = new FormProductos())
+                {
+                    frm.ShowDialog();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, nameof(btnProducto_Click));
+                MessageBox.Show("Ocurrió un error al abrir el formulario de productos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnCreditos_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

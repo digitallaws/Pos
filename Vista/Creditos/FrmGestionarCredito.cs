@@ -1,5 +1,6 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Modelo;
+using System.Globalization;
 
 namespace Sopromil.Vista.Creditos
 {
@@ -34,13 +35,6 @@ namespace Sopromil.Vista.Creditos
             txtMonto.KeyPress += txtMonto_KeyPress;
             chkAplicaInteres.CheckedChanged += chkAplicaInteres_CheckedChanged;
             txtFechaLimite1.ValueChanged += dtpFechaLimite_ValueChanged;
-        }
-
-        private void LogError(Exception ex, string metodo)
-        {
-            string logPath = "logErrores.txt";
-            string mensaje = $"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}] Error en {metodo}: {ex.Message}{Environment.NewLine}";
-            File.AppendAllText(logPath, mensaje);
         }
 
         private async void BuscarCliente()
@@ -149,25 +143,33 @@ namespace Sopromil.Vista.Creditos
                     ClienteSeleccionado = nuevoCliente;
                 }
 
+                // 🚨 Validar si el cliente ya tiene un crédito activo
+                var creditosActivos = await _creditoController.ObtenerCreditosActivosClienteAsync(ClienteSeleccionado.IDCliente);
+                if (creditosActivos.Any())
+                {
+                    MessageBox.Show("El cliente ya tiene un crédito activo. Por favor gestione el crédito existente antes de crear uno nuevo.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 var nuevoCredito = new Credito
                 {
                     IDCliente = ClienteSeleccionado.IDCliente,
                     FechaVencimiento = txtFechaLimite1.Value,
-                    Total = monto, // En este caso Total es el monto solicitado (no el cupo total)
+                    Total = monto,
                     AplicaInteres = chkAplicaInteres.Checked,
                     TasaInteres = chkAplicaInteres.Checked ? Convert.ToDecimal(txtPorcentajeInteres.Value) : 0
                 };
 
-                string resultado = await _creditoController.RegistrarOActualizarCreditoAsync(nuevoCredito);
+                bool registrado = await _creditoController.RegistrarCreditoAsync(nuevoCredito);
 
-                if (resultado.Contains("correctamente") || resultado.Contains("Saldo disponible"))
+                if (registrado)
                 {
-                    MessageBox.Show(resultado, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Crédito registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     DialogResult = DialogResult.OK;
                 }
                 else
                 {
-                    MessageBox.Show(resultado, "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("No se pudo registrar el crédito.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
@@ -176,7 +178,6 @@ namespace Sopromil.Vista.Creditos
                 MessageBox.Show("Ocurrió un error al registrar el crédito.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
         private void chkAplicaInteres_CheckedChanged(object sender, EventArgs e)
         {
@@ -208,6 +209,20 @@ namespace Sopromil.Vista.Creditos
         private void dtpFechaLimite_ValueChanged(object sender, EventArgs e)
         {
             txtFechaLimite.Text = txtFechaLimite1.Value.ToString("dd/MM/yyyy");
+        }
+
+        private void LogError(Exception ex, string metodo)
+        {
+            try
+            {
+                string logPath = "logErrores.txt";
+                string mensaje = $"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}] Error en {metodo}: {ex.Message}{Environment.NewLine}";
+                System.IO.File.AppendAllText(logPath, mensaje);
+            }
+            catch
+            {
+                // Silenciar errores al guardar el log
+            }
         }
     }
 }

@@ -72,6 +72,22 @@ namespace Sopromil.Vista.Productos
             };
             dtCategorias.Columns.Add(btnEliminar);
 
+            dtCategorias.AllowUserToAddRows = false;
+            dtCategorias.AllowUserToDeleteRows = false;
+            dtCategorias.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dtCategorias.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dtCategorias.BackgroundColor = Color.White;
+            dtCategorias.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dtCategorias.ReadOnly = true;
+            dtCategorias.RowHeadersVisible = false;
+            dtCategorias.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            // ✅ Estilos generales
+            dtCategorias.DefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold);
+            dtCategorias.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold);
+            dtCategorias.DefaultCellStyle.ForeColor = Color.Black;
+            dtCategorias.DefaultCellStyle.BackColor = Color.White;
+
             dtCategorias.DataSource = categorias;
             dtCategorias.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }

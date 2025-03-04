@@ -18,12 +18,16 @@ namespace Sopromil.Vista.Creditos
 
             // ✅ Asignar eventos por código
             txtBuscar.TextChanged += TxtBuscar_TextChanged;
-            btnRegistrarA.Click += BtnRegistrar_Click;
-            btnRegistrar.Click += BtnActualizar_Click;
-            dtCreditos.CellClick += DtCreditos_CellClick;  // Aquí está el evento que faltaba
+            btnRegistrar.Click += BtnRegistrar_Click;
+            dtCreditos.CellClick += DtCreditos_CellClick;
 
             // ✅ Cargar créditos al iniciar
-            CargarCreditos();
+            Load += FrmGestionCreditos_Load;
+        }
+
+        private async void FrmGestionCreditos_Load(object sender, EventArgs e)
+        {
+            await CargarCreditos();
         }
 
         private void ConfigurarDataGrid()
@@ -37,22 +41,22 @@ namespace Sopromil.Vista.Creditos
             dtCreditos.RowHeadersVisible = false;
             dtCreditos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
-            // ✅ Estilo general
-            dtCreditos.DefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold);
-            dtCreditos.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold);
+            dtCreditos.DefaultCellStyle.Font = new Font("Arial", 11, FontStyle.Regular);
+            dtCreditos.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 11, FontStyle.Bold);
             dtCreditos.DefaultCellStyle.ForeColor = Color.Black;
             dtCreditos.DefaultCellStyle.BackColor = Color.White;
         }
 
-        private async void CargarCreditos()
+        private async Task CargarCreditos()
         {
             try
             {
-                creditosOriginales = await _creditoController.ObtenerCreditosActivosAsync();
+                creditosOriginales = await _creditoController.ObtenerTodosLosCreditosActivosAsync();
                 MostrarCreditosEnGrid(creditosOriginales);
             }
             catch (Exception ex)
             {
+                LogError(ex, nameof(CargarCreditos));
                 MessageBox.Show($"Error al cargar créditos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -66,14 +70,14 @@ namespace Sopromil.Vista.Creditos
             dtCreditos.Columns.Add(new DataGridViewTextBoxColumn
             {
                 DataPropertyName = "IDCredito",
-                HeaderText = "ID",
+                HeaderText = "ID Crédito",
                 Visible = false
             });
 
             dtCreditos.Columns.Add(new DataGridViewTextBoxColumn
             {
                 DataPropertyName = "IDCliente",
-                HeaderText = "IDCliente",
+                HeaderText = "ID Cliente",
                 Visible = false
             });
 
@@ -98,7 +102,7 @@ namespace Sopromil.Vista.Creditos
                 DataPropertyName = "Total",
                 HeaderText = "Total",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                DefaultCellStyle = new DataGridViewCellStyle { Format = "C2" }
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "C2", Alignment = DataGridViewContentAlignment.MiddleRight }
             });
 
             dtCreditos.Columns.Add(new DataGridViewTextBoxColumn
@@ -106,7 +110,7 @@ namespace Sopromil.Vista.Creditos
                 DataPropertyName = "Saldo",
                 HeaderText = "Saldo",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                DefaultCellStyle = new DataGridViewCellStyle { Format = "C2" }
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "C2", Alignment = DataGridViewContentAlignment.MiddleRight }
             });
 
             dtCreditos.Columns.Add(new DataGridViewTextBoxColumn
@@ -118,10 +122,10 @@ namespace Sopromil.Vista.Creditos
 
             dtCreditos.Columns.Add(new DataGridViewButtonColumn
             {
-                HeaderText = "Ver Detalle",
-                Text = "Detalle",
+                HeaderText = "Acción",
+                Text = "Ver Detalle",
                 UseColumnTextForButtonValue = true,
-                Width = 100
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
             });
 
             dtCreditos.DataSource = creditos;
@@ -131,42 +135,55 @@ namespace Sopromil.Vista.Creditos
         {
             string filtro = txtBuscar.Text.Trim().ToLower();
 
-            var creditosFiltrados = creditosOriginales
+            var filtrados = creditosOriginales
                 .Where(c => c.IDCredito.ToString().Contains(filtro) ||
                             c.IDCliente.ToString().Contains(filtro) ||
                             c.Estado.ToLower().Contains(filtro))
                 .ToList();
 
-            MostrarCreditosEnGrid(creditosFiltrados.Any() ? creditosFiltrados : creditosOriginales);
+            MostrarCreditosEnGrid(filtrados.Any() ? filtrados : creditosOriginales);
         }
 
         private void BtnRegistrar_Click(object sender, EventArgs e)
         {
-            var frm = new FrmGestionarCredito();
+            using var frm = new FrmGestionarCredito();
             if (frm.ShowDialog() == DialogResult.OK)
             {
-                CargarCreditos();
+                _ = CargarCreditos();  // Ejecuta async sin bloquear
             }
         }
 
         private void BtnActualizar_Click(object sender, EventArgs e)
         {
-            CargarCreditos();
+            _ = CargarCreditos();
         }
 
         private void DtCreditos_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
 
-            var creditoSeleccionado = ((List<Credito>)dtCreditos.DataSource)[e.RowIndex];
-
-            if (dtCreditos.Columns[e.ColumnIndex].HeaderText == "Ver Detalle")
+            if (dtCreditos.Columns[e.ColumnIndex] is DataGridViewButtonColumn &&
+                dtCreditos.Columns[e.ColumnIndex].HeaderText == "Acción")
             {
-                var frmDetalle = new FrmDetalleCredito(creditoSeleccionado.IDCredito);
+                var creditoSeleccionado = ((List<Credito>)dtCreditos.DataSource)[e.RowIndex];
+                using var frmDetalle = new FrmDetalleCredito(creditoSeleccionado.IDCredito);
                 frmDetalle.ShowDialog();
 
-                // Actualiza lista de créditos al cerrar el detalle
-                CargarCreditos();
+                _ = CargarCreditos();
+            }
+        }
+
+        private void LogError(Exception ex, string metodo)
+        {
+            try
+            {
+                string logPath = "logErrores.txt";
+                string mensaje = $"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}] Error en {metodo}: {ex.Message}{Environment.NewLine}";
+                System.IO.File.AppendAllText(logPath, mensaje);
+            }
+            catch
+            {
+                // No interrumpir al usuario si falla el log
             }
         }
     }

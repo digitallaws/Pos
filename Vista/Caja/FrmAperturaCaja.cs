@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Sopromil.Vista.Caja
+﻿namespace Sopromil.Vista.Caja
 {
     public partial class FrmAperturaCaja : Form
     {
@@ -19,54 +9,55 @@ namespace Sopromil.Vista.Caja
         {
             InitializeComponent();
             InicializarReloj();
+
+            // Asignar eventos manualmente
+            Load += FrmAperturaCaja_Load;
+            btnActualizar.Click += btnAbrir_Click;
+            button1.Click += btnCancelar_Click;
             txtSaldoInicial.KeyPress += txtSaldoInicial_KeyPress;
 
             CajaAbierta = false;
         }
 
-        private void btnAbrir_Click(object sender, EventArgs e)
+        private void FrmAperturaCaja_Load(object sender, EventArgs e)
         {
-            if (!decimal.TryParse(txtSaldoInicial.Text, out decimal saldo))
-            {
-                MessageBox.Show("Ingrese un saldo inicial válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            SaldoInicial = saldo;
-            CajaAbierta = true;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-        }
-
-        private void btnCancelar_Click(object sender, EventArgs e)
-        {
-            CajaAbierta = false;
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            lblReloj.Text = DateTime.Now.ToString("HH:mm:ss");
         }
 
         private void InicializarReloj()
         {
             relojTimer = new System.Windows.Forms.Timer();
             relojTimer.Interval = 1000; // 1 segundo
-            relojTimer.Tick += RelojTimer_Tick;
+            relojTimer.Tick += (s, e) => lblReloj.Text = DateTime.Now.ToString("HH:mm:ss");
             relojTimer.Start();
-
-            // Mostrar la hora actual al abrir
-            lblReloj.Text = DateTime.Now.ToString("HH:mm:ss");
         }
 
-        private void RelojTimer_Tick(object sender, EventArgs e)
+        private void btnAbrir_Click(object sender, EventArgs e)
         {
-            lblReloj.Text = DateTime.Now.ToString("HH:mm:ss");
+            if (!decimal.TryParse(txtSaldoInicial.Text, out decimal saldo) || saldo < 0)
+            {
+                MessageBox.Show("Ingrese un saldo inicial válido y mayor o igual a cero.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            SaldoInicial = saldo;
+            CajaAbierta = true;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            CajaAbierta = false;
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void txtSaldoInicial_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Permite dígitos, punto decimal y la tecla de retroceso (backspace)
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
             {
-                e.Handled = true; // Bloquea la tecla
+                e.Handled = true;
             }
 
             // Solo permite un punto decimal
@@ -74,6 +65,11 @@ namespace Sopromil.Vista.Caja
             {
                 e.Handled = true;
             }
+        }
+
+        private void FrmAperturaCaja_Load_1(object sender, EventArgs e)
+        {
+
         }
     }
 }
