@@ -78,6 +78,69 @@ namespace Sopromil.Data.Repository
             return ventas;
         }
 
+        public async Task RegistrarVentaConCreditoAsync(Venta venta, List<DetalleVenta> detalles, int idCliente)
+        {
+            using (var connection = ConexionBD.ObtenerConexion())
+            {
+                await connection.OpenAsync();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // Registrar venta
+                        int idVenta;
+                        using (var command = new SqlCommand("sp_RegistrarVenta", connection, transaction))
+                        {
+                            command.CommandType = CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@IDCliente", venta.IDCliente);
+                            command.Parameters.AddWithValue("@MontoTotal", venta.MontoTotal);
+                            command.Parameters.AddWithValue("@TipoPago", venta.TipoPago);
+                            command.Parameters.AddWithValue("@IDUsuario", venta.IDUsuario);
+
+                            SqlParameter outputId = new SqlParameter("@IDVenta", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                            command.Parameters.Add(outputId);
+
+                            await command.ExecuteNonQueryAsync();
+                            idVenta = (int)outputId.Value;
+                        }
+
+                        // Registrar detalles de la venta
+                        foreach (var detalle in detalles)
+                        {
+                            using (var command = new SqlCommand("sp_RegistrarDetalleVenta", connection, transaction))
+                            {
+                                command.CommandType = CommandType.StoredProcedure;
+                                command.Parameters.AddWithValue("@IDVenta", idVenta);
+                                command.Parameters.AddWithValue("@IDProducto", detalle.IDProducto);
+                                command.Parameters.AddWithValue("@Cantidad", detalle.Cantidad);
+                                command.Parameters.AddWithValue("@PrecioUnitario", detalle.PrecioUnitario);
+
+                                await command.ExecuteNonQueryAsync();
+                            }
+                        }
+
+                        // Actualizar saldo crédito
+                        using (var command = new SqlCommand("sp_ActualizarSaldoCredito", connection, transaction))
+                        {
+                            command.CommandType = CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@IDCliente", idCliente);
+                            command.Parameters.AddWithValue("@Monto", -venta.MontoTotal);  // Resta el valor de la venta
+
+                            await command.ExecuteNonQueryAsync();
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+
         public async Task<List<DetalleVenta>> ObtenerDetalleVentaAsync(int idVenta)
         {
             var detalles = new List<DetalleVenta>();

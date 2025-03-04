@@ -1,9 +1,5 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Modelo;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sopromil.Vista.Creditos
 {
@@ -16,44 +12,76 @@ namespace Sopromil.Vista.Creditos
         public FrmGestionarCredito()
         {
             InitializeComponent();
-            txtPorcentajeInteres.Value = 3; // ✅ Por defecto 3%
-            txtPorcentajeInteres.Enabled = false; // ✅ Inicia deshabilitado
-            txtFechaLimite1.Value = DateTime.Now.AddDays(30); // ✅ Fecha por defecto: 30 días adelante
-            txtFechaLimite.Text = txtFechaLimite1.Value.ToString("dd/MM/yyyy"); // ✅ Reflejar en el TextBox
-            txtFechaLimite.ReadOnly = true; // ✅ Solo lectura para evitar errores
+            InicializarConfiguracionInicial();
+            InicializarEventos();
+        }
+
+        private void InicializarConfiguracionInicial()
+        {
+            txtPorcentajeInteres.Value = 3;
+            txtPorcentajeInteres.Enabled = false;
+            txtFechaLimite1.Value = DateTime.Now.AddDays(30);
+            txtFechaLimite.Text = txtFechaLimite1.Value.ToString("dd/MM/yyyy");
+            txtFechaLimite.ReadOnly = true;
+        }
+
+        private void InicializarEventos()
+        {
+            txtDocumento.KeyDown += txtDocumento_KeyDown;
+            btnBuscarCliente.Click += btnBuscarCliente_Click;
+            btnRegistrarCredito.Click += btnRegistrarCredito_Click;
+            btnCancelar.Click += btnCancelar_Click;
+            txtMonto.KeyPress += txtMonto_KeyPress;
+            chkAplicaInteres.CheckedChanged += chkAplicaInteres_CheckedChanged;
+            txtFechaLimite1.ValueChanged += dtpFechaLimite_ValueChanged;
+        }
+
+        private void LogError(Exception ex, string metodo)
+        {
+            string logPath = "logErrores.txt";
+            string mensaje = $"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}] Error en {metodo}: {ex.Message}{Environment.NewLine}";
+            File.AppendAllText(logPath, mensaje);
         }
 
         private async void BuscarCliente()
         {
-            string documento = txtDocumento.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(documento))
+            try
             {
-                MessageBox.Show("Ingrese un documento válido.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+                string documento = txtDocumento.Text.Trim();
 
-            var clientes = await _clienteController.ObtenerClientesAsync();
-            ClienteSeleccionado = clientes.FirstOrDefault(c => c.IdentificadorFiscal == documento);
-
-            if (ClienteSeleccionado != null)
-            {
-                CargarDatosCliente(ClienteSeleccionado);
-            }
-            else
-            {
-                var respuesta = MessageBox.Show("Cliente no encontrado. ¿Desea registrarlo?", "Cliente no encontrado", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (respuesta == DialogResult.Yes)
+                if (string.IsNullOrWhiteSpace(documento))
                 {
-                    LimpiarDatosCliente();
-                    txtDocumento.Enabled = false; // ✅ Se fija el documento para evitar cambios
-                    MessageBox.Show("Complete los datos del nuevo cliente.", "Nuevo Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Ingrese un documento válido.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var clientes = await _clienteController.ObtenerClientesAsync();
+                ClienteSeleccionado = clientes.FirstOrDefault(c => c.IdentificadorFiscal == documento);
+
+                if (ClienteSeleccionado != null)
+                {
+                    CargarDatosCliente(ClienteSeleccionado);
                 }
                 else
                 {
-                    LimpiarDatosCliente();
+                    var respuesta = MessageBox.Show("Cliente no encontrado. ¿Desea registrarlo?", "Cliente no encontrado", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (respuesta == DialogResult.Yes)
+                    {
+                        LimpiarDatosCliente();
+                        txtDocumento.Enabled = false;
+                        MessageBox.Show("Complete los datos del nuevo cliente.", "Nuevo Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        LimpiarDatosCliente();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, nameof(BuscarCliente));
+                MessageBox.Show("Ocurrió un error al buscar el cliente. Consulte al administrador.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -85,70 +113,77 @@ namespace Sopromil.Vista.Creditos
 
         private async void btnRegistrarCredito_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(txtDocumento.Text))
+            try
             {
-                MessageBox.Show("Debe ingresar nombre y documento.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (!decimal.TryParse(txtMonto.Text, out decimal monto) || monto <= 0)
-            {
-                MessageBox.Show("Ingrese un monto válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (ClienteSeleccionado == null)
-            {
-                // ✅ Registrar cliente si no existe
-                var nuevoCliente = new Cliente
+                if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(txtDocumento.Text))
                 {
-                    Nombre = txtNombre.Text.Trim(),
-                    IdentificadorFiscal = txtDocumento.Text.Trim(),
-                    Celular = txtTelefono.Text.Trim(),
-                    Estado = "Activo"
-                };
-
-                int nuevoID = await _clienteController.CrearClienteAsync(nuevoCliente);
-
-                if (nuevoID <= 0)
-                {
-                    MessageBox.Show("Error al crear el cliente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Debe ingresar nombre y documento.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                nuevoCliente.IDCliente = nuevoID;
-                ClienteSeleccionado = nuevoCliente;
-            }
+                if (!decimal.TryParse(txtMonto.Text, out decimal monto) || monto <= 0)
+                {
+                    MessageBox.Show("Ingrese un monto válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-            var nuevoCredito = new Credito
-            {
-                IDCliente = ClienteSeleccionado.IDCliente,
-                FechaVencimiento = txtFechaLimite1.Value, // ✅ Fecha seleccionada
-                Total = monto,
-                Saldo = monto,
-                AplicaInteres = chkAplicaInteres.Checked,
-                TasaInteres = chkAplicaInteres.Checked ? Convert.ToDecimal(txtPorcentajeInteres.Value) : 0,
-                Estado = "Pendiente"
-            };
+                if (ClienteSeleccionado == null)
+                {
+                    var nuevoCliente = new Cliente
+                    {
+                        Nombre = txtNombre.Text.Trim(),
+                        IdentificadorFiscal = txtDocumento.Text.Trim(),
+                        Celular = txtTelefono.Text.Trim(),
+                        Estado = "Activo"
+                    };
 
-            try
-            {
-                await _creditoController.RegistrarCreditoAsync(nuevoCredito);
-                MessageBox.Show("Crédito registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                DialogResult = DialogResult.OK;
+                    int nuevoID = await _clienteController.CrearClienteAsync(nuevoCliente);
+
+                    if (nuevoID <= 0)
+                    {
+                        MessageBox.Show("Error al crear el cliente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    nuevoCliente.IDCliente = nuevoID;
+                    ClienteSeleccionado = nuevoCliente;
+                }
+
+                var nuevoCredito = new Credito
+                {
+                    IDCliente = ClienteSeleccionado.IDCliente,
+                    FechaVencimiento = txtFechaLimite1.Value,
+                    Total = monto, // En este caso Total es el monto solicitado (no el cupo total)
+                    AplicaInteres = chkAplicaInteres.Checked,
+                    TasaInteres = chkAplicaInteres.Checked ? Convert.ToDecimal(txtPorcentajeInteres.Value) : 0
+                };
+
+                string resultado = await _creditoController.RegistrarOActualizarCreditoAsync(nuevoCredito);
+
+                if (resultado.Contains("correctamente") || resultado.Contains("Saldo disponible"))
+                {
+                    MessageBox.Show(resultado, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult = DialogResult.OK;
+                }
+                else
+                {
+                    MessageBox.Show(resultado, "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al registrar el crédito: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogError(ex, nameof(btnRegistrarCredito_Click));
+                MessageBox.Show("Ocurrió un error al registrar el crédito.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void chkAplicaInteres_CheckedChanged(object sender, EventArgs e)
         {
             txtPorcentajeInteres.Enabled = chkAplicaInteres.Checked;
             if (!chkAplicaInteres.Checked)
             {
-                txtPorcentajeInteres.Value = 3; // ✅ Restaurar 3% cuando se desactiva
+                txtPorcentajeInteres.Value = 3;
             }
         }
 
@@ -159,13 +194,11 @@ namespace Sopromil.Vista.Creditos
 
         private void txtMonto_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // ✅ Solo permitir números y un punto decimal
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
             {
                 e.Handled = true;
             }
 
-            // ✅ Solo un punto decimal permitido
             if (e.KeyChar == '.' && txtMonto.Text.Contains("."))
             {
                 e.Handled = true;
@@ -174,7 +207,7 @@ namespace Sopromil.Vista.Creditos
 
         private void dtpFechaLimite_ValueChanged(object sender, EventArgs e)
         {
-            txtFechaLimite.Text = txtFechaLimite1.Value.ToString("dd/MM/yyyy"); // ✅ Actualiza el TextBox al cambiar fecha
+            txtFechaLimite.Text = txtFechaLimite1.Value.ToString("dd/MM/yyyy");
         }
     }
 }

@@ -77,7 +77,6 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(553, 406);
             panel1.TabIndex = 3;
-            panel1.Paint += panel1_Paint;
             // 
             // btnBuscarCliente
             // 
@@ -89,7 +88,6 @@
             btnBuscarCliente.SizeMode = PictureBoxSizeMode.Zoom;
             btnBuscarCliente.TabIndex = 43;
             btnBuscarCliente.TabStop = false;
-            btnBuscarCliente.Click += btnBuscarCliente_Click;
             // 
             // lblDocumentoCliente
             // 

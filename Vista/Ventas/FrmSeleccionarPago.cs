@@ -1,4 +1,5 @@
 ﻿using Sopromil.Controlador;
+using Sopromil.Modelo;
 using System.Globalization;
 
 namespace Sopromil.Vista.Ventas
@@ -20,10 +21,27 @@ namespace Sopromil.Vista.Ventas
         {
             InitializeComponent();
             TotalVenta = totalVenta;
+
+            // ✅ Forzar el evento Load desde el constructor
+            Load += FrmSeleccionarPago_Load;
+
+            // ✅ Asignar eventos a controles manualmente
+            InicializarEventos();
+        }
+
+        private void InicializarEventos()
+        {
+            cmbTipoPago.SelectedIndexChanged += cmbTipoPago_SelectedIndexChanged;
+            txtMontoRecibido.TextChanged += txtMontoRecibido_TextChanged;
+            btnBuscarCliente.Click += async (s, e) => await BuscarClienteAsync();
+            btnActualizar.Click += btnAceptar_Click;
+            button1.Click += btnCancelar_Click;
         }
 
         private void FrmSeleccionarPago_Load(object sender, EventArgs e)
         {
+            // ✅ Aquí cargamos el combo manualmente (esto es lo que te estaba fallando)
+            cmbTipoPago.Items.Clear();
             cmbTipoPago.Items.Add("Efectivo");
             cmbTipoPago.Items.Add("Crédito");
             cmbTipoPago.SelectedIndex = 0;
@@ -41,6 +59,7 @@ namespace Sopromil.Vista.Ventas
             bool esEfectivo = cmbTipoPago.SelectedItem.ToString() == "Efectivo";
             bool esCredito = cmbTipoPago.SelectedItem.ToString() == "Crédito";
 
+            // ✅ Mostrar y ocultar los campos según el tipo de pago
             lblMontoRecibido.Visible = esEfectivo;
             txtMontoRecibido.Visible = esEfectivo;
             lblDevuelta.Visible = esEfectivo;
@@ -50,7 +69,10 @@ namespace Sopromil.Vista.Ventas
             btnBuscarCliente.Visible = esCredito;
             lblCupoDisponible.Visible = esCredito;
 
+            txtMontoRecibido.Clear();
             lblDevuelta.Text = "Devuelta: $0";
+
+            LimpiarCupo();
         }
 
         private void txtMontoRecibido_TextChanged(object sender, EventArgs e)
@@ -59,6 +81,7 @@ namespace Sopromil.Vista.Ventas
             {
                 MontoRecibido = montoRecibido;
                 Devuelta = MontoRecibido - TotalVenta;
+
                 lblDevuelta.Text = $"Devuelta: {Devuelta.ToString("C0", culturaColombiana)}";
             }
             else
@@ -67,7 +90,7 @@ namespace Sopromil.Vista.Ventas
             }
         }
 
-        private async void btnBuscarCliente_Click(object sender, EventArgs e)
+        private async Task BuscarClienteAsync()
         {
             string documento = txtDocumentoCliente.Text.Trim();
 
@@ -80,34 +103,39 @@ namespace Sopromil.Vista.Ventas
             var clientes = await _clienteController.ObtenerClientesAsync();
             var cliente = clientes.FirstOrDefault(c => c.IdentificadorFiscal == documento);
 
-            if (cliente != null)
-            {
-                IDCliente = cliente.IDCliente;
-
-                // Validar si tiene crédito activo
-                var creditos = await _creditoController.ObtenerCreditosActivosAsync(IDCliente, null);
-
-                if (creditos.Count == 0)
-                {
-                    MessageBox.Show("El cliente no tiene un crédito aprobado o activo. No puede realizar compras a crédito.",
-                        "Crédito no disponible", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    IDCliente = 0; // Resetear ID para prevenir errores
-                    CupoDisponible = 0;
-                    lblCupoDisponible.Text = $"Cupo Disponible: $0";
-                    return;
-                }
-
-                // Obtener el saldo pendiente y calcular el cupo disponible
-                decimal saldoPendiente = await _creditoController.ObtenerSaldoPendienteAsync(IDCliente, null);
-                decimal cupoTotal = 2000000m;  // Si el cupo máximo está en la BD, lo puedes consultar desde Clientes
-                CupoDisponible = cupoTotal - saldoPendiente;
-
-                lblCupoDisponible.Text = $"Cupo Disponible: {CupoDisponible.ToString("C0", culturaColombiana)}";
-            }
-            else
+            if (cliente == null)
             {
                 MessageBox.Show("Cliente no encontrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LimpiarCupo();
+                return;
             }
+
+            IDCliente = cliente.IDCliente;
+
+            await CargarCupoDisponibleAsync();
+        }
+
+        private async Task CargarCupoDisponibleAsync()
+        {
+            var creditos = await _creditoController.ObtenerCreditosActivosAsync();
+            var credito = creditos.FirstOrDefault(c => c.IDCliente == IDCliente && c.Estado == "Pendiente");
+
+            if (credito == null)
+            {
+                MessageBox.Show("El cliente no tiene crédito activo.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                LimpiarCupo();
+                return;
+            }
+
+            CupoDisponible = credito.Saldo;
+            lblCupoDisponible.Text = $"Cupo Disponible: {CupoDisponible.ToString("C0", culturaColombiana)}";
+        }
+
+        private void LimpiarCupo()
+        {
+            IDCliente = 0;
+            CupoDisponible = 0;
+            lblCupoDisponible.Text = "Cupo Disponible: $0";
         }
 
         private void btnAceptar_Click(object sender, EventArgs e)
@@ -132,7 +160,7 @@ namespace Sopromil.Vista.Ventas
 
                 if (TotalVenta > CupoDisponible)
                 {
-                    MessageBox.Show("El total de la venta supera el cupo de crédito disponible.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("El total de la venta supera el cupo disponible.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
             }
@@ -145,11 +173,6 @@ namespace Sopromil.Vista.Ventas
         {
             DialogResult = DialogResult.Cancel;
             Close();
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }

@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             panel3 = new Panel();
-            button1 = new Button();
-            pictureBox2 = new PictureBox();
+            btnCancelar = new Button();
+            btnBuscarCliente = new PictureBox();
             lblIDCliente = new Label();
             txtFechaLimite = new TextBox();
             txtFechaLimite1 = new DateTimePicker();
-            btnActualizar = new Button();
+            btnRegistrarCredito = new Button();
             label6 = new Label();
             txtPorcentajeInteres = new NumericUpDown();
             chkAplicaInteres = new CheckBox();
@@ -51,7 +51,7 @@
             panel1 = new Panel();
             label3 = new Label();
             panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)btnBuscarCliente).BeginInit();
             ((System.ComponentModel.ISupportInitialize)txtPorcentajeInteres).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dtCreditos).BeginInit();
             panel1.SuspendLayout();
@@ -60,12 +60,12 @@
             // panel3
             // 
             panel3.BackColor = Color.White;
-            panel3.Controls.Add(button1);
-            panel3.Controls.Add(pictureBox2);
+            panel3.Controls.Add(btnCancelar);
+            panel3.Controls.Add(btnBuscarCliente);
             panel3.Controls.Add(lblIDCliente);
             panel3.Controls.Add(txtFechaLimite);
             panel3.Controls.Add(txtFechaLimite1);
-            panel3.Controls.Add(btnActualizar);
+            panel3.Controls.Add(btnRegistrarCredito);
             panel3.Controls.Add(label6);
             panel3.Controls.Add(txtPorcentajeInteres);
             panel3.Controls.Add(chkAplicaInteres);
@@ -85,30 +85,30 @@
             panel3.Size = new Size(883, 476);
             panel3.TabIndex = 8;
             // 
-            // button1
+            // btnCancelar
             // 
-            button1.BackColor = Color.Red;
-            button1.FlatStyle = FlatStyle.Popup;
-            button1.ForeColor = Color.White;
-            button1.Location = new Point(455, 375);
-            button1.Name = "button1";
-            button1.Size = new Size(170, 55);
-            button1.TabIndex = 63;
-            button1.Text = "Cancelar";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += btnCancelar_Click;
+            btnCancelar.BackColor = Color.Red;
+            btnCancelar.FlatStyle = FlatStyle.Popup;
+            btnCancelar.ForeColor = Color.White;
+            btnCancelar.Location = new Point(455, 375);
+            btnCancelar.Name = "btnCancelar";
+            btnCancelar.Size = new Size(170, 55);
+            btnCancelar.TabIndex = 63;
+            btnCancelar.Text = "Cancelar";
+            btnCancelar.UseVisualStyleBackColor = false;
+            btnCancelar.Click += btnCancelar_Click;
             // 
-            // pictureBox2
+            // btnBuscarCliente
             // 
-            pictureBox2.BackColor = Color.White;
-            pictureBox2.Image = Properties.Resources.buscar;
-            pictureBox2.Location = new Point(273, 96);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(35, 31);
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.TabIndex = 62;
-            pictureBox2.TabStop = false;
-            pictureBox2.Click += btnBuscarCliente_Click;
+            btnBuscarCliente.BackColor = Color.White;
+            btnBuscarCliente.Image = Properties.Resources.buscar;
+            btnBuscarCliente.Location = new Point(273, 96);
+            btnBuscarCliente.Name = "btnBuscarCliente";
+            btnBuscarCliente.Size = new Size(35, 31);
+            btnBuscarCliente.SizeMode = PictureBoxSizeMode.Zoom;
+            btnBuscarCliente.TabIndex = 62;
+            btnBuscarCliente.TabStop = false;
+            btnBuscarCliente.Click += btnBuscarCliente_Click;
             // 
             // lblIDCliente
             // 
@@ -119,6 +119,7 @@
             lblIDCliente.Size = new Size(27, 32);
             lblIDCliente.TabIndex = 61;
             lblIDCliente.Text = "0";
+            lblIDCliente.Visible = false;
             // 
             // txtFechaLimite
             // 
@@ -142,18 +143,17 @@
             txtFechaLimite1.Size = new Size(26, 34);
             txtFechaLimite1.TabIndex = 59;
             // 
-            // btnActualizar
+            // btnRegistrarCredito
             // 
-            btnActualizar.BackColor = Color.DodgerBlue;
-            btnActualizar.FlatStyle = FlatStyle.Popup;
-            btnActualizar.ForeColor = Color.White;
-            btnActualizar.Location = new Point(229, 375);
-            btnActualizar.Name = "btnActualizar";
-            btnActualizar.Size = new Size(170, 55);
-            btnActualizar.TabIndex = 58;
-            btnActualizar.Text = "Registrar Credito";
-            btnActualizar.UseVisualStyleBackColor = false;
-            btnActualizar.Click += btnRegistrarCredito_Click;
+            btnRegistrarCredito.BackColor = Color.DodgerBlue;
+            btnRegistrarCredito.FlatStyle = FlatStyle.Popup;
+            btnRegistrarCredito.ForeColor = Color.White;
+            btnRegistrarCredito.Location = new Point(246, 375);
+            btnRegistrarCredito.Name = "btnRegistrarCredito";
+            btnRegistrarCredito.Size = new Size(170, 55);
+            btnRegistrarCredito.TabIndex = 58;
+            btnRegistrarCredito.Text = "Registrar Credito";
+            btnRegistrarCredito.UseVisualStyleBackColor = false;
             // 
             // label6
             // 
@@ -334,7 +334,7 @@
             Text = "GestionarCreditos";
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)btnBuscarCliente).EndInit();
             ((System.ComponentModel.ISupportInitialize)txtPorcentajeInteres).EndInit();
             ((System.ComponentModel.ISupportInitialize)dtCreditos).EndInit();
             panel1.ResumeLayout(false);
@@ -359,11 +359,11 @@
         private CheckBox chkAplicaInteres;
         private Label label6;
         private NumericUpDown txtPorcentajeInteres;
-        private Button btnActualizar;
+        private Button btnRegistrarCredito;
         private TextBox txtFechaLimite;
         private DateTimePicker txtFechaLimite1;
         private Label lblIDCliente;
-        private Button button1;
-        private PictureBox pictureBox2;
+        private Button btnCancelar;
+        private PictureBox btnBuscarCliente;
     }
 }

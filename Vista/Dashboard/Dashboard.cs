@@ -1,7 +1,6 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Modelo;
 using Sopromil.Vista.Caja;
-using Sopromil.Vista.Creditos;
 using Sopromil.Vista.Productos;
 
 namespace Sopromil.Vista.Dashboard
@@ -17,7 +16,7 @@ namespace Sopromil.Vista.Dashboard
         private readonly CajaController _cajaController = new();
         private Button btnOpciones;
         private ContextMenuStrip menuOpciones;
-        private Dictionary<string, Panel> panelModulos = new();
+        private readonly Dictionary<string, Panel> panelModulos = new();
 
         public Dashboard()
         {
@@ -33,7 +32,11 @@ namespace Sopromil.Vista.Dashboard
 
                 if (SesionActual.Rol == "Admin")
                 {
-                    LoadFormAsync("Dashboard");
+                    if (panelModulos.ContainsKey("Dashboard"))
+                    {
+                        var panelDashboard = panelModulos["Dashboard"];
+                        LoadFormAsync("Dashboard", panelDashboard);
+                    }
                 }
             }
             else
@@ -139,9 +142,79 @@ namespace Sopromil.Vista.Dashboard
             Sidebar.Refresh();
         }
 
+        private void UpdatePanelLayout()
+        {
+            foreach (var panelButton in panelModulos.Values)
+            {
+                PictureBox pictureBox = panelButton.Controls.OfType<PictureBox>().FirstOrDefault();
+                Label label = panelButton.Controls.OfType<Label>().FirstOrDefault();
+
+                if (menuExpand)
+                {
+                    // Mostrar texto y ajustar el icono al expandir
+                    if (label != null) label.Visible = true;
+                    if (pictureBox != null)
+                    {
+                        pictureBox.Size = new Size(30, 30);
+                        pictureBox.Location = new Point(10, 10);
+                    }
+                }
+                else
+                {
+                    // Ocultar el texto al colapsar
+                    if (label != null) label.Visible = false;
+                    if (pictureBox != null)
+                    {
+                        pictureBox.Size = new Size(30, 30);
+                        pictureBox.Location = new Point(10, 10);
+                    }
+                }
+            }
+        }
+
+        private async Task<bool> VerificarCajaAbierta()
+        {
+            var cajaAbierta = await _cajaController.ObtenerCajaAbiertaAsync();
+
+            if (cajaAbierta != null)
+            {
+                return true; // ✅ Caja ya está abierta
+            }
+
+            // ✅ Mostrar formulario de apertura de caja
+            var frmApertura = new FrmAperturaCaja();
+            if (frmApertura.ShowDialog() == DialogResult.OK && frmApertura.CajaAbierta)
+            {
+                int idUsuario = SesionActual.IDUsuario;
+                await _cajaController.AbrirCajaAsync(idUsuario, frmApertura.SaldoInicial);
+                return true;
+            }
+            else
+            {
+                // ✅ Si cancela, mostramos el Dashboard automáticamente
+                MessageBox.Show("Debe abrir caja para ingresar a Ventas. Regresando al Dashboard.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                await LoadFormAsync("Dashboard", panelModulos["Dashboard"]);
+                return false;
+            }
+        }
+
+
+
         private void CreateSidebarPanels()
         {
             var moduleNames = new List<string> { "Dashboard", "Usuarios", "Clientes", "Ventas", "Creditos", "Inventario", "Categorias" };
+            var moduleIcons = new List<Bitmap>
+            {
+                Properties.Resources.analisis_de_negocios,
+                Properties.Resources.administracion_de_empresas,
+                Properties.Resources.cliente,
+                Properties.Resources.colateral,
+                Properties.Resources.analisis_de_negocios,
+                Properties.Resources.inventario,
+                Properties.Resources.aplicacion
+            };
+
             var permisosPorRol = new Dictionary<string, List<string>>
             {
                 { "Admin", moduleNames },
@@ -160,8 +233,10 @@ namespace Sopromil.Vista.Dashboard
             var modulosPermitidos = permisosPorRol[rolUsuario];
             int panelTop = 10;
 
-            foreach (var modulo in modulosPermitidos)
+            for (int i = 0; i < modulosPermitidos.Count; i++)
             {
+                var modulo = modulosPermitidos[i];
+
                 var panelButton = new Panel
                 {
                     Width = ExpandedWidth - 10,
@@ -172,14 +247,27 @@ namespace Sopromil.Vista.Dashboard
                     Tag = modulo
                 };
 
-                panelButton.Click += (s, e) => LoadFormAsync(modulo, panelButton);
+                var icono = new PictureBox
+                {
+                    Image = moduleIcons[i],
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    Size = new Size(30, 30),
+                    Location = new Point(10, 10)
+                };
 
-                panelButton.Controls.Add(new Label
+                var label = new Label
                 {
                     Text = modulo,
                     Location = new Point(50, 15),
                     Font = new Font("Arial", 10, FontStyle.Bold)
-                });
+                };
+
+                panelButton.Click += (s, e) => LoadFormAsync(modulo, panelButton);
+                icono.Click += (s, e) => LoadFormAsync(modulo, panelButton);
+                label.Click += (s, e) => LoadFormAsync(modulo, panelButton);
+
+                panelButton.Controls.Add(icono);
+                panelButton.Controls.Add(label);
 
                 Sidebar.Controls.Add(panelButton);
                 panelModulos[modulo] = panelButton;
@@ -187,7 +275,7 @@ namespace Sopromil.Vista.Dashboard
             }
         }
 
-        private async Task LoadFormAsync(string formName, Panel panelSeleccionado = null)
+        private async Task LoadFormAsync(string formName, Panel panelSeleccionado)
         {
             if (activeForm != null)
             {
@@ -195,16 +283,19 @@ namespace Sopromil.Vista.Dashboard
                     return;
 
                 activeForm.Close();
-                panelModulos[activeForm.Tag.ToString()].Enabled = true;
+                if (activeForm.Tag != null && panelModulos.ContainsKey(activeForm.Tag.ToString()))
+                {
+                    panelModulos[activeForm.Tag.ToString()].Enabled = true;
+                }
             }
 
-            if (panelSeleccionado == null && panelModulos.ContainsKey(formName))
-                panelSeleccionado = panelModulos[formName];
-
-            if (formName == "Ventas" && !await VerificarCajaAbierta())
+            if (formName == "Ventas")
             {
-                MessageBox.Show("Debe abrir caja antes de iniciar ventas.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                if (!await VerificarCajaAbierta())
+                {
+                    // ✅ No abrimos el formulario de Ventas y regresamos
+                    return;
+                }
             }
 
             activeForm = formName switch
@@ -212,12 +303,18 @@ namespace Sopromil.Vista.Dashboard
                 "Dashboard" => new Estadisticas(),
                 "Usuarios" => new Usuarios.Usuarios(),
                 "Clientes" => new Clientes.Clientes(),
-                "Ventas" => new Ventas.Venta(),
-                "Creditos" => new FrmGestionCreditos(),
+                "Ventas" => new Ventas.FormVenta(),
+                "Creditos" => new Creditos.FrmGestionCreditos(),
                 "Categorias" => new Categorias(),
                 "Inventario" => new Productos.Productos(),
-                _ => throw new InvalidOperationException("Formulario no encontrado.")
+                _ => null
             };
+
+            if (activeForm == null)
+            {
+                MessageBox.Show("Formulario no encontrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             activeForm.Tag = formName;
             activeForm.TopLevel = false;
@@ -229,58 +326,6 @@ namespace Sopromil.Vista.Dashboard
             activeForm.Show();
 
             panelSeleccionado.Enabled = false;
-        }
-
-        private async Task<bool> VerificarCajaAbierta()
-        {
-            var caja = await _cajaController.ObtenerCajaAbiertaAsync();
-            if (caja != null) return true;
-
-            var frmApertura = new FrmAperturaCaja();
-            if (frmApertura.ShowDialog() == DialogResult.OK && frmApertura.CajaAbierta)
-            {
-                await _cajaController.AbrirCajaAsync(SesionActual.IDUsuario, frmApertura.SaldoInicial);
-                return true;
-            }
-
-            return false;
-        }
-        private void UpdatePanelLayout()
-        {
-            foreach (Control control in Sidebar.Controls)
-            {
-                if (control is Panel panelButton)
-                {
-                    PictureBox pictureBox = panelButton.Controls.OfType<PictureBox>().FirstOrDefault();
-                    Label label = panelButton.Controls.OfType<Label>().FirstOrDefault();
-
-                    if (menuExpand)
-                    {
-                        // Mostrar el texto y reposicionar el ícono
-                        if (label != null) label.Visible = true;
-                        if (pictureBox != null)
-                        {
-                            pictureBox.Size = new Size(30, 30); // Tamaño original
-                            pictureBox.Location = new Point(10, 10); // Pegado a la izquierda
-                        }
-                    }
-                    else
-                    {
-                        // Ocultar el texto y mantener el ícono en su posición original
-                        if (label != null) label.Visible = false;
-                        if (pictureBox != null)
-                        {
-                            pictureBox.Size = new Size(30, 30); // Evita que se expanda
-                            pictureBox.Location = new Point(10, 10); // Pegado a la izquierda
-                        }
-                    }
-                }
-            }
-        }
-
-        private void Content_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }

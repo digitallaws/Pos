@@ -1,6 +1,6 @@
 ﻿namespace Sopromil.Vista.Ventas
 {
-    partial class Venta
+    partial class FormVenta
     {
         /// <summary>
         /// Required designer variable.
@@ -35,12 +35,6 @@
             panel3 = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
             panel2 = new Panel();
-            pictureBox5 = new PictureBox();
-            button3 = new Button();
-            pictureBox4 = new PictureBox();
-            pictureBox3 = new PictureBox();
-            button1 = new Button();
-            button2 = new Button();
             panel9 = new Panel();
             lblVenta = new Label();
             label6 = new Label();
@@ -67,9 +61,6 @@
             panel3.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             panel9.SuspendLayout();
             panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dtVenta).BeginInit();
@@ -143,12 +134,6 @@
             // 
             // panel2
             // 
-            panel2.Controls.Add(pictureBox5);
-            panel2.Controls.Add(button3);
-            panel2.Controls.Add(pictureBox4);
-            panel2.Controls.Add(pictureBox3);
-            panel2.Controls.Add(button1);
-            panel2.Controls.Add(button2);
             panel2.Controls.Add(panel9);
             panel2.Controls.Add(label2);
             panel2.Controls.Add(cmbClientes);
@@ -157,75 +142,6 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(327, 627);
             panel2.TabIndex = 2;
-            // 
-            // pictureBox5
-            // 
-            pictureBox5.Image = Properties.Resources.supervision;
-            pictureBox5.Location = new Point(62, 305);
-            pictureBox5.Name = "pictureBox5";
-            pictureBox5.Size = new Size(75, 78);
-            pictureBox5.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox5.TabIndex = 44;
-            pictureBox5.TabStop = false;
-            // 
-            // button3
-            // 
-            button3.BackColor = Color.DodgerBlue;
-            button3.FlatStyle = FlatStyle.Popup;
-            button3.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button3.ForeColor = Color.White;
-            button3.Location = new Point(134, 305);
-            button3.Name = "button3";
-            button3.Size = new Size(141, 78);
-            button3.TabIndex = 43;
-            button3.Text = "Consultar credito";
-            button3.UseVisualStyleBackColor = false;
-            // 
-            // pictureBox4
-            // 
-            pictureBox4.Image = Properties.Resources._return;
-            pictureBox4.Location = new Point(62, 205);
-            pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(75, 78);
-            pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox4.TabIndex = 42;
-            pictureBox4.TabStop = false;
-            // 
-            // pictureBox3
-            // 
-            pictureBox3.Image = Properties.Resources.inventory;
-            pictureBox3.Location = new Point(62, 115);
-            pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(66, 71);
-            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox3.TabIndex = 41;
-            pictureBox3.TabStop = false;
-            // 
-            // button1
-            // 
-            button1.BackColor = Color.DodgerBlue;
-            button1.FlatStyle = FlatStyle.Popup;
-            button1.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button1.ForeColor = Color.White;
-            button1.Location = new Point(134, 205);
-            button1.Name = "button1";
-            button1.Size = new Size(141, 78);
-            button1.TabIndex = 39;
-            button1.Text = "Devoluciones";
-            button1.UseVisualStyleBackColor = false;
-            // 
-            // button2
-            // 
-            button2.BackColor = Color.DodgerBlue;
-            button2.FlatStyle = FlatStyle.Popup;
-            button2.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button2.ForeColor = Color.White;
-            button2.Location = new Point(127, 115);
-            button2.Name = "button2";
-            button2.Size = new Size(148, 71);
-            button2.TabIndex = 40;
-            button2.Text = "Consultar Inventario";
-            button2.UseVisualStyleBackColor = false;
             // 
             // panel9
             // 
@@ -462,9 +378,6 @@
             tableLayoutPanel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
             panel9.ResumeLayout(false);
             panel9.PerformLayout();
             panel4.ResumeLayout(false);
@@ -504,12 +417,7 @@
         private System.Windows.Forms.Timer relojTimer;
         private Label label4;
         private PictureBox pictureBox6;
-        private PictureBox pictureBox5;
-        private Button button3;
-        private PictureBox pictureBox4;
-        private PictureBox pictureBox3;
         private Button button1;
-        private Button button2;
         private Label lblVenta;
         private Label label6;
     }

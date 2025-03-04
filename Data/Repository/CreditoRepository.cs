@@ -7,6 +7,36 @@ namespace Sopromil.Data.Repository
 {
     public class CreditoRepository : ICreditoRepository
     {
+
+        public async Task<string> RegistrarOActualizarCreditoAsync(Credito credito)
+        {
+            using (var connection = ConexionBD.ObtenerConexion())
+            {
+                await connection.OpenAsync();
+
+                using (var command = new SqlCommand("sp_RegistrarOActualizarCredito", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@IDCliente", credito.IDCliente);
+                    command.Parameters.AddWithValue("@Monto", credito.Total); // En este flujo "Total" es el monto solicitado (nuevo consumo)
+                    command.Parameters.AddWithValue("@FechaVencimiento", credito.FechaVencimiento);
+                    command.Parameters.AddWithValue("@AplicaInteres", credito.AplicaInteres);
+                    command.Parameters.AddWithValue("@TasaInteres", credito.TasaInteres);
+
+                    var mensajeOutput = new SqlParameter("@MensajeSalida", SqlDbType.VarChar, 100)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    command.Parameters.Add(mensajeOutput);
+
+                    await command.ExecuteNonQueryAsync();
+
+                    return mensajeOutput.Value.ToString();
+                }
+            }
+        }
+
         public async Task RegistrarCreditoAsync(Credito credito)
         {
             using (var connection = ConexionBD.ObtenerConexion())
@@ -63,7 +93,7 @@ namespace Sopromil.Data.Repository
             }
         }
 
-        public async Task<List<Credito>> ObtenerCreditosActivosAsync(int? idCliente, string documento = null)
+        public async Task<List<Credito>> ObtenerCreditosActivosAsync()
         {
             var lista = new List<Credito>();
 
@@ -71,11 +101,9 @@ namespace Sopromil.Data.Repository
             {
                 await connection.OpenAsync();
 
-                using (var command = new SqlCommand("sp_ObtenerCreditosActivosCliente", connection))
+                using (var command = new SqlCommand("sp_ObtenerTodosLosCreditosActivos", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@IDCliente", (object)idCliente ?? DBNull.Value);
-                    command.Parameters.AddWithValue("@Documento", (object)documento ?? DBNull.Value);
 
                     using (var reader = await command.ExecuteReaderAsync())
                     {
@@ -84,16 +112,18 @@ namespace Sopromil.Data.Repository
                             lista.Add(new Credito
                             {
                                 IDCredito = reader.GetInt32(0),
-                                FechaRegistro = reader.GetDateTime(1),
-                                FechaVencimiento = reader.GetDateTime(2),
-                                Total = reader.GetDecimal(3),
-                                Saldo = reader.GetDecimal(4),
-                                Estado = reader.GetString(5)
+                                IDCliente = reader.GetInt32(1),
+                                FechaRegistro = reader.GetDateTime(2),
+                                FechaVencimiento = reader.GetDateTime(3),
+                                Total = reader.GetDecimal(4),
+                                Saldo = reader.GetDecimal(5),
+                                Estado = reader.GetString(6)
                             });
                         }
                     }
                 }
             }
+
             return lista;
         }
 

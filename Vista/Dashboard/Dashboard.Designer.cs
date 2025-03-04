@@ -141,7 +141,6 @@
             Content.Name = "Content";
             Content.Size = new Size(1294, 929);
             Content.TabIndex = 2;
-            Content.Paint += Content_Paint;
             // 
             // sqlCommand1
             // 

@@ -37,8 +37,8 @@
             label5 = new Label();
             txtBuscar = new TextBox();
             panel2 = new Panel();
-            btnActualizar = new Button();
             btnRegistrar = new Button();
+            btnRegistrarA = new Button();
             panel1 = new Panel();
             pictureBox1 = new PictureBox();
             label3 = new Label();
@@ -118,7 +118,6 @@
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 2;
             pictureBox2.TabStop = false;
-            pictureBox2.Click += btnBuscar_Click;
             // 
             // label5
             // 
@@ -144,38 +143,37 @@
             // panel2
             // 
             panel2.BackColor = Color.White;
-            panel2.Controls.Add(btnActualizar);
             panel2.Controls.Add(btnRegistrar);
+            panel2.Controls.Add(btnRegistrarA);
             panel2.Dock = DockStyle.Left;
             panel2.Location = new Point(0, 114);
             panel2.Name = "panel2";
             panel2.Size = new Size(342, 579);
             panel2.TabIndex = 13;
             // 
-            // btnActualizar
-            // 
-            btnActualizar.BackColor = Color.DodgerBlue;
-            btnActualizar.FlatStyle = FlatStyle.Popup;
-            btnActualizar.ForeColor = Color.White;
-            btnActualizar.Location = new Point(24, 158);
-            btnActualizar.Name = "btnActualizar";
-            btnActualizar.Size = new Size(286, 55);
-            btnActualizar.TabIndex = 30;
-            btnActualizar.Text = "Nuevo Credito";
-            btnActualizar.UseVisualStyleBackColor = false;
-            btnActualizar.Click += btnNuevoCredito_Click;
-            // 
             // btnRegistrar
             // 
             btnRegistrar.BackColor = Color.DodgerBlue;
             btnRegistrar.FlatStyle = FlatStyle.Popup;
             btnRegistrar.ForeColor = Color.White;
-            btnRegistrar.Location = new Point(24, 219);
+            btnRegistrar.Location = new Point(24, 158);
             btnRegistrar.Name = "btnRegistrar";
             btnRegistrar.Size = new Size(286, 55);
-            btnRegistrar.TabIndex = 19;
-            btnRegistrar.Text = "Reportes";
+            btnRegistrar.TabIndex = 30;
+            btnRegistrar.Text = "Nuevo Credito";
             btnRegistrar.UseVisualStyleBackColor = false;
+            // 
+            // btnRegistrarA
+            // 
+            btnRegistrarA.BackColor = Color.DodgerBlue;
+            btnRegistrarA.FlatStyle = FlatStyle.Popup;
+            btnRegistrarA.ForeColor = Color.White;
+            btnRegistrarA.Location = new Point(24, 219);
+            btnRegistrarA.Name = "btnRegistrarA";
+            btnRegistrarA.Size = new Size(286, 55);
+            btnRegistrarA.TabIndex = 19;
+            btnRegistrarA.Text = "Reportes";
+            btnRegistrarA.UseVisualStyleBackColor = false;
             // 
             // panel1
             // 
@@ -212,7 +210,6 @@
             label3.TabIndex = 1;
             label3.Text = "Gestión de creditos";
             label3.TextAlign = ContentAlignment.MiddleCenter;
-            label3.Click += btnNuevoCredito_Click;
             // 
             // FrmGestionCreditos
             // 
@@ -246,8 +243,8 @@
         private Label label5;
         private TextBox txtBuscar;
         private Panel panel2;
-        private Button btnActualizar;
         private Button btnRegistrar;
+        private Button btnRegistrarA;
         private Panel panel1;
         private PictureBox pictureBox1;
         private Label label3;
