@@ -6,27 +6,51 @@ namespace Sopromil.Vista.Empresa
 {
     public partial class CrearEmpresa : Form
     {
-        private readonly InitialSetupController _initialSetupController;
+        private readonly EmpresaController _empresaController;
         private byte[] logoBytes = null;
+
+        public string Modo { get; set; } = "Crear";  // Puede ser "Crear" o "Editar"
 
         public CrearEmpresa()
         {
             InitializeComponent();
-            _initialSetupController = new InitialSetupController();
+            _empresaController = new EmpresaController();
 
-            // Asignar eventos
-            btnSeleccionarLogo.Click += BtnSeleccionarLogo_Click;
             btnRegistrar.Click += BtnRegistrar_Click;
 
-            // Validaciones de entrada en tiempo real
+            // Validaciones
             txtNombre.KeyPress += ValidarLetras;
             txtIdentificadorFiscal.KeyPress += ValidarLetrasYNumeros;
             txtDireccion.KeyPress += ValidarDireccion;
             txtTelefono.KeyPress += ValidarNumeros;
             txtCorreo.Leave += ValidarCorreo;
+
+            this.Load += CrearEmpresa_Load;
         }
 
-        // 📌 Seleccionar Logo
+        private async void CrearEmpresa_Load(object sender, EventArgs e)
+        {
+            if (Modo == "Editar")
+            {
+                btnRegistrar.Text = "Actualizar";
+                await CargarDatosEmpresa();
+            }
+        }
+
+        private async Task CargarDatosEmpresa()
+        {
+            var empresa = await _empresaController.ObtenerEmpresaAsync();
+            if (empresa != null)
+            {
+                txtNombre.Text = empresa.Nombre;
+                txtIdentificadorFiscal.Text = empresa.NIT;
+                txtDireccion.Text = empresa.Direccion;
+                txtTelefono.Text = empresa.Telefono;
+                txtCorreo.Text = empresa.Correo;
+                logoBytes = empresa.Logo;
+            }
+        }
+
         private void BtnSeleccionarLogo_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -36,17 +60,11 @@ namespace Sopromil.Vista.Empresa
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string rutaImagen = openFileDialog.FileName;
-                    logoBytes = File.ReadAllBytes(rutaImagen);
-
-                    // Mostrar la imagen en el PictureBox
-                    picLogo.Image = Image.FromFile(rutaImagen);
-                    picLogo.SizeMode = PictureBoxSizeMode.Zoom;
+                    logoBytes = File.ReadAllBytes(openFileDialog.FileName);
                 }
             }
         }
 
-        // 📌 Función para registrar la empresa en la base de datos
         private async void BtnRegistrar_Click(object sender, EventArgs e)
         {
             if (!ValidarCampos())
@@ -54,30 +72,41 @@ namespace Sopromil.Vista.Empresa
 
             try
             {
-                await _initialSetupController.CrearEmpresaAsync(
-                    txtNombre.Text.Trim(),
-                    txtIdentificadorFiscal.Text.Trim(),
-                    txtDireccion.Text.Trim(),
-                    txtTelefono.Text.Trim(),
-                    txtCorreo.Text.Trim(),
-                    "COP", // Moneda por defecto
-                    logoBytes
-                );
+                var empresa = new Modelo.Empresa
+                {
+                    Nombre = txtNombre.Text.Trim(),
+                    NIT = txtIdentificadorFiscal.Text.Trim(),
+                    Direccion = txtDireccion.Text.Trim(),
+                    Telefono = txtTelefono.Text.Trim(),
+                    Correo = txtCorreo.Text.Trim(),
+                    Moneda = "COP",
+                    Logo = logoBytes
+                };
 
-                // 🔹 Redirección a InicialConfiguracion
-                this.Hide();
-                InicialConfiguracion configForm = new InicialConfiguracion();
-                configForm.ShowDialog();
+                if (Modo == "Crear")
+                {
+                    await _empresaController.RegistrarEmpresaAsync(empresa);
+                    MessageBox.Show("Empresa registrada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                this.Close();
+                    // 🔹 Registro inicial -> abrir configuración
+                    this.Hide();
+                    InicialConfiguracion configForm = new InicialConfiguracion();
+                    configForm.ShowDialog();
+                    this.Close();
+                }
+                else
+                {
+                    await _empresaController.ActualizarEmpresaAsync(empresa);
+                    MessageBox.Show("Datos de la empresa actualizados correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                }
             }
             catch (Exception ex)
             {
-                MostrarMensajeError($"Error al registrar la empresa: {ex.Message}");
+                MostrarMensajeError($"Error al guardar la empresa: {ex.Message}");
             }
         }
 
-        // 📌 Validaciones de los campos antes de enviar la información
         private bool ValidarCampos()
         {
             if (string.IsNullOrWhiteSpace(txtNombre.Text))
@@ -107,23 +136,12 @@ namespace Sopromil.Vista.Empresa
             return true;
         }
 
-        private bool EsCorreoValido(string correo)
-        {
-            string patronCorreo = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            return Regex.IsMatch(correo, patronCorreo);
-        }
+        private bool EsCorreoValido(string correo) => Regex.IsMatch(correo, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        private bool EsNumeroValido(string numero) => Regex.IsMatch(numero, @"^\d+$");
 
-        private bool EsNumeroValido(string numero)
-        {
-            return Regex.IsMatch(numero, @"^\d+$"); // Solo números
-        }
+        private void MostrarMensajeError(string mensaje) => MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-        private void MostrarMensajeError(string mensaje)
-        {
-            MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        // ✅ Métodos para restringir caracteres en los campos de entrada
+        // ✅ Validaciones específicas de entrada
         private void ValidarLetras(object sender, KeyPressEventArgs e)
         {
             if (!char.IsLetter(e.KeyChar) && !char.IsControl(e.KeyChar) && e.KeyChar != ' ')

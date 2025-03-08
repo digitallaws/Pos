@@ -1,87 +1,91 @@
 ﻿using Sopromil.Data.Repository;
+using Sopromil.Modelo;
 
 namespace Sopromil.Controlador
 {
     public class InitialSetupController
     {
-        private readonly InitialSetupRepository _repository;
+        private readonly UsuarioRepository _usuarioRepository;
+        private readonly EmpresaRepository _empresaRepository;
 
         public InitialSetupController()
         {
-            _repository = new InitialSetupRepository();
+            _usuarioRepository = new UsuarioRepository();
+            _empresaRepository = new EmpresaRepository();
         }
 
+        /// <summary>
+        /// Verifica si hay usuarios registrados.
+        /// </summary>
         public async Task<string> VerificarUsuariosAsync()
         {
-            var resultado = await _repository.VerificarUsuariosAsync();
-            return resultado; // Retorna el resultado al Program.cs para que decida qué vista abrir
-        }
-
-        public async Task CrearUsuarioInicialAsync(string nombre, string login, string password)
-        {
-            if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
+            try
             {
-                MessageBox.Show("Todos los campos son obligatorios.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                return await _usuarioRepository.VerificarUsuariosAsync();
             }
-
-            var resultado = await _repository.CrearUsuarioInicialAsync(nombre, login, password);
-
-            if (resultado == "UsuarioInicialCreado")
+            catch (Exception ex)
             {
-                MessageBox.Show("Usuario creado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else if (resultado == "UsuarioYaExiste")
-            {
-                MessageBox.Show("El usuario ya existe. Por favor, elija otro nombre de usuario.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            else
-            {
-                MessageBox.Show($"Resultado inesperado: {resultado}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogError("VerificarUsuariosAsync", ex);
+                return "Error";
             }
         }
 
-        public async Task CrearEmpresaAsync(string nombre, string ruc, string direccion, string telefono, string correo, string moneda, byte[] logo)
+        /// <summary>
+        /// Crea el primer usuario inicial (admin).
+        /// </summary>
+        public async Task<string> CrearUsuarioInicialAsync(string nombre, string login, string password)
         {
-            if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(ruc))
+            try
             {
-                MessageBox.Show("El nombre y RUC son obligatorios.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                return await _usuarioRepository.CrearUsuarioInicialAsync(nombre, login, password);
             }
-
-            var resultado = await _repository.CrearEmpresaAsync(nombre, ruc, direccion, telefono, correo, moneda, logo);
-
-            if (resultado == "EmpresaCreada")
+            catch (Exception ex)
             {
-                MessageBox.Show("Empresa creada exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else if (resultado == "EmpresaActualizada")
-            {
-                MessageBox.Show("Empresa actualizada exitosamente.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show($"Resultado inesperado: {resultado}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogError("CrearUsuarioInicialAsync", ex);
+                return "Error";
             }
         }
 
-        public async Task ConfiguracionInicialAsync(string agradecimiento, string anuncio, string datosFiscales, string copiaSeguridad, string impresora, string lectorCodigoBarras)
+        /// <summary>
+        /// Registra o actualiza la empresa.
+        /// </summary>
+        public async Task<string> GuardarEmpresaAsync(Empresa empresa)
         {
-            if (string.IsNullOrWhiteSpace(impresora))
+            try
             {
-                MessageBox.Show("El nombre de la impresora es obligatorio.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                // Verificamos si ya hay empresa registrada.
+                var empresaActual = await _empresaRepository.ObtenerEmpresaAsync();
+                if (empresaActual == null)
+                {
+                    return await _empresaRepository.RegistrarEmpresaAsync(empresa);
+                }
+                else
+                {
+                    empresa.IDEmpresa = empresaActual.IDEmpresa;  // aseguramos el mismo ID.
+                    return await _empresaRepository.ActualizarEmpresaAsync(empresa);
+                }
             }
-
-            var resultado = await _repository.ConfiguracionInicialAsync(agradecimiento, anuncio, datosFiscales, copiaSeguridad, impresora, lectorCodigoBarras);
-
-            if (resultado == "ConfiguracionInicialCompletada")
+            catch (Exception ex)
             {
-                MessageBox.Show("Configuración inicial completada con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LogError("GuardarEmpresaAsync", ex);
+                return "Error";
             }
-            else
+        }
+
+        /// <summary>
+        /// Loguea errores en archivo de texto.
+        /// </summary>
+        private void LogError(string metodo, Exception ex)
+        {
+            try
             {
-                MessageBox.Show($"Resultado inesperado: {resultado}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string rutaLog = "LogErrores.txt";
+                string mensaje = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Error en {metodo}: {ex.Message}\n";
+                File.AppendAllText(rutaLog, mensaje);
+            }
+            catch
+            {
+                // Evitar que un fallo en el log detenga la ejecución.
             }
         }
     }

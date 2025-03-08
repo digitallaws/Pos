@@ -1,5 +1,4 @@
 ﻿using Sopromil.Controlador;
-using System.Drawing.Printing;
 using System.Globalization;
 
 namespace Sopromil.Vista.Caja
@@ -8,9 +7,6 @@ namespace Sopromil.Vista.Caja
     {
         private readonly CajaController _cajaController = new CajaController();
         private readonly CultureInfo culturaColombiana = new CultureInfo("es-CO");
-
-        private PrintDocument printDocument;
-        private string impresoraConfigurada;
 
         public decimal SaldoInicial { get; set; }
         public decimal VentasDesdeApertura { get; set; }
@@ -26,7 +22,11 @@ namespace Sopromil.Vista.Caja
             SaldoInicial = saldoInicial;
             CajaCerrada = false;
 
-            // Eventos asignados por código
+            AsignarEventos();
+        }
+
+        private void AsignarEventos()
+        {
             Load += FrmCierreCaja_Load;
             txtSaldoReal.TextChanged += txtSaldoReal_TextChanged;
             txtSaldoReal.KeyPress += txtSaldoReal_KeyPress;
@@ -37,7 +37,6 @@ namespace Sopromil.Vista.Caja
         private async void FrmCierreCaja_Load(object sender, EventArgs e)
         {
             await CargarDatosDesdeApertura();
-            await CargarImpresora();
             MostrarDatosIniciales();
 
             lblReloj.Text = DateTime.Now.ToString("HH:mm:ss");
@@ -45,8 +44,10 @@ namespace Sopromil.Vista.Caja
 
         private void InicializarReloj()
         {
-            relojTimer = new System.Windows.Forms.Timer();
-            relojTimer.Interval = 1000; // 1 segundo
+            relojTimer = new System.Windows.Forms.Timer
+            {
+                Interval = 1000
+            };
             relojTimer.Tick += (s, e) => lblReloj.Text = DateTime.Now.ToString("HH:mm:ss");
             relojTimer.Start();
         }
@@ -55,11 +56,9 @@ namespace Sopromil.Vista.Caja
         {
             VentasDesdeApertura = await _cajaController.CalcularVentasDesdeAperturaCajaAsync();
             MovimientosExtra = await _cajaController.CalcularMovimientosExtraDesdeAperturaAsync();
-        }
+            decimal ventasCredito = await _cajaController.CalcularVentasCreditoDesdeAperturaAsync();
 
-        private async Task CargarImpresora()
-        {
-            impresoraConfigurada = await _cajaController.ObtenerImpresoraAsync();
+            lblVentasCredito.Text = $"Ventas a Crédito: {ventasCredito.ToString("C0", culturaColombiana)}";  // Mostrar en UI
         }
 
         private void MostrarDatosIniciales()
@@ -67,7 +66,7 @@ namespace Sopromil.Vista.Caja
             decimal saldoTeorico = SaldoInicial + VentasDesdeApertura + MovimientosExtra;
 
             lblSaldoInicial.Text = $"Saldo Inicial: {SaldoInicial.ToString("C0", culturaColombiana)}";
-            lblVentasDelDia.Text = $"Ventas desde Apertura: {VentasDesdeApertura.ToString("C0", culturaColombiana)}";
+            lblVentasDelDia.Text = $"Ventas Contado: {VentasDesdeApertura.ToString("C0", culturaColombiana)}";
             lblMovimientosExtra.Text = $"Movimientos Extra: {MovimientosExtra.ToString("C0", culturaColombiana)}";
             lblSaldoTeorico.Text = $"Saldo Teórico: {saldoTeorico.ToString("C0", culturaColombiana)}";
             lblDescuadre.Text = "Descuadre: $0";
@@ -116,9 +115,12 @@ namespace Sopromil.Vista.Caja
 
             SaldoReal = saldoReal;
             ActualizarDescuadre();
+
+            // Aquí solo marca que la caja fue cerrada
             CajaCerrada = true;
 
-            ImprimirCierreZ();
+            // ✅ Eliminamos la impresión, el cierre se registra pero el ticket lo sacará otro proceso.
+            MessageBox.Show("Caja cerrada correctamente. El cuadre se ha registrado.", "Cierre de Caja", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             DialogResult = DialogResult.OK;
             Close();
@@ -129,82 +131,6 @@ namespace Sopromil.Vista.Caja
             CajaCerrada = false;
             DialogResult = DialogResult.Cancel;
             Close();
-        }
-
-        // ======================================
-        //          IMPRESIÓN DE CIERRE Z
-        // ======================================
-        private void ImprimirCierreZ()
-        {
-            try
-            {
-                printDocument = new PrintDocument();
-                printDocument.PrinterSettings.PrinterName = impresoraConfigurada;
-                printDocument.PrintPage += PrintDocument_PrintPage;
-                printDocument.Print();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al imprimir el cierre de caja (Z).\n{ex.Message}", "Error de impresión", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void PrintDocument_PrintPage(object sender, PrintPageEventArgs e)
-        {
-            DibujarTicketCierreZ(e.Graphics);
-        }
-
-        private void DibujarTicketCierreZ(Graphics g)
-        {
-            Font fontNormal = new Font("Arial", 10);
-            Font fontBold = new Font("Arial", 12, FontStyle.Bold);
-            Font fontLargeBold = new Font("Arial", 14, FontStyle.Bold);
-
-            float y = 10;
-
-            g.DrawString("CIERRE DE CAJA - REPORTE Z", fontLargeBold, Brushes.Black, new PointF(30, y));
-            y += 25;
-
-            g.DrawLine(Pens.Black, 10, y, 280, y);
-            y += 10;
-
-            g.DrawString($"Fecha: {DateTime.Now:yyyy-MM-dd}", fontNormal, Brushes.Black, new PointF(10, y));
-            y += 20;
-            g.DrawString($"Hora: {DateTime.Now:HH:mm:ss}", fontNormal, Brushes.Black, new PointF(10, y));
-            y += 20;
-
-            g.DrawLine(Pens.Black, 10, y, 280, y);
-            y += 10;
-
-            g.DrawString("RESUMEN DE CAJA", fontBold, Brushes.Black, new PointF(10, y));
-            y += 20;
-
-            g.DrawString($"Saldo Inicial: {SaldoInicial.ToString("C0", culturaColombiana)}", fontNormal, Brushes.Black, new PointF(10, y));
-            y += 20;
-            g.DrawString($"Ventas: {VentasDesdeApertura.ToString("C0", culturaColombiana)}", fontNormal, Brushes.Black, new PointF(10, y));
-            y += 20;
-            g.DrawString($"Movimientos Extra: {MovimientosExtra.ToString("C0", culturaColombiana)}", fontNormal, Brushes.Black, new PointF(10, y));
-            y += 20;
-
-            decimal saldoTeorico = SaldoInicial + VentasDesdeApertura + MovimientosExtra;
-            g.DrawString($"Saldo Teórico: {saldoTeorico.ToString("C0", culturaColombiana)}", fontBold, Brushes.Black, new PointF(10, y));
-            y += 25;
-
-            g.DrawString($"Saldo Real Contado: {SaldoReal.ToString("C0", culturaColombiana)}", fontBold, Brushes.Black, new PointF(10, y));
-            y += 25;
-
-            g.DrawLine(Pens.Black, 10, y, 280, y);
-            y += 10;
-
-            g.DrawString($"Descuadre: {Descuadre.ToString("C0", culturaColombiana)}", fontLargeBold, Brushes.Black, new PointF(10, y));
-            y += 30;
-
-            g.DrawLine(Pens.Black, 10, y, 280, y);
-            y += 20;
-
-            g.DrawString("Gracias por su trabajo.", fontNormal, Brushes.Black, new PointF(10, y));
-            y += 20;
-            g.DrawString("*** Fin del Cierre de Caja ***", fontBold, Brushes.Black, new PointF(30, y));
         }
     }
 }

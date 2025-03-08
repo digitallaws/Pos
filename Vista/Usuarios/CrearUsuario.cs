@@ -2,6 +2,7 @@
 using Sopromil.Controlador;
 using Sopromil.Modelo;
 using Sopromil.Vista.Empresa;
+using Sopromil.Vista.Login;
 
 namespace Sopromil.Vista.Usuarios
 {
@@ -30,11 +31,6 @@ namespace Sopromil.Vista.Usuarios
             // Permitir solo números en los campos de contraseña
             txtPassword.KeyPress += TxtPassword_KeyPress;
             txtConfirmarPassword.KeyPress += TxtPassword_KeyPress;
-
-            // Configurar Rol como "Administrador" por defecto y bloquear cambios
-            cmbRol.DataSource = Enum.GetValues(typeof(Rol));
-            cmbRol.SelectedItem = Rol.Admin;
-            cmbRol.Enabled = false; // Bloqueado para evitar cambios
         }
 
         private void TxtPassword_KeyPress(object sender, KeyPressEventArgs e)
@@ -72,9 +68,9 @@ namespace Sopromil.Vista.Usuarios
                 );
 
                 // Si el controlador maneja el éxito, se muestra la siguiente vista
-                CrearEmpresa seleccionPerfil = new CrearEmpresa();
+                SeleccionPerfil si = new SeleccionPerfil();
                 this.Hide();
-                seleccionPerfil.Show();
+                si.Show();
             }
             catch (SqlException ex) when (ex.Number == 2627)
             {

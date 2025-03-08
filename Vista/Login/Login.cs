@@ -1,5 +1,6 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Modelo;
+using Sopromil.Vista.Dashboard;
 
 namespace Sopromil.Vista.Login
 {
@@ -249,7 +250,7 @@ namespace Sopromil.Vista.Login
 
                 if (loginExitoso)
                 {
-                    var vistaPrincipal = new Dashboard.Dashboard();
+                    var vistaPrincipal = new FrmInicio();
                     this.Hide();
                     vistaPrincipal.ShowDialog();
                     this.Close();

@@ -1,58 +1,61 @@
-﻿using Sopromil.Data.Interfaces;
-using Sopromil.Data.Repository;
+﻿using Sopromil.Data.Repository;
 using Sopromil.Modelo;
 
 namespace Sopromil.Controlador
 {
     public class CajaController
     {
-        private readonly ICajaRepository _cajaRepository;
+        private readonly CajaRepository _cajaRepository;
 
         public CajaController()
         {
             _cajaRepository = new CajaRepository();
         }
 
-        // ========================================
-        // APERTURA DE CAJA
-        // ========================================
+        // Apertura de caja
         public async Task<int> AbrirCajaAsync(int idUsuarioApertura, decimal saldoInicial)
         {
             try
             {
-                if (saldoInicial < 0)
-                    throw new ArgumentException("El saldo inicial no puede ser negativo.");
-
                 return await _cajaRepository.AbrirCajaAsync(idUsuarioApertura, saldoInicial);
             }
             catch (Exception ex)
             {
-                LogError(ex, nameof(AbrirCajaAsync));
-                MostrarError("Error al abrir la caja.", ex);
+                LogError("AbrirCajaAsync", ex);
                 return 0;
             }
         }
 
-        // ========================================
-        // CIERRE DE CAJA
-        // ========================================
-        public async Task CerrarCajaAsync(int idMovimiento, int idUsuarioCierre, decimal saldoFinal)
+        // Cierre de caja
+        public async Task<bool> CerrarCajaAsync(int idMovimiento, int idUsuarioCierre, decimal saldoFinal, decimal descuadre, string observaciones)
         {
             try
             {
-                await _cajaRepository.CerrarCajaAsync(idMovimiento, idUsuarioCierre, saldoFinal);
+                return await _cajaRepository.CerrarCajaAsync(idMovimiento, idUsuarioCierre, saldoFinal, descuadre, observaciones);
             }
             catch (Exception ex)
             {
-                LogError(ex, nameof(CerrarCajaAsync));
-                MostrarError("Error al cerrar la caja.", ex);
+                LogError("CerrarCajaAsync", ex);
+                return false;
             }
         }
 
-        // ========================================
-        // OBTENER CAJA ABIERTA
-        // ========================================
-        public async Task<MovimientoCaja> ObtenerCajaAbiertaAsync()
+        // Movimientos Extra
+        public async Task<bool> RegistrarMovimientoExtraAsync(int idMovimiento, string tipoMovimiento, decimal monto, string descripcion)
+        {
+            try
+            {
+                return await _cajaRepository.RegistrarMovimientoExtraAsync(idMovimiento, tipoMovimiento, monto, descripcion);
+            }
+            catch (Exception ex)
+            {
+                LogError("RegistrarMovimientoExtraAsync", ex);
+                return false;
+            }
+        }
+
+        // Obtener Caja Abierta
+        public async Task<MovimientoCaja?> ObtenerCajaAbiertaAsync()
         {
             try
             {
@@ -60,15 +63,69 @@ namespace Sopromil.Controlador
             }
             catch (Exception ex)
             {
-                LogError(ex, nameof(ObtenerCajaAbiertaAsync));
-                MostrarError("Error al obtener la caja abierta.", ex);
+                LogError("ObtenerCajaAbiertaAsync", ex);
                 return null;
             }
         }
 
-        // ========================================
-        // CALCULAR VENTAS DESDE APERTURA
-        // ========================================
+        // Detalle de Movimientos
+        public async Task<List<MovimientoCajaDetalle>> ObtenerMovimientosDetalleAsync(int idMovimiento)
+        {
+            try
+            {
+                return await _cajaRepository.ObtenerMovimientosDetalleAsync(idMovimiento);
+            }
+            catch (Exception ex)
+            {
+                LogError("ObtenerMovimientosDetalleAsync", ex);
+                return new List<MovimientoCajaDetalle>();
+            }
+        }
+
+        // Configuración de caja
+        public async Task<bool> ConfigurarCajaAsync(string descripcion, string impresora, string copiaSeguridad, string estado, int idUsuario)
+        {
+            try
+            {
+                return await _cajaRepository.ConfigurarCajaAsync(descripcion, impresora, copiaSeguridad, estado, idUsuario);
+            }
+            catch (Exception ex)
+            {
+                LogError("ConfigurarCajaAsync", ex);
+                return false;
+            }
+        }
+
+        // Obtener configuración actual de la caja
+        public async Task<Caja?> ObtenerConfiguracionCajaAsync()
+        {
+            try
+            {
+                return await _cajaRepository.ObtenerConfiguracionCajaAsync();
+            }
+            catch (Exception ex)
+            {
+                LogError("ObtenerConfiguracionCajaAsync", ex);
+                return null;
+            }
+        }
+
+        // Actualizar impresora y copia de seguridad
+        public async Task<bool> ActualizarConfiguracionImpresoraYCopiaAsync(string impresora, string copiaSeguridad)
+        {
+            try
+            {
+                return await _cajaRepository.ActualizarConfiguracionImpresoraYCopiaAsync(impresora, copiaSeguridad);
+            }
+            catch (Exception ex)
+            {
+                LogError("ActualizarConfiguracionImpresoraYCopiaAsync", ex);
+                return false;
+            }
+        }
+
+
+        // Cálculo de Ventas desde Apertura
         public async Task<decimal> CalcularVentasDesdeAperturaCajaAsync()
         {
             try
@@ -77,32 +134,26 @@ namespace Sopromil.Controlador
             }
             catch (Exception ex)
             {
-                LogError(ex, nameof(CalcularVentasDesdeAperturaCajaAsync));
-                MostrarError("Error al calcular las ventas desde la apertura.", ex);
+                LogError("CalcularVentasDesdeAperturaCajaAsync", ex);
                 return 0;
             }
         }
 
-        // ========================================
-        // REGISTRAR MOVIMIENTO EXTRA (INGRESO/EGRESO)
-        // ========================================
-        public async Task RegistrarMovimientoExtraAsync(int idMovimiento, string tipo, decimal monto, string descripcion)
+        // Cálculo de Ventas a Crédito desde Apertura
+        public async Task<decimal> CalcularVentasCreditoDesdeAperturaAsync()
         {
             try
             {
-                ValidarMovimientoExtra(idMovimiento, tipo, monto, descripcion);
-                await _cajaRepository.RegistrarMovimientoExtraAsync(idMovimiento, tipo, monto, descripcion);
+                return await _cajaRepository.CalcularVentasCreditoDesdeAperturaAsync();
             }
             catch (Exception ex)
             {
-                LogError(ex, nameof(RegistrarMovimientoExtraAsync));
-                MostrarError("Error al registrar el movimiento extra.", ex);
+                LogError("CalcularVentasCreditoDesdeAperturaAsync", ex);
+                return 0;
             }
         }
 
-        // ========================================
-        // CALCULAR MOVIMIENTOS EXTRA DESDE APERTURA
-        // ========================================
+        // Cálculo de Movimientos Extra desde Apertura
         public async Task<decimal> CalcularMovimientosExtraDesdeAperturaAsync()
         {
             try
@@ -111,87 +162,24 @@ namespace Sopromil.Controlador
             }
             catch (Exception ex)
             {
-                LogError(ex, nameof(CalcularMovimientosExtraDesdeAperturaAsync));
-                MostrarError("Error al calcular los movimientos extra desde la apertura.", ex);
+                LogError("CalcularMovimientosExtraDesdeAperturaAsync", ex);
                 return 0;
             }
         }
 
-        // ========================================
-        // OBTENER MOVIMIENTOS EXTRA DE UNA CAJA
-        // ========================================
-        public async Task<List<MovimientoCajaDetalle>> ObtenerMovimientosExtraDeCajaAsync(int idMovimiento)
+        // Registro centralizado de errores
+        private void LogError(string metodo, Exception ex)
         {
             try
             {
-                return await _cajaRepository.ObtenerMovimientosExtraDeCajaAsync(idMovimiento);
-            }
-            catch (Exception ex)
-            {
-                LogError(ex, nameof(ObtenerMovimientosExtraDeCajaAsync));
-                MostrarError("Error al obtener los movimientos extra de la caja.", ex);
-                return new List<MovimientoCajaDetalle>();
-            }
-        }
-
-        // ========================================
-        // OBTENER IMPRESORA CONFIGURADA
-        // ========================================
-        public async Task<string> ObtenerImpresoraAsync()
-        {
-            try
-            {
-                return await _cajaRepository.ObtenerImpresoraAsync();
-            }
-            catch (Exception ex)
-            {
-                LogError(ex, nameof(ObtenerImpresoraAsync));
-                MostrarError("Error al obtener la impresora configurada.", ex);
-                return "IMPRESORA NO CONFIGURADA";
-            }
-        }
-
-        // ========================================
-        // VALIDACIONES DE MOVIMIENTO EXTRA
-        // ========================================
-        private void ValidarMovimientoExtra(int idMovimiento, string tipo, decimal monto, string descripcion)
-        {
-            if (idMovimiento <= 0)
-                throw new ArgumentException("ID de caja inválido.");
-
-            if (string.IsNullOrWhiteSpace(tipo) || (tipo != "IngresoExtra" && tipo != "EgresoExtra"))
-                throw new ArgumentException("Tipo de movimiento inválido. Debe ser 'IngresoExtra' o 'EgresoExtra'.");
-
-            if (monto <= 0)
-                throw new ArgumentException("El monto debe ser mayor a cero.");
-
-            if (string.IsNullOrWhiteSpace(descripcion))
-                throw new ArgumentException("La descripción es obligatoria.");
-        }
-
-        // ========================================
-        // LOG DE ERRORES
-        // ========================================
-        private void LogError(Exception ex, string metodo)
-        {
-            try
-            {
-                string logPath = "logErrores.txt";
-                string mensaje = $"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}] Error en {metodo}: {ex.Message}{Environment.NewLine}";
-                File.AppendAllText(logPath, mensaje);
+                string rutaLog = "LogErrores.txt";
+                string mensaje = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Error en {metodo}: {ex.Message}\n{ex.StackTrace}\n";
+                System.IO.File.AppendAllText(rutaLog, mensaje);
             }
             catch
             {
-                // Si falla el log, no interrumpimos el flujo
+                // No romper el flujo si falla el log.
             }
-        }
-
-        // ========================================
-        // MOSTRAR ERROR AL USUARIO
-        // ========================================
-        private void MostrarError(string mensaje, Exception ex)
-        {
-            MessageBox.Show($"{mensaje}\n\nDetalle Técnico: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

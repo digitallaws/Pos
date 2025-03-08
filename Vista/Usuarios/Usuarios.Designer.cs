@@ -33,24 +33,24 @@
             panel6 = new Panel();
             panel5 = new Panel();
             panel4 = new Panel();
-            pictureBox2 = new PictureBox();
-            label5 = new Label();
+            label8 = new Label();
             txtBuscar = new TextBox();
+            pictureBox2 = new PictureBox();
             panel2 = new Panel();
-            label6 = new Label();
-            cbEstado = new ComboBox();
             btnActualizar = new Button();
-            cbRol = new ComboBox();
-            label7 = new Label();
-            Celular = new Label();
-            txtPassword = new TextBox();
-            txtLogin = new TextBox();
-            lbId = new Label();
             btnRegistrar = new Button();
-            label4 = new Label();
+            cbEstado = new ComboBox();
+            label6 = new Label();
+            label9 = new Label();
+            cbRol = new ComboBox();
+            txtPassword = new TextBox();
             label1 = new Label();
+            txtLogin = new TextBox();
             label2 = new Label();
             txtNombre = new TextBox();
+            label5 = new Label();
+            lbId = new Label();
+            label4 = new Label();
             panel1 = new Panel();
             pictureBox1 = new PictureBox();
             label3 = new Label();
@@ -111,216 +111,216 @@
             // 
             // panel4
             // 
-            panel4.Controls.Add(pictureBox2);
-            panel4.Controls.Add(label5);
+            panel4.Controls.Add(label8);
             panel4.Controls.Add(txtBuscar);
+            panel4.Controls.Add(pictureBox2);
             panel4.Dock = DockStyle.Top;
             panel4.Location = new Point(0, 0);
             panel4.Name = "panel4";
             panel4.Size = new Size(972, 117);
             panel4.TabIndex = 1;
             // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label8.Location = new Point(80, 23);
+            label8.Name = "label8";
+            label8.Size = new Size(83, 31);
+            label8.TabIndex = 34;
+            label8.Text = "Buscar";
+            // 
+            // txtBuscar
+            // 
+            txtBuscar.BackColor = Color.White;
+            txtBuscar.BorderStyle = BorderStyle.FixedSingle;
+            txtBuscar.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtBuscar.Location = new Point(68, 57);
+            txtBuscar.Name = "txtBuscar";
+            txtBuscar.Size = new Size(286, 38);
+            txtBuscar.TabIndex = 33;
+            txtBuscar.TextAlign = HorizontalAlignment.Center;
+            // 
             // pictureBox2
             // 
             pictureBox2.BackColor = Color.White;
             pictureBox2.Image = Properties.Resources.buscar;
-            pictureBox2.Location = new Point(360, 45);
+            pictureBox2.Location = new Point(360, 57);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(35, 31);
+            pictureBox2.Size = new Size(47, 38);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 2;
             pictureBox2.TabStop = false;
             // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(68, 19);
-            label5.Name = "label5";
-            label5.Size = new Size(60, 23);
-            label5.TabIndex = 20;
-            label5.Text = "Buscar";
-            // 
-            // txtBuscar
-            // 
-            txtBuscar.BorderStyle = BorderStyle.FixedSingle;
-            txtBuscar.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtBuscar.Location = new Point(68, 45);
-            txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(286, 31);
-            txtBuscar.TabIndex = 20;
-            txtBuscar.Tag = "4";
-            txtBuscar.TextAlign = HorizontalAlignment.Center;
-            // 
             // panel2
             // 
             panel2.BackColor = Color.White;
-            panel2.Controls.Add(label6);
-            panel2.Controls.Add(cbEstado);
             panel2.Controls.Add(btnActualizar);
-            panel2.Controls.Add(cbRol);
-            panel2.Controls.Add(label7);
-            panel2.Controls.Add(Celular);
-            panel2.Controls.Add(txtPassword);
-            panel2.Controls.Add(txtLogin);
-            panel2.Controls.Add(lbId);
             panel2.Controls.Add(btnRegistrar);
-            panel2.Controls.Add(label4);
+            panel2.Controls.Add(cbEstado);
+            panel2.Controls.Add(label6);
+            panel2.Controls.Add(label9);
+            panel2.Controls.Add(cbRol);
+            panel2.Controls.Add(txtPassword);
             panel2.Controls.Add(label1);
+            panel2.Controls.Add(txtLogin);
             panel2.Controls.Add(label2);
             panel2.Controls.Add(txtNombre);
+            panel2.Controls.Add(label5);
+            panel2.Controls.Add(lbId);
+            panel2.Controls.Add(label4);
             panel2.Dock = DockStyle.Left;
             panel2.Location = new Point(0, 114);
             panel2.Name = "panel2";
             panel2.Size = new Size(342, 638);
             panel2.TabIndex = 7;
             // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label6.Location = new Point(24, 448);
-            label6.Name = "label6";
-            label6.Size = new Size(61, 23);
-            label6.TabIndex = 32;
-            label6.Text = "Estado";
-            // 
-            // cbEstado
-            // 
-            cbEstado.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            cbEstado.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cbEstado.FormattingEnabled = true;
-            cbEstado.Location = new Point(24, 474);
-            cbEstado.Name = "cbEstado";
-            cbEstado.Size = new Size(286, 36);
-            cbEstado.TabIndex = 31;
-            // 
             // btnActualizar
             // 
-            btnActualizar.BackColor = Color.DodgerBlue;
-            btnActualizar.FlatStyle = FlatStyle.Popup;
+            btnActualizar.BackColor = Color.CornflowerBlue;
+            btnActualizar.FlatStyle = FlatStyle.Flat;
+            btnActualizar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnActualizar.ForeColor = Color.White;
-            btnActualizar.Location = new Point(24, 537);
+            btnActualizar.Location = new Point(56, 532);
             btnActualizar.Name = "btnActualizar";
-            btnActualizar.Size = new Size(286, 55);
-            btnActualizar.TabIndex = 30;
+            btnActualizar.Size = new Size(235, 55);
+            btnActualizar.TabIndex = 45;
             btnActualizar.Text = "Actualizar";
             btnActualizar.UseVisualStyleBackColor = false;
             // 
+            // btnRegistrar
+            // 
+            btnRegistrar.BackColor = SystemColors.MenuHighlight;
+            btnRegistrar.FlatStyle = FlatStyle.Flat;
+            btnRegistrar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnRegistrar.ForeColor = Color.White;
+            btnRegistrar.Location = new Point(56, 532);
+            btnRegistrar.Name = "btnRegistrar";
+            btnRegistrar.Size = new Size(235, 55);
+            btnRegistrar.TabIndex = 44;
+            btnRegistrar.Text = "Guardar";
+            btnRegistrar.UseVisualStyleBackColor = false;
+            // 
+            // cbEstado
+            // 
+            cbEstado.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cbEstado.FormattingEnabled = true;
+            cbEstado.Location = new Point(24, 458);
+            cbEstado.Name = "cbEstado";
+            cbEstado.Size = new Size(286, 39);
+            cbEstado.TabIndex = 43;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.Location = new Point(24, 424);
+            label6.Name = "label6";
+            label6.Size = new Size(84, 31);
+            label6.TabIndex = 42;
+            label6.Text = "Estado";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label9.Location = new Point(24, 338);
+            label9.Name = "label9";
+            label9.Size = new Size(47, 31);
+            label9.TabIndex = 41;
+            label9.Text = "Rol";
+            // 
             // cbRol
             // 
-            cbRol.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            cbRol.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cbRol.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbRol.FormattingEnabled = true;
-            cbRol.Location = new Point(24, 396);
+            cbRol.Location = new Point(24, 372);
             cbRol.Name = "cbRol";
-            cbRol.Size = new Size(286, 36);
-            cbRol.TabIndex = 29;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(24, 370);
-            label7.Name = "label7";
-            label7.Size = new Size(35, 23);
-            label7.TabIndex = 25;
-            label7.Text = "Rol";
-            // 
-            // Celular
-            // 
-            Celular.AutoSize = true;
-            Celular.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            Celular.Location = new Point(24, 301);
-            Celular.Name = "Celular";
-            Celular.Size = new Size(97, 23);
-            Celular.TabIndex = 24;
-            Celular.Text = "Contraseña";
+            cbRol.Size = new Size(286, 39);
+            cbRol.TabIndex = 40;
             // 
             // txtPassword
             // 
+            txtPassword.BackColor = Color.White;
             txtPassword.BorderStyle = BorderStyle.FixedSingle;
-            txtPassword.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtPassword.Location = new Point(24, 327);
+            txtPassword.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtPassword.Location = new Point(24, 293);
             txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(286, 31);
-            txtPassword.TabIndex = 23;
-            txtPassword.Tag = "1";
+            txtPassword.Size = new Size(286, 38);
+            txtPassword.TabIndex = 39;
             txtPassword.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Location = new Point(24, 259);
+            label1.Name = "label1";
+            label1.Size = new Size(131, 31);
+            label1.TabIndex = 38;
+            label1.Text = "Contraseña";
             // 
             // txtLogin
             // 
+            txtLogin.BackColor = Color.White;
             txtLogin.BorderStyle = BorderStyle.FixedSingle;
-            txtLogin.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtLogin.Location = new Point(24, 260);
+            txtLogin.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtLogin.Location = new Point(24, 210);
             txtLogin.Name = "txtLogin";
-            txtLogin.Size = new Size(286, 31);
-            txtLogin.TabIndex = 22;
-            txtLogin.Tag = "1";
+            txtLogin.Size = new Size(286, 38);
+            txtLogin.TabIndex = 37;
             txtLogin.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.Location = new Point(24, 176);
+            label2.Name = "label2";
+            label2.Size = new Size(94, 31);
+            label2.TabIndex = 36;
+            label2.Text = "Usuario";
+            // 
+            // txtNombre
+            // 
+            txtNombre.BackColor = Color.White;
+            txtNombre.BorderStyle = BorderStyle.FixedSingle;
+            txtNombre.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtNombre.Location = new Point(24, 125);
+            txtNombre.Name = "txtNombre";
+            txtNombre.Size = new Size(286, 38);
+            txtNombre.TabIndex = 35;
+            txtNombre.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label5.Location = new Point(24, 83);
+            label5.Name = "label5";
+            label5.Size = new Size(101, 31);
+            label5.TabIndex = 35;
+            label5.Text = "Nombre";
             // 
             // lbId
             // 
             lbId.AutoSize = true;
             lbId.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbId.Location = new Point(250, 159);
+            lbId.Location = new Point(250, 125);
             lbId.Name = "lbId";
             lbId.Size = new Size(0, 23);
             lbId.TabIndex = 21;
             lbId.Visible = false;
             // 
-            // btnRegistrar
-            // 
-            btnRegistrar.BackColor = Color.DodgerBlue;
-            btnRegistrar.FlatStyle = FlatStyle.Popup;
-            btnRegistrar.ForeColor = Color.White;
-            btnRegistrar.Location = new Point(24, 537);
-            btnRegistrar.Name = "btnRegistrar";
-            btnRegistrar.Size = new Size(286, 55);
-            btnRegistrar.TabIndex = 19;
-            btnRegistrar.Text = "Registrar";
-            btnRegistrar.UseVisualStyleBackColor = false;
-            // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI Semibold", 14F, FontStyle.Bold);
-            label4.Location = new Point(63, 98);
+            label4.Location = new Point(76, 22);
             label4.Name = "label4";
             label4.Size = new Size(174, 32);
             label4.TabIndex = 9;
             label4.Text = "Nueva Usuario";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(24, 234);
-            label1.Name = "label1";
-            label1.Size = new Size(68, 23);
-            label1.TabIndex = 8;
-            label1.Text = "Usuario";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(24, 159);
-            label2.Name = "label2";
-            label2.Size = new Size(73, 23);
-            label2.TabIndex = 7;
-            label2.Text = "Nombre";
-            // 
-            // txtNombre
-            // 
-            txtNombre.BorderStyle = BorderStyle.FixedSingle;
-            txtNombre.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtNombre.Location = new Point(24, 192);
-            txtNombre.Name = "txtNombre";
-            txtNombre.Size = new Size(286, 31);
-            txtNombre.TabIndex = 5;
-            txtNombre.Tag = "1";
-            txtNombre.TextAlign = HorizontalAlignment.Center;
             // 
             // panel1
             // 
@@ -335,7 +335,7 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.BackColor = Color.DodgerBlue;
+            pictureBox1.BackColor = Color.CornflowerBlue;
             pictureBox1.Dock = DockStyle.Right;
             pictureBox1.Image = Properties.Resources.agregar_usuario;
             pictureBox1.Location = new Point(1059, 0);
@@ -347,7 +347,7 @@
             // 
             // label3
             // 
-            label3.BackColor = Color.DodgerBlue;
+            label3.BackColor = Color.CornflowerBlue;
             label3.Dock = DockStyle.Fill;
             label3.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.White;
@@ -388,25 +388,25 @@
         private Panel panel5;
         private Panel panel4;
         private PictureBox pictureBox2;
-        private Label label5;
-        private TextBox txtBuscar;
         private Panel panel2;
-        private Button btnActualizar;
-        private ComboBox cbRol;
-        private Label label7;
-        private Label Celular;
-        private TextBox txtPassword;
-        private TextBox txtLogin;
         private Label lbId;
-        private Button btnRegistrar;
         private Label label4;
-        private Label label1;
-        private Label label2;
-        private TextBox txtNombre;
         private Panel panel1;
         private PictureBox pictureBox1;
         private Label label3;
+        private TextBox txtBuscar;
+        private Label label8;
+        private TextBox txtPassword;
+        private Label label1;
+        private TextBox txtLogin;
+        private Label label2;
+        private TextBox txtNombre;
+        private Label label5;
         private Label label6;
+        private Label label9;
+        private ComboBox cbRol;
         private ComboBox cbEstado;
+        private Button btnActualizar;
+        private Button btnRegistrar;
     }
 }

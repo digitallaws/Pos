@@ -1,174 +1,194 @@
 ﻿using Microsoft.Data.SqlClient;
-using Sopromil.Data.Interfaces;
 using Sopromil.Modelo;
 using System.Data;
 
 namespace Sopromil.Data.Repository
 {
-    public class ProductoRepository : IProductoRepository
+    public class ProductoRepository
     {
-        public async Task<string> CrearProductoAsync(Producto producto)
+        public async Task<List<Producto>> ListarProductosPorProveedorAsync(int idProveedor, bool soloActivos = true)
         {
-            using (var connection = ConexionBD.ObtenerConexion())
+            var lista = new List<Producto>();
+
+            try
             {
-                await connection.OpenAsync();
-                using (var command = new SqlCommand("CrearProducto", connection))
+                using (var connection = ConexionBD.ObtenerConexion())
                 {
-                    command.CommandType = CommandType.StoredProcedure;
+                    await connection.OpenAsync();
 
-                    command.Parameters.AddWithValue("@IDCategoria", producto.IDCategoria);
-                    command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
-                    command.Parameters.AddWithValue("@Stock", producto.Stock);
-                    command.Parameters.AddWithValue("@PrecioCompra", producto.PrecioCompra);
-                    command.Parameters.AddWithValue("@PrecioVenta", producto.PrecioVenta);
-
-                    // ✅ Manejo de FechaVencimiento nula
-                    if (producto.FechaVencimiento == null || producto.FechaVencimiento == DateTime.MinValue)
+                    using (var command = new SqlCommand("ListarProductosPorProveedor", connection))
                     {
-                        command.Parameters.AddWithValue("@FechaVencimiento", DBNull.Value);
-                    }
-                    else
-                    {
-                        command.Parameters.AddWithValue("@FechaVencimiento", producto.FechaVencimiento);
-                    }
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@IDProveedor", idProveedor);
+                        command.Parameters.AddWithValue("@SoloActivos", soloActivos ? 1 : 0);
 
-                    command.Parameters.AddWithValue("@CodigoBarras", producto.CodigoBarras);
-
-                    var resultado = await command.ExecuteScalarAsync();
-                    return resultado?.ToString();
-                }
-            }
-        }
-
-        public async Task<List<Producto>> ObtenerProductosAsync()
-        {
-            var productos = new List<Producto>();
-
-            using (var connection = ConexionBD.ObtenerConexion())
-            {
-                await connection.OpenAsync();
-                using (var command = new SqlCommand("ObtenerProductos", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            var producto = new Producto
+                            while (await reader.ReadAsync())
                             {
-                                IDProducto = reader.GetInt32(reader.GetOrdinal("IDProducto")),
-                                IDCategoria = reader.GetInt32(reader.GetOrdinal("IDCategoria")), // ✅ Ahora obtiene el ID de la categoría
-                                Descripcion = reader.GetString(reader.GetOrdinal("Descripcion")),
-                                Categoria = reader.GetString(reader.GetOrdinal("Categoria")),
-                                Stock = reader.GetInt32(reader.GetOrdinal("Stock")),
-                                PrecioCompra = reader.GetDecimal(reader.GetOrdinal("PrecioCompra")),
-                                PrecioVenta = reader.GetDecimal(reader.GetOrdinal("PrecioVenta")),
-                                // ✅ Manejo de posibles valores nulos en FechaVencimiento
-                                FechaVencimiento = reader.IsDBNull(reader.GetOrdinal("FechaVencimiento"))
-                                    ? (DateTime?)null
-                                    : reader.GetDateTime(reader.GetOrdinal("FechaVencimiento")),
-                                CodigoBarras = reader.GetString(reader.GetOrdinal("CodigoBarras"))
-                            };
-
-                            productos.Add(producto);
+                                lista.Add(MapearProducto(reader));
+                            }
                         }
                     }
                 }
             }
-
-            return productos;
-        }
-
-
-        public async Task<string> ActualizarProductoAsync(Producto producto)
-        {
-            using (var connection = ConexionBD.ObtenerConexion())
+            catch (Exception ex)
             {
-                await connection.OpenAsync();
-                using (var command = new SqlCommand("ActualizarProducto", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    command.Parameters.AddWithValue("@IDProducto", producto.IDProducto);
-                    command.Parameters.AddWithValue("@IDCategoria", producto.IDCategoria);
-                    command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
-                    command.Parameters.AddWithValue("@Stock", producto.Stock);
-                    command.Parameters.AddWithValue("@PrecioCompra", producto.PrecioCompra);
-                    command.Parameters.AddWithValue("@PrecioVenta", producto.PrecioVenta);
-
-                    if (producto.FechaVencimiento == null || producto.FechaVencimiento == DateTime.MinValue)
-                    {
-                        command.Parameters.AddWithValue("@FechaVencimiento", DBNull.Value);
-                    }
-                    else
-                    {
-                        command.Parameters.AddWithValue("@FechaVencimiento", producto.FechaVencimiento);
-                    }
-
-                    command.Parameters.AddWithValue("@CodigoBarras", producto.CodigoBarras);
-
-                    var resultado = await command.ExecuteScalarAsync();
-                    return resultado?.ToString();
-                }
+                MessageBox.Show($"Error al listar productos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            return lista;
         }
 
-        public async Task<string> EliminarProductoAsync(int idProducto)
+        public async Task<List<Producto>> ListarTodosLosProductosAsync(bool soloActivos = true)
         {
-            using (var connection = ConexionBD.ObtenerConexion())
+            var lista = new List<Producto>();
+
+            try
             {
-                await connection.OpenAsync();
-                using (var command = new SqlCommand("EliminarProducto", connection))
+                using (var connection = ConexionBD.ObtenerConexion())
                 {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@IDProducto", idProducto);
+                    await connection.OpenAsync();
 
-                    var resultado = await command.ExecuteScalarAsync();
-                    return resultado?.ToString();
-                }
-            }
-        }
-
-        public async Task<List<Producto>> FiltrarProductosAsync(DateTime? fechaInicio, DateTime? fechaFin, string codigoBarras, string descripcion)
-        {
-            var productos = new List<Producto>();
-
-            using (var connection = ConexionBD.ObtenerConexion())
-            {
-                await connection.OpenAsync();
-                using (var command = new SqlCommand("FiltrarProductos", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    command.Parameters.AddWithValue("@FechaInicio", (object)fechaInicio ?? DBNull.Value);
-                    command.Parameters.AddWithValue("@FechaFin", (object)fechaFin ?? DBNull.Value);
-                    command.Parameters.AddWithValue("@CodigoBarras", (object)codigoBarras ?? DBNull.Value);
-                    command.Parameters.AddWithValue("@Descripcion", (object)descripcion ?? DBNull.Value);
-
-                    using (var reader = await command.ExecuteReaderAsync())
+                    using (var command = new SqlCommand("ListarTodosLosProductos", connection))
                     {
-                        while (await reader.ReadAsync())
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@SoloActivos", soloActivos ? 1 : 0);
+
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            productos.Add(new Producto
+                            while (await reader.ReadAsync())
                             {
-                                IDProducto = reader.GetInt32(reader.GetOrdinal("IDProducto")),
-                                Descripcion = reader.GetString(reader.GetOrdinal("Descripcion")),
-                                Categoria = reader.GetString(reader.GetOrdinal("Categoria")),
-                                Stock = reader.GetInt32(reader.GetOrdinal("Stock")),
-                                PrecioCompra = reader.GetDecimal(reader.GetOrdinal("PrecioCompra")),
-                                PrecioVenta = reader.GetDecimal(reader.GetOrdinal("PrecioVenta")),
-                                FechaVencimiento = reader.IsDBNull(reader.GetOrdinal("FechaVencimiento"))
-                                    ? (DateTime?)null
-                                    : reader.GetDateTime(reader.GetOrdinal("FechaVencimiento")),
-                                CodigoBarras = reader.GetString(reader.GetOrdinal("CodigoBarras"))
-                            });
+                                lista.Add(MapearProducto(reader));
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al listar todos los productos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
-            return productos;
+            return lista;
+        }
+
+        public async Task CrearProductoAsync(Producto producto)
+        {
+            try
+            {
+                using (var connection = ConexionBD.ObtenerConexion())
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new SqlCommand("CrearProducto", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
+                        command.Parameters.AddWithValue("@Marca", (object)producto.Marca ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@UnidadMedida", producto.UnidadMedida);
+                        command.Parameters.AddWithValue("@Stock", producto.Stock);
+                        command.Parameters.AddWithValue("@FechaVencimiento", (object)producto.FechaVencimiento ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@CodigoBarras", (object)producto.CodigoBarras ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@PrecioCompra", producto.PrecioCompra);
+                        command.Parameters.AddWithValue("@Flete", producto.Flete);
+                        command.Parameters.AddWithValue("@Utilidad", producto.Utilidad);
+                        command.Parameters.AddWithValue("@IDProveedor", producto.IDProveedor);
+
+                        await command.ExecuteNonQueryAsync();
+
+                        MessageBox.Show("Producto registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al registrar producto: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public async Task ActualizarProductoAsync(Producto producto)
+        {
+            try
+            {
+                using (var connection = ConexionBD.ObtenerConexion())
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new SqlCommand("ActualizarProducto", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.AddWithValue("@IDProducto", producto.IDProducto);
+                        command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
+                        command.Parameters.AddWithValue("@Marca", (object)producto.Marca ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@UnidadMedida", producto.UnidadMedida);
+                        command.Parameters.AddWithValue("@Stock", producto.Stock);
+                        command.Parameters.AddWithValue("@FechaVencimiento", (object)producto.FechaVencimiento ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@CodigoBarras", (object)producto.CodigoBarras ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@PrecioCompra", producto.PrecioCompra);
+                        command.Parameters.AddWithValue("@Flete", producto.Flete);
+                        command.Parameters.AddWithValue("@Utilidad", producto.Utilidad);
+                        command.Parameters.AddWithValue("@Estado", producto.Estado);
+
+                        await command.ExecuteNonQueryAsync();
+
+                        MessageBox.Show("Producto actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al actualizar producto: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public async Task CambiarEstadoProductoAsync(int idProducto, string nuevoEstado)
+        {
+            try
+            {
+                using (var connection = ConexionBD.ObtenerConexion())
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new SqlCommand("CambiarEstadoProducto", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@IDProducto", idProducto);
+                        command.Parameters.AddWithValue("@Estado", nuevoEstado);
+
+                        await command.ExecuteNonQueryAsync();
+
+                        MessageBox.Show($"Producto cambiado a estado: {nuevoEstado}.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cambiar estado del producto: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private Producto MapearProducto(SqlDataReader reader)
+        {
+            var producto = new Producto
+            {
+                IDProducto = reader.GetInt32(reader.GetOrdinal("IDProducto")),
+                Descripcion = reader.GetString(reader.GetOrdinal("Descripcion")),
+                Marca = reader.IsDBNull(reader.GetOrdinal("Marca")) ? null : reader.GetString(reader.GetOrdinal("Marca")),
+                UnidadMedida = reader.GetString(reader.GetOrdinal("UnidadMedida")),
+                Stock = reader.GetDecimal(reader.GetOrdinal("Stock")),
+                FechaVencimiento = reader.IsDBNull(reader.GetOrdinal("FechaVencimiento")) ? null : reader.GetDateTime(reader.GetOrdinal("FechaVencimiento")),
+                CodigoBarras = reader.IsDBNull(reader.GetOrdinal("CodigoBarras")) ? null : reader.GetString(reader.GetOrdinal("CodigoBarras")),
+                PrecioCompra = reader.GetDecimal(reader.GetOrdinal("PrecioCompra")),
+                Flete = reader.GetDecimal(reader.GetOrdinal("Flete")),
+                Utilidad = reader.GetDecimal(reader.GetOrdinal("Utilidad")),
+                ValorVenta = reader.GetDecimal(reader.GetOrdinal("ValorVenta")),
+                Estado = reader.GetString(reader.GetOrdinal("Estado"))
+            };
+
+            return producto;
         }
     }
 }

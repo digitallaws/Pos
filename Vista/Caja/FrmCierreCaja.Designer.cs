@@ -44,12 +44,14 @@
             txtSaldoReal = new TextBox();
             label3 = new Label();
             relojTimer = new System.Windows.Forms.Timer(components);
+            lblVentasCredito = new Label();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
             panel1.BackColor = Color.White;
+            panel1.Controls.Add(lblVentasCredito);
             panel1.Controls.Add(btnCancelar);
             panel1.Controls.Add(lblMovimientosExtra);
             panel1.Controls.Add(lblDescuadre);
@@ -211,6 +213,16 @@
             label3.Text = "Cierre de Caja";
             label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // lblVentasCredito
+            // 
+            lblVentasCredito.AutoSize = true;
+            lblVentasCredito.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblVentasCredito.Location = new Point(373, 278);
+            lblVentasCredito.Name = "lblVentasCredito";
+            lblVentasCredito.Size = new Size(96, 31);
+            lblVentasCredito.TabIndex = 42;
+            lblVentasCredito.Text = "10:00:00";
+            // 
             // FrmCierreCaja
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -244,5 +256,6 @@
         private Label lblMovimientosExtra;
         private Button btnCancelar;
         private System.Windows.Forms.Timer relojTimer;
+        private Label lblVentasCredito;
     }
 }

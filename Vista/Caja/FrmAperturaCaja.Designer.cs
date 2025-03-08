@@ -150,7 +150,6 @@
             Name = "FrmAperturaCaja";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmAperturaCaja";
-            Load += FrmAperturaCaja_Load_1;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

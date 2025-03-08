@@ -6,7 +6,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>chart_marketing_report_shop_graph_business_sales_shopping_analytics_finance_icon_231909 (1).ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="chart_marketing_report_shop_graph_business_sales_shopping_analytics_finance_icon_231909 (1).ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BarCode" Version="2025.2.11" />

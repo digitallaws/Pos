@@ -1,23 +1,22 @@
-﻿using Sopromil.Data.Interfaces;
-using Sopromil.Data.Repository;
+﻿using Sopromil.Data.Repository;
 using Sopromil.Modelo;
 
 namespace Sopromil.Controlador
 {
     public class ProductoController
     {
-        private readonly IProductoRepository _productoRepository;
+        private readonly ProductoRepository _productoRepository;
 
         public ProductoController()
         {
             _productoRepository = new ProductoRepository();
         }
 
-        public async Task<List<Producto>> ObtenerProductosAsync()
+        public async Task<List<Producto>> ListarProductosPorProveedorAsync(int idProveedor, bool soloActivos = true)
         {
             try
             {
-                return await _productoRepository.ObtenerProductosAsync();
+                return await _productoRepository.ListarProductosPorProveedorAsync(idProveedor, soloActivos);
             }
             catch (Exception ex)
             {
@@ -26,20 +25,26 @@ namespace Sopromil.Controlador
             }
         }
 
-        public async Task CrearProductoAsync(Producto producto)
+        public async Task<List<Producto>> ListarTodosLosProductosAsync(bool soloActivos = true)
         {
             try
             {
-                var resultado = await _productoRepository.CrearProductoAsync(producto);
+                return await _productoRepository.ListarTodosLosProductosAsync(soloActivos);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al obtener todos los productos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new List<Producto>();
+            }
+        }
 
-                if (resultado == "ProductoCreado" || resultado == "ProductoActualizado")
-                {
-                    //MessageBox.Show("Producto creado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    MessageBox.Show("No se pudo crear el producto.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+        public async Task CrearProductoAsync(Producto producto)
+        {
+            if (!ValidarProducto(producto)) return;
+
+            try
+            {
+                await _productoRepository.CrearProductoAsync(producto);
             }
             catch (Exception ex)
             {
@@ -49,18 +54,11 @@ namespace Sopromil.Controlador
 
         public async Task ActualizarProductoAsync(Producto producto)
         {
+            if (!ValidarProducto(producto)) return;
+
             try
             {
-                var resultado = await _productoRepository.ActualizarProductoAsync(producto);
-
-                if (resultado == "ProductoActualizado")
-                {
-                    MessageBox.Show("Producto actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    MessageBox.Show("No se pudo actualizar el producto.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                await _productoRepository.ActualizarProductoAsync(producto);
             }
             catch (Exception ex)
             {
@@ -68,38 +66,51 @@ namespace Sopromil.Controlador
             }
         }
 
-        public async Task EliminarProductoAsync(int idProducto)
+        public async Task CambiarEstadoProductoAsync(int idProducto, string nuevoEstado)
         {
             try
             {
-                var resultado = await _productoRepository.EliminarProductoAsync(idProducto);
-
-                if (resultado == "ProductoEliminado")
-                {
-                    MessageBox.Show("Producto eliminado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    MessageBox.Show("No se pudo eliminar el producto.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                await _productoRepository.CambiarEstadoProductoAsync(idProducto, nuevoEstado);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al eliminar producto: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error al cambiar estado del producto: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        public async Task<List<Producto>> FiltrarProductosAsync(DateTime? fechaInicio, DateTime? fechaFin, string codigoBarras, string descripcion)
+        private bool ValidarProducto(Producto producto)
         {
-            try
+            if (string.IsNullOrWhiteSpace(producto.Descripcion))
             {
-                return await _productoRepository.FiltrarProductosAsync(fechaInicio, fechaFin, codigoBarras, descripcion);
+                MessageBox.Show("La descripción es obligatoria.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
             }
-            catch (Exception ex)
+
+            if (producto.PrecioCompra <= 0)
             {
-                MessageBox.Show($"Error al filtrar productos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return new List<Producto>();
+                MessageBox.Show("El precio de compra debe ser mayor a cero.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
             }
+
+            if (producto.Utilidad < 0)
+            {
+                MessageBox.Show("La utilidad no puede ser negativa.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (producto.Stock < 0)
+            {
+                MessageBox.Show("El stock no puede ser negativo.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (producto.IDProveedor <= 0)
+            {
+                MessageBox.Show("Debe seleccionar un proveedor válido.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            return true;
         }
     }
 }

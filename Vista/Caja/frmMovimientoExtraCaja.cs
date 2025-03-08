@@ -1,7 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Sopromil.Controlador;
-using System;
-using System.Windows.Forms;
+﻿using Sopromil.Controlador;
 
 namespace Sopromil.Vista.Caja
 {
@@ -10,13 +7,13 @@ namespace Sopromil.Vista.Caja
         private readonly CajaController _cajaController;
         private readonly int _idMovimiento;
 
-        public frmMovimientoExtraCaja(int idMovimiento)
+        public frmMovimientoExtraCaja(int idMovimiento, CajaController cajaController)
         {
             InitializeComponent();
-            _cajaController = new CajaController();
+            _cajaController = cajaController ?? throw new ArgumentNullException(nameof(cajaController));
             _idMovimiento = idMovimiento;
 
-            // Asociar eventos directamente (sin depender del diseñador)
+            // Asociar eventos directamente
             this.Load += frmMovimientoExtraCaja_Load;
             btnGuardar.Click += btnGuardar_Click;
             btnCancelar.Click += btnCancelar_Click;
@@ -31,23 +28,23 @@ namespace Sopromil.Vista.Caja
 
         private async void btnGuardar_Click(object sender, EventArgs e)
         {
-            if (!ValidarDatos())
+            if (!ValidarDatos(out decimal monto, out string descripcion))
                 return;
 
             string tipoMovimiento = cbTipoMovimiento.SelectedItem.ToString();
-            decimal monto = decimal.Parse(txtMonto.Text);
-            string descripcion = txtDescripcion.Text.Trim();
 
             try
             {
-                await _cajaController.RegistrarMovimientoExtraAsync(_idMovimiento, tipoMovimiento, monto, descripcion);
-                MessageBox.Show($"El {tipoMovimiento} fue registrado correctamente.", "Movimiento Registrado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close();
-            }
-            catch (SqlException sqlEx)
-            {
-                LogError(sqlEx, nameof(btnGuardar_Click));
-                MostrarErrorAlUsuario("Ocurrió un problema al conectar con la base de datos.\nPor favor, verifique la conexión e intente nuevamente.", sqlEx);
+                bool registrado = await _cajaController.RegistrarMovimientoExtraAsync(_idMovimiento, tipoMovimiento, monto, descripcion);
+                if (registrado)
+                {
+                    MessageBox.Show($"El {tipoMovimiento} fue registrado correctamente.", "Movimiento Registrado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("No se pudo registrar el movimiento extra. Revise la conexión o intente nuevamente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception ex)
             {
@@ -56,15 +53,18 @@ namespace Sopromil.Vista.Caja
             }
         }
 
-        private bool ValidarDatos()
+        private bool ValidarDatos(out decimal monto, out string descripcion)
         {
-            if (string.IsNullOrWhiteSpace(txtMonto.Text) || !decimal.TryParse(txtMonto.Text, out decimal monto) || monto <= 0)
+            monto = 0;
+            descripcion = txtDescripcion.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(txtMonto.Text) || !decimal.TryParse(txtMonto.Text, out monto) || monto <= 0)
             {
                 MessageBox.Show("Debe ingresar un monto válido mayor a cero.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtDescripcion.Text))
+            if (string.IsNullOrWhiteSpace(descripcion))
             {
                 MessageBox.Show("Debe ingresar una descripción del movimiento.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
@@ -88,7 +88,7 @@ namespace Sopromil.Vista.Caja
             }
             catch
             {
-                // Evitar que un error al escribir el log detenga el programa
+                // Si hay un error al escribir el log, no detiene el programa.
             }
         }
 

@@ -32,20 +32,15 @@
             btnGuardarConfiguracion = new Button();
             panel1 = new Panel();
             txtRutaCopiaSeguridad = new TextBox();
-            label3 = new Label();
-            txtCodigo = new TextBox();
             e = new Label();
             txtImpresora = new TextBox();
             label1 = new Label();
             btnSeleccionarRuta = new Button();
             pictureBox1 = new PictureBox();
-            pictureBox2 = new PictureBox();
             pictureBox3 = new PictureBox();
-            pictureBox4 = new PictureBox();
             panel2 = new Panel();
             panel3 = new Panel();
             panel4 = new Panel();
-            label2 = new Label();
             btnImprimirPrueba = new Button();
             pictureBox5 = new PictureBox();
             label4 = new Label();
@@ -91,11 +86,8 @@
             txtDireccion = new Label();
             txtNit = new Label();
             txtNombre = new Label();
-            btnProbarLector = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
             panelTicket.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox7).BeginInit();
@@ -137,32 +129,12 @@
             // 
             txtRutaCopiaSeguridad.BorderStyle = BorderStyle.FixedSingle;
             txtRutaCopiaSeguridad.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtRutaCopiaSeguridad.Location = new Point(436, 665);
+            txtRutaCopiaSeguridad.Location = new Point(411, 459);
             txtRutaCopiaSeguridad.Name = "txtRutaCopiaSeguridad";
             txtRutaCopiaSeguridad.ReadOnly = true;
             txtRutaCopiaSeguridad.Size = new Size(560, 31);
             txtRutaCopiaSeguridad.TabIndex = 33;
             txtRutaCopiaSeguridad.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
-            label3.Location = new Point(602, 285);
-            label3.Name = "label3";
-            label3.Size = new Size(200, 31);
-            label3.TabIndex = 28;
-            label3.Text = "Lector de codigos";
-            // 
-            // txtCodigo
-            // 
-            txtCodigo.BorderStyle = BorderStyle.FixedSingle;
-            txtCodigo.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtCodigo.Location = new Point(436, 443);
-            txtCodigo.Name = "txtCodigo";
-            txtCodigo.Size = new Size(177, 31);
-            txtCodigo.TabIndex = 27;
-            txtCodigo.TextAlign = HorizontalAlignment.Center;
             // 
             // e
             // 
@@ -203,7 +175,7 @@
             btnSeleccionarRuta.BackColor = Color.DodgerBlue;
             btnSeleccionarRuta.FlatStyle = FlatStyle.Popup;
             btnSeleccionarRuta.ForeColor = Color.White;
-            btnSeleccionarRuta.Location = new Point(629, 592);
+            btnSeleccionarRuta.Location = new Point(604, 386);
             btnSeleccionarRuta.Name = "btnSeleccionarRuta";
             btnSeleccionarRuta.Size = new Size(119, 44);
             btnSeleccionarRuta.TabIndex = 40;
@@ -220,16 +192,6 @@
             pictureBox1.TabIndex = 41;
             pictureBox1.TabStop = false;
             // 
-            // pictureBox2
-            // 
-            pictureBox2.Image = Properties.Resources.Codigobarras;
-            pictureBox2.Location = new Point(466, 333);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(109, 101);
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.TabIndex = 42;
-            pictureBox2.TabStop = false;
-            // 
             // pictureBox3
             // 
             pictureBox3.BackColor = Color.Transparent;
@@ -240,16 +202,6 @@
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox3.TabIndex = 43;
             pictureBox3.TabStop = false;
-            // 
-            // pictureBox4
-            // 
-            pictureBox4.Image = Properties.Resources.barcode_Code128;
-            pictureBox4.Location = new Point(732, 336);
-            pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(258, 98);
-            pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox4.TabIndex = 44;
-            pictureBox4.TabStop = false;
             // 
             // panel2
             // 
@@ -275,16 +227,6 @@
             panel4.Size = new Size(629, 2);
             panel4.TabIndex = 38;
             // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.Location = new Point(751, 441);
-            label2.Name = "label2";
-            label2.Size = new Size(215, 28);
-            label2.TabIndex = 45;
-            label2.Text = "Escaneame para Probar";
-            // 
             // btnImprimirPrueba
             // 
             btnImprimirPrueba.BackColor = Color.DodgerBlue;
@@ -301,7 +243,7 @@
             // pictureBox5
             // 
             pictureBox5.Image = Properties.Resources.folder;
-            pictureBox5.Location = new Point(468, 557);
+            pictureBox5.Location = new Point(443, 351);
             pictureBox5.Name = "pictureBox5";
             pictureBox5.Size = new Size(107, 90);
             pictureBox5.SizeMode = PictureBoxSizeMode.Zoom;
@@ -312,7 +254,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
-            label4.Location = new Point(602, 507);
+            label4.Location = new Point(577, 301);
             label4.Name = "label4";
             label4.Size = new Size(219, 31);
             label4.TabIndex = 48;
@@ -753,34 +695,18 @@
             txtNombre.TabIndex = 0;
             txtNombre.Text = "Sopromil";
             // 
-            // btnProbarLector
-            // 
-            btnProbarLector.BackColor = Color.DodgerBlue;
-            btnProbarLector.FlatStyle = FlatStyle.Popup;
-            btnProbarLector.ForeColor = Color.White;
-            btnProbarLector.Location = new Point(619, 443);
-            btnProbarLector.Name = "btnProbarLector";
-            btnProbarLector.Size = new Size(76, 31);
-            btnProbarLector.TabIndex = 49;
-            btnProbarLector.Text = "Probar";
-            btnProbarLector.UseVisualStyleBackColor = false;
-            // 
             // InicialConfiguracion
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1032, 861);
-            Controls.Add(btnProbarLector);
             Controls.Add(label4);
             Controls.Add(pictureBox5);
             Controls.Add(btnImprimirPrueba);
-            Controls.Add(label2);
             Controls.Add(panel4);
             Controls.Add(panel3);
             Controls.Add(panel2);
-            Controls.Add(pictureBox4);
             Controls.Add(pictureBox3);
-            Controls.Add(pictureBox2);
             Controls.Add(pictureBox1);
             Controls.Add(btnSeleccionarRuta);
             Controls.Add(panelTicket);
@@ -788,8 +714,6 @@
             Controls.Add(btnGuardarConfiguracion);
             Controls.Add(panel1);
             Controls.Add(txtRutaCopiaSeguridad);
-            Controls.Add(label3);
-            Controls.Add(txtCodigo);
             Controls.Add(e);
             Controls.Add(txtImpresora);
             Controls.Add(label1);
@@ -799,9 +723,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "InicialConfiguracion";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
             panelTicket.ResumeLayout(false);
             panelTicket.PerformLayout();
@@ -817,20 +739,15 @@
         private Button btnGuardarConfiguracion;
         private Panel panel1;
         private TextBox txtRutaCopiaSeguridad;
-        private Label label3;
-        private TextBox txtCodigo;
         private Label e;
         private TextBox txtImpresora;
         private Label label1;
         private Button btnSeleccionarRuta;
         private PictureBox pictureBox1;
-        private PictureBox pictureBox2;
         private PictureBox pictureBox3;
-        private PictureBox pictureBox4;
         private Panel panel2;
         private Panel panel3;
         private Panel panel4;
-        private Label label2;
         private Button btnImprimirPrueba;
         private PictureBox pictureBox5;
         private Label label4;
@@ -876,6 +793,5 @@
         private Label label39;
         private Label label40;
         private TextBox textBox1;
-        private Button btnProbarLector;
     }
 }

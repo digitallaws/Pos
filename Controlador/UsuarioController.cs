@@ -1,12 +1,10 @@
-﻿using Sopromil.Data.Interfaces;
-using Sopromil.Data.Repository;
-using Sopromil.Modelo;
+﻿using Sopromil.Modelo;
 
 namespace Sopromil.Controlador
 {
     public class UsuarioController
     {
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly UsuarioRepository _usuarioRepository;
 
         public UsuarioController()
         {
@@ -47,7 +45,7 @@ namespace Sopromil.Controlador
         {
             try
             {
-                return await _usuarioRepository.ObtenerUsuariosActivosAsync();
+                return await _usuarioRepository.ObtenerUsuariosAsync();
             }
             catch (Exception ex)
             {

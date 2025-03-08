@@ -1,30 +1,33 @@
 ﻿using Microsoft.Data.SqlClient;
-using System.Configuration;
+using Sopromil.Utils; // Asegúrate de agregar el using para que vea ConfigManager
 
 namespace Sopromil.Data
 {
     public static class ConexionBD
     {
-        // Propiedad para obtener la cadena de conexión directamente
+        // Propiedad para obtener la cadena de conexión, ahora desde ConfigManager
         public static string CadenaConexion
         {
             get
             {
-                var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString;
-
-                if (string.IsNullOrEmpty(connectionString))
+                try
                 {
-                    throw new Exception("No se encontró una cadena de conexión válida en App.config.");
-                }
+                    // Cargar configuración desde el archivo ini (si no se ha cargado antes)
+                    ConfigManager.CargarConfiguracion();
 
-                return connectionString;
+                    // Retorna la cadena desde ConfigManager
+                    return ConfigManager.ObtenerCadenaConexion();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Error al obtener la cadena de conexión desde ConfigManager: {ex.Message}");
+                }
             }
         }
 
         /// <summary>
-        /// Obtiene una nueva instancia de SqlConnection utilizando la cadena de conexión predeterminada.
+        /// Obtiene una nueva instancia de SqlConnection utilizando la cadena de conexión dinámica.
         /// </summary>
-        /// <returns>Una instancia de SqlConnection.</returns>
         public static SqlConnection ObtenerConexion()
         {
             return new SqlConnection(CadenaConexion);
@@ -33,7 +36,6 @@ namespace Sopromil.Data
         /// <summary>
         /// Prueba la conexión a la base de datos.
         /// </summary>
-        /// <returns>True si la conexión es exitosa, de lo contrario false.</returns>
         public static bool ProbarConexion()
         {
             try

@@ -1,5 +1,5 @@
-using Sopromil.Controlador;
-using Sopromil.Vista.Configuracion;
+ï»¿using Sopromil.Controlador;
+using Sopromil.Utils;
 using Sopromil.Vista.Login;
 using Sopromil.Vista.Usuarios;
 using System.Globalization;
@@ -8,42 +8,50 @@ namespace Sopromil
 {
     internal static class Program
     {
-        /// <summary>
-        /// Punto de entrada principal para la aplicación.
-        /// </summary>
         [STAThread]
         static void Main()
         {
+            try
+            {
+                ConfigManager.CargarConfiguracion();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"No se pudo cargar la configuraciÃ³n.\n\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("es-CO");
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("es-CO");
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Ejecutar la lógica de inicio en un método síncrono
             RunApplication();
         }
 
         private static void RunApplication()
         {
-            var initialSetupController = new InitialSetupController();
+            if (!ConfigManager.ProbarConexion(out string mensajeConexion))
+            {
+                MessageBox.Show($"Error al conectar a la base de datos:\n{mensajeConexion}",
+                                "Error de ConexiÃ³n", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-            // Ejecutar la lógica asincrónica y esperar el resultado antes de iniciar Application.Run()
+            var initialSetupController = new InitialSetupController();
             var resultado = Task.Run(async () => await initialSetupController.VerificarUsuariosAsync()).GetAwaiter().GetResult();
 
             if (resultado == "SinUsuarios")
             {
-                // No hay usuarios, mostrar la vista de creación de usuario
                 Application.Run(new CrearUsuario(initialSetupController));
             }
             else if (resultado == "UsuariosExistentes")
             {
-                // Usuarios existentes, mostrar la vista de selección de perfil
                 Application.Run(new SeleccionPerfil());
             }
             else
             {
-                // Manejo de resultados inesperados
                 MessageBox.Show("Error al verificar usuarios. Intenta nuevamente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

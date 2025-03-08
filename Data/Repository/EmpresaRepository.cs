@@ -1,69 +1,107 @@
 ﻿using Microsoft.Data.SqlClient;
-using Sopromil.Data.Interfaces;
 using Sopromil.Modelo;
 using System.Data;
 
 namespace Sopromil.Data.Repository
 {
-    public class EmpresaRepository : IEmpresaRepository
+    public class EmpresaRepository
     {
-        public async Task<Empresa> ObtenerDatosEmpresaAsync()
+        public async Task<Empresa> ObtenerEmpresaAsync()
         {
-            Empresa empresa = null;
-
-            using (var connection = ConexionBD.ObtenerConexion())
+            try
             {
-                await connection.OpenAsync();
-
-                using (var command = new SqlCommand("ObtenerDatosEmpresa", connection))
+                using (var connection = ConexionBD.ObtenerConexion())
                 {
-                    command.CommandType = CommandType.StoredProcedure;
+                    await connection.OpenAsync();
 
-                    using (var reader = await command.ExecuteReaderAsync())
+                    using (var command = new SqlCommand("ObtenerEmpresa", connection))
                     {
-                        if (await reader.ReadAsync())
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            empresa = new Empresa
+                            if (await reader.ReadAsync())
                             {
-                                IDEmpresa = reader.GetInt32(reader.GetOrdinal("IDEmpresa")),
-                                Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
-                                RUC = reader.GetString(reader.GetOrdinal("RUC")),
-                                Direccion = reader.GetString(reader.GetOrdinal("Direccion")),
-                                Telefono = reader.GetString(reader.GetOrdinal("Telefono")),
-                                Correo = reader.GetString(reader.GetOrdinal("Correo")),
-                                Moneda = reader.GetString(reader.GetOrdinal("Moneda")),
-                                Logo = reader["Logo"] as byte[]
-                            };
+                                return new Empresa
+                                {
+                                    IDEmpresa = reader.GetInt32(reader.GetOrdinal("IDEmpresa")),
+                                    Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
+                                    NIT = reader.IsDBNull(reader.GetOrdinal("NIT")) ? null : reader.GetString(reader.GetOrdinal("NIT")),
+                                    Direccion = reader.IsDBNull(reader.GetOrdinal("Direccion")) ? null : reader.GetString(reader.GetOrdinal("Direccion")),
+                                    Telefono = reader.IsDBNull(reader.GetOrdinal("Telefono")) ? null : reader.GetString(reader.GetOrdinal("Telefono")),
+                                    Correo = reader.IsDBNull(reader.GetOrdinal("Correo")) ? null : reader.GetString(reader.GetOrdinal("Correo")),
+                                    Logo = reader.IsDBNull(reader.GetOrdinal("Logo")) ? null : (byte[])reader["Logo"],
+                                    Moneda = reader.GetString(reader.GetOrdinal("Moneda"))
+                                };
+                            }
                         }
                     }
                 }
             }
-
-            return empresa;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener empresa: {ex.Message}");
+            }
+            return null;
         }
 
-        public async Task<string> GuardarActualizarEmpresaAsync(Empresa empresa)
+        public async Task<string> RegistrarEmpresaAsync(Empresa empresa)
         {
-            using (var connection = ConexionBD.ObtenerConexion())
+            try
             {
-                await connection.OpenAsync();
-
-                using (var command = new SqlCommand("GuardarActualizarEmpresa", connection))
+                using (var connection = ConexionBD.ObtenerConexion())
                 {
-                    command.CommandType = CommandType.StoredProcedure;
+                    await connection.OpenAsync();
 
-                    command.Parameters.AddWithValue("@Nombre", empresa.Nombre);
-                    command.Parameters.AddWithValue("@RUC", empresa.RUC);
-                    command.Parameters.AddWithValue("@Direccion", empresa.Direccion);
-                    command.Parameters.AddWithValue("@Telefono", empresa.Telefono);
-                    command.Parameters.AddWithValue("@Correo", empresa.Correo);
-                    command.Parameters.AddWithValue("@Moneda", empresa.Moneda);
-                    command.Parameters.AddWithValue("@Logo", (object)empresa.Logo ?? DBNull.Value);
+                    using (var command = new SqlCommand("RegistrarEmpresa", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        MapearParametrosEmpresa(command, empresa);
 
-                    var resultado = await command.ExecuteScalarAsync();
-                    return resultado.ToString();
+                        return (string)await command.ExecuteScalarAsync();
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al registrar empresa: {ex.Message}");
+                return "Error";
+            }
+        }
+
+        public async Task<string> ActualizarEmpresaAsync(Empresa empresa)
+        {
+            try
+            {
+                using (var connection = ConexionBD.ObtenerConexion())
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new SqlCommand("ActualizarEmpresa", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        MapearParametrosEmpresa(command, empresa);
+
+                        return (string)await command.ExecuteScalarAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al actualizar empresa: {ex.Message}");
+                return "Error";
+            }
+        }
+
+        private void MapearParametrosEmpresa(SqlCommand command, Empresa empresa)
+        {
+            command.Parameters.AddWithValue("@Nombre", empresa.Nombre);
+            command.Parameters.AddWithValue("@NIT", (object)empresa.NIT ?? DBNull.Value);
+            command.Parameters.AddWithValue("@Direccion", (object)empresa.Direccion ?? DBNull.Value);
+            command.Parameters.AddWithValue("@Telefono", (object)empresa.Telefono ?? DBNull.Value);
+            command.Parameters.AddWithValue("@Correo", (object)empresa.Correo ?? DBNull.Value);
+            command.Parameters.AddWithValue("@Logo", (object)empresa.Logo ?? DBNull.Value);
+            command.Parameters.AddWithValue("@Moneda", empresa.Moneda);
         }
     }
 }
