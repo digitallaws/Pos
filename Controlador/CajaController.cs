@@ -82,21 +82,25 @@ namespace Sopromil.Controlador
             }
         }
 
-        // Configuración de caja
         public async Task<bool> ConfigurarCajaAsync(string descripcion, string impresora, string copiaSeguridad, string estado, int idUsuario)
         {
             try
             {
+                // 🔹 Validar si algún campo es NULL o vacío, y reemplazarlo con una cadena vacía ("")
+                descripcion = string.IsNullOrWhiteSpace(descripcion) ? "" : descripcion;
+                impresora = string.IsNullOrWhiteSpace(impresora) ? "" : impresora;
+                copiaSeguridad = string.IsNullOrWhiteSpace(copiaSeguridad) ? "" : copiaSeguridad;
+                estado = string.IsNullOrWhiteSpace(estado) ? "" : estado;
+
                 return await _cajaRepository.ConfigurarCajaAsync(descripcion, impresora, copiaSeguridad, estado, idUsuario);
             }
             catch (Exception ex)
             {
-                LogError("ConfigurarCajaAsync", ex);
+                Console.WriteLine($"❌ Error al configurar la caja: {ex.Message}");
                 return false;
             }
         }
 
-        // Obtener configuración actual de la caja
         public async Task<Caja?> ObtenerConfiguracionCajaAsync()
         {
             try
@@ -105,22 +109,8 @@ namespace Sopromil.Controlador
             }
             catch (Exception ex)
             {
-                LogError("ObtenerConfiguracionCajaAsync", ex);
+                Console.WriteLine($"❌ Error al obtener la configuración de la caja: {ex.Message}");
                 return null;
-            }
-        }
-
-        // Actualizar impresora y copia de seguridad
-        public async Task<bool> ActualizarConfiguracionImpresoraYCopiaAsync(string impresora, string copiaSeguridad)
-        {
-            try
-            {
-                return await _cajaRepository.ActualizarConfiguracionImpresoraYCopiaAsync(impresora, copiaSeguridad);
-            }
-            catch (Exception ex)
-            {
-                LogError("ActualizarConfiguracionImpresoraYCopiaAsync", ex);
-                return false;
             }
         }
 

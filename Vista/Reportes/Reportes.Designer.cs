@@ -1,6 +1,6 @@
-﻿namespace Sopromil.Vista.Dashboard
+﻿namespace Sopromil.Vista.Reportes
 {
-    partial class FrmInicio
+    partial class Reportes
     {
         /// <summary>
         /// Required designer variable.
@@ -28,60 +28,70 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmInicio));
+            panel1 = new Panel();
             label3 = new Label();
             PnlContenedor = new Panel();
             btnVolver = new Button();
+            panel1.SuspendLayout();
             SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.White;
+            panel1.Controls.Add(btnVolver);
+            panel1.Controls.Add(label3);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(1159, 114);
+            panel1.TabIndex = 13;
             // 
             // label3
             // 
             label3.BackColor = Color.CornflowerBlue;
-            label3.Dock = DockStyle.Top;
+            label3.Dock = DockStyle.Fill;
             label3.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.White;
             label3.Location = new Point(0, 0);
             label3.Name = "label3";
-            label3.Size = new Size(917, 109);
-            label3.TabIndex = 2;
-            label3.TextAlign = ContentAlignment.MiddleLeft;
+            label3.Size = new Size(1159, 114);
+            label3.TabIndex = 1;
+            label3.Text = "Reportes";
+            label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // PnlContenedor
             // 
+            PnlContenedor.BackColor = Color.White;
             PnlContenedor.Dock = DockStyle.Fill;
-            PnlContenedor.Location = new Point(0, 109);
+            PnlContenedor.Location = new Point(0, 114);
             PnlContenedor.Name = "PnlContenedor";
-            PnlContenedor.Size = new Size(917, 462);
-            PnlContenedor.TabIndex = 3;
+            PnlContenedor.Size = new Size(1159, 525);
+            PnlContenedor.TabIndex = 14;
             // 
             // btnVolver
             // 
-            btnVolver.Location = new Point(12, 25);
+            btnVolver.Location = new Point(33, 40);
             btnVolver.Name = "btnVolver";
             btnVolver.Size = new Size(97, 49);
-            btnVolver.TabIndex = 5;
+            btnVolver.TabIndex = 6;
             btnVolver.Text = "Atras";
             btnVolver.UseVisualStyleBackColor = true;
-            btnVolver.Click += btnVolver_Click;
             // 
-            // FrmInicio
+            // Reportes
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(917, 571);
-            Controls.Add(btnVolver);
+            ClientSize = new Size(1159, 639);
             Controls.Add(PnlContenedor);
-            Controls.Add(label3);
-            Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "FrmInicio";
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "FrmInicio";
-            WindowState = FormWindowState.Maximized;
+            Controls.Add(panel1);
+            Name = "Reportes";
+            Text = "Reportes";
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
-
+        private Panel panel1;
         private Label label3;
         private Panel PnlContenedor;
         private Button btnVolver;

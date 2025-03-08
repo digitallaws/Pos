@@ -48,7 +48,7 @@
             // 
             // label3
             // 
-            label3.BackColor = SystemColors.MenuHighlight;
+            label3.BackColor = Color.CornflowerBlue;
             label3.Dock = DockStyle.Top;
             label3.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.White;
@@ -83,7 +83,7 @@
             // 
             // btnProbar
             // 
-            btnProbar.BackColor = Color.FromArgb(0, 192, 0);
+            btnProbar.BackColor = Color.LimeGreen;
             btnProbar.FlatStyle = FlatStyle.Flat;
             btnProbar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnProbar.ForeColor = Color.White;
@@ -109,7 +109,7 @@
             // 
             // btnGuardar
             // 
-            btnGuardar.BackColor = SystemColors.MenuHighlight;
+            btnGuardar.BackColor = Color.CornflowerBlue;
             btnGuardar.FlatStyle = FlatStyle.Flat;
             btnGuardar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnGuardar.ForeColor = Color.White;

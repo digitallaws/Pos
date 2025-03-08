@@ -1,5 +1,6 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Modelo;
+using System.Drawing;
 
 namespace Sopromil.Vista.Clientes
 {
@@ -49,7 +50,13 @@ namespace Sopromil.Vista.Clientes
             dtVentas.Columns.Add(new DataGridViewTextBoxColumn { Name = "IDVenta", HeaderText = "ID", Visible = false });
             dtVentas.Columns.Add(new DataGridViewTextBoxColumn { Name = "FechaVenta", HeaderText = "Fecha", Width = 120 });
             dtVentas.Columns.Add(new DataGridViewTextBoxColumn { Name = "TipoVenta", HeaderText = "Tipo de Pago", Width = 100 });
-            dtVentas.Columns.Add(new DataGridViewTextBoxColumn { Name = "TotalVenta", HeaderText = "Total", Width = 100, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" } });
+            dtVentas.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "TotalVenta",
+                HeaderText = "Total",
+                Width = 100,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
+            });
             dtVentas.Columns.Add(new DataGridViewTextBoxColumn { Name = "Estado", HeaderText = "Estado", Width = 100 });
 
             DataGridViewButtonColumn btnDetalles = new DataGridViewButtonColumn
@@ -63,6 +70,7 @@ namespace Sopromil.Vista.Clientes
             dtVentas.Columns.Add(btnDetalles);
 
             dtVentas.CellClick += DtVentas_CellClick;
+            dtVentas.CellFormatting += DtVentas_CellFormatting; // 🔥 Evento para cambiar color de fila
         }
 
         private void ConfigurarComboBox()
@@ -89,7 +97,7 @@ namespace Sopromil.Vista.Clientes
                 dtVentas.Rows.Add(
                     venta.IDVenta,
                     venta.FechaVenta.ToString("dd/MM/yyyy"),
-                    venta.TipoVenta, // Asegurar que el nombre sea correcto
+                    venta.TipoVenta,
                     venta.TotalVenta,
                     venta.Estado
                 );
@@ -182,6 +190,31 @@ namespace Sopromil.Vista.Clientes
                 if (row.Cells["TipoVenta"].Value.ToString() == "Crédito" && row.Cells["Estado"].Value.ToString() == "Pendiente")
                 {
                     totalCredito += Convert.ToDecimal(row.Cells["TotalVenta"].Value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 🔥 Cambia el color de las facturas pagadas a verde.
+        /// </summary>
+        private void DtVentas_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dtVentas.Columns[e.ColumnIndex].Name == "Estado")
+            {
+                DataGridViewRow row = dtVentas.Rows[e.RowIndex];
+
+                if (row.Cells["Estado"].Value != null)
+                {
+                    string estado = row.Cells["Estado"].Value.ToString();
+
+                    if (estado == "Pagado")
+                    {
+                        row.DefaultCellStyle.BackColor = Color.LightGreen;
+                    }
+                    else
+                    {
+                        row.DefaultCellStyle.BackColor = Color.White;
+                    }
                 }
             }
         }

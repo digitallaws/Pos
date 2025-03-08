@@ -367,6 +367,7 @@
             Controls.Add(panel2);
             Controls.Add(panel1);
             Name = "Usuarios";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Usuarios";
             panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dtUsuarios).EndInit();

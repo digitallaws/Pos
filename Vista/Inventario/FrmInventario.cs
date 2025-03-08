@@ -1,6 +1,11 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Modelo;
 using System.Data;
+using System.Linq;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sopromil.Vista.Inventario
 {
@@ -18,14 +23,14 @@ namespace Sopromil.Vista.Inventario
             ConfigurarDataGrid();
             ConfigurarEventos();
             CargarInventario();
-            CargarProveedores(); // Cargar proveedores al abrir la ventana
+            CargarProveedores();
         }
-
 
         #region Configuración Inicial
 
         private void ConfigurarDataGrid()
         {
+            dtInventario.Dock = DockStyle.Fill; // Hace que el DataGridView ocupe todo el panel
             dtInventario.AllowUserToAddRows = false;
             dtInventario.AllowUserToDeleteRows = false;
             dtInventario.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -33,10 +38,13 @@ namespace Sopromil.Vista.Inventario
             dtInventario.ReadOnly = true;
             dtInventario.RowHeadersVisible = false;
             dtInventario.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dtInventario.BorderStyle = BorderStyle.None; // Se elimina el borde para mejorar el diseño
 
             dtInventario.DefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Regular);
             dtInventario.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold);
+            dtInventario.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
+            // 🔹 Cambiar color de selección
             dtInventario.DefaultCellStyle.SelectionBackColor = Color.CornflowerBlue;
             dtInventario.DefaultCellStyle.SelectionForeColor = Color.White;
         }
@@ -44,9 +52,8 @@ namespace Sopromil.Vista.Inventario
         private void ConfigurarEventos()
         {
             txtBuscar.TextChanged += (s, e) => FiltrarInventario();
-            cbProveedores.SelectedIndexChanged += (s, e) => FiltrarInventario(); // Nuevo evento
+            cbProveedores.SelectedIndexChanged += (s, e) => FiltrarInventario();
         }
-
 
         #endregion
 
@@ -71,7 +78,6 @@ namespace Sopromil.Vista.Inventario
             }
         }
 
-
         private void ActualizarTabla(List<Producto> productos)
         {
             dtInventario.DataSource = null;
@@ -84,21 +90,35 @@ namespace Sopromil.Vista.Inventario
             dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Stock", HeaderText = "Cantidad" });
             dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "UnidadMedida", HeaderText = "Unidad" });
 
-            // Cambié "PrecioCompra" por "Valor Unitario"
-            dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "PrecioCompra", HeaderText = "Valor Unitario" });
+            // 🔹 Precio de compra formateado con separador de miles
+            var colPrecioCompra = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "PrecioCompra",
+                HeaderText = "Valor Unitario",
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "N0", Alignment = DataGridViewContentAlignment.MiddleRight }
+            };
+            dtInventario.Columns.Add(colPrecioCompra);
 
-            // Nueva columna "Valor Total" (Stock * PrecioCompra)
+            // 🔹 Nueva columna "Valor Total" (Stock * PrecioCompra) formateada con separadores de miles
             var colValorTotal = new DataGridViewTextBoxColumn
             {
                 HeaderText = "Valor Total",
                 Name = "ValorTotal",
-                ReadOnly = true
+                ReadOnly = true,
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "N0", Alignment = DataGridViewContentAlignment.MiddleRight }
             };
             dtInventario.Columns.Add(colValorTotal);
 
-            dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "ValorVenta", HeaderText = "Venta" });
+            // 🔹 Precio de venta formateado con separador de miles
+            var colValorVenta = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "ValorVenta",
+                HeaderText = "Venta",
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "N0", Alignment = DataGridViewContentAlignment.MiddleRight }
+            };
+            dtInventario.Columns.Add(colValorVenta);
 
-            // Asignamos la lista de productos al DataGridView
+            // Asignar la lista de productos al DataGridView
             dtInventario.DataSource = productos;
 
             // Calcular el valor total por cada fila
@@ -113,25 +133,23 @@ namespace Sopromil.Vista.Inventario
             CalcularResumenInventario();
         }
 
-
         private async void CargarProveedores()
         {
             try
             {
-                var proveedores = await _proveedorController.ObtenerProveedoresAsync(true); // Asegúrate de que este método exista
+                var proveedores = await _proveedorController.ObtenerProveedoresAsync(true);
 
                 cbProveedores.DataSource = null;
                 cbProveedores.DataSource = proveedores;
-                cbProveedores.DisplayMember = "Nombre";  // El nombre del proveedor
-                cbProveedores.ValueMember = "IDProveedor";  // ID del proveedor
-                cbProveedores.SelectedIndex = -1;  // Para que no haya ninguno seleccionado al inicio
+                cbProveedores.DisplayMember = "Nombre";
+                cbProveedores.ValueMember = "IDProveedor";
+                cbProveedores.SelectedIndex = -1;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al cargar proveedores: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
         #endregion
 
@@ -144,7 +162,7 @@ namespace Sopromil.Vista.Inventario
 
             var productosFiltrados = _productosOriginales
                 .Where(p =>
-                    (idProveedorSeleccionado == 0 || p.IDProveedor == idProveedorSeleccionado) &&  // Filtra por proveedor si está seleccionado
+                    (idProveedorSeleccionado == 0 || p.IDProveedor == idProveedorSeleccionado) &&
                     (string.IsNullOrEmpty(filtro) ||
                      p.Descripcion.ToLower().Contains(filtro) ||
                      p.CodigoBarras.ToLower().Contains(filtro) ||
@@ -153,7 +171,6 @@ namespace Sopromil.Vista.Inventario
 
             ActualizarTabla(productosFiltrados);
         }
-
 
         #endregion
 

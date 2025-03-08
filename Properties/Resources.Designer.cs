@@ -133,6 +133,17 @@ namespace Sopromil.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap chart_marketing_report_shop_graph_business_sales_shopping_analytics_finance_icon_231909 {
+            get {
+                object obj = ResourceManager.GetObject("chart_marketing_report_shop_graph_business_sales_shopping_analytics_finance_icon_" +
+                        "231909", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap cliente {
             get {
                 object obj = ResourceManager.GetObject("cliente", resourceCulture);

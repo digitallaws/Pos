@@ -30,18 +30,18 @@
         {
             label1 = new Label();
             panel1 = new Panel();
-            btnVerConfirmPassword = new PictureBox();
-            btnVerPassword = new PictureBox();
-            txtNombre = new TextBox();
-            label7 = new Label();
-            label2 = new Label();
-            txtUsuario = new TextBox();
+            btnCancelar = new Button();
+            btnGuardar = new Button();
+            label5 = new Label();
+            txtConfirmarPassword = new TextBox();
             label3 = new Label();
             txtPassword = new TextBox();
-            txtConfirmarPassword = new TextBox();
-            label5 = new Label();
-            btnGuardar = new Button();
-            btnCancelar = new Button();
+            label2 = new Label();
+            txtUsuario = new TextBox();
+            label7 = new Label();
+            txtNombre = new TextBox();
+            btnVerConfirmPassword = new PictureBox();
+            btnVerPassword = new PictureBox();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnVerConfirmPassword).BeginInit();
             ((System.ComponentModel.ISupportInitialize)btnVerPassword).BeginInit();
@@ -49,7 +49,7 @@
             // 
             // label1
             // 
-            label1.BackColor = Color.DodgerBlue;
+            label1.BackColor = Color.CornflowerBlue;
             label1.Dock = DockStyle.Top;
             label1.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.White;
@@ -81,67 +81,52 @@
             panel1.Size = new Size(526, 498);
             panel1.TabIndex = 1;
             // 
-            // btnVerConfirmPassword
+            // btnCancelar
             // 
-            btnVerConfirmPassword.Image = Properties.Resources.eye_open;
-            btnVerConfirmPassword.Location = new Point(428, 310);
-            btnVerConfirmPassword.Name = "btnVerConfirmPassword";
-            btnVerConfirmPassword.Size = new Size(37, 38);
-            btnVerConfirmPassword.SizeMode = PictureBoxSizeMode.Zoom;
-            btnVerConfirmPassword.TabIndex = 11;
-            btnVerConfirmPassword.TabStop = false;
+            btnCancelar.BackColor = Color.Red;
+            btnCancelar.FlatStyle = FlatStyle.Flat;
+            btnCancelar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnCancelar.ForeColor = Color.White;
+            btnCancelar.Location = new Point(264, 392);
+            btnCancelar.Name = "btnCancelar";
+            btnCancelar.Size = new Size(138, 69);
+            btnCancelar.TabIndex = 38;
+            btnCancelar.Text = "Salir";
+            btnCancelar.UseVisualStyleBackColor = false;
             // 
-            // btnVerPassword
+            // btnGuardar
             // 
-            btnVerPassword.Image = Properties.Resources.eye_open;
-            btnVerPassword.Location = new Point(428, 217);
-            btnVerPassword.Name = "btnVerPassword";
-            btnVerPassword.Size = new Size(37, 38);
-            btnVerPassword.SizeMode = PictureBoxSizeMode.Zoom;
-            btnVerPassword.TabIndex = 10;
-            btnVerPassword.TabStop = false;
+            btnGuardar.BackColor = Color.CornflowerBlue;
+            btnGuardar.FlatStyle = FlatStyle.Flat;
+            btnGuardar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnGuardar.ForeColor = Color.White;
+            btnGuardar.Location = new Point(95, 392);
+            btnGuardar.Name = "btnGuardar";
+            btnGuardar.Size = new Size(138, 69);
+            btnGuardar.TabIndex = 37;
+            btnGuardar.Text = "Guardar";
+            btnGuardar.UseVisualStyleBackColor = false;
             // 
-            // txtNombre
+            // label5
             // 
-            txtNombre.BackColor = Color.White;
-            txtNombre.BorderStyle = BorderStyle.FixedSingle;
-            txtNombre.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtNombre.Location = new Point(68, 53);
-            txtNombre.Name = "txtNombre";
-            txtNombre.Size = new Size(354, 38);
-            txtNombre.TabIndex = 27;
-            txtNombre.TextAlign = HorizontalAlignment.Center;
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label5.Location = new Point(75, 276);
+            label5.Name = "label5";
+            label5.Size = new Size(233, 31);
+            label5.TabIndex = 34;
+            label5.Text = "Confimar Contraseña";
             // 
-            // label7
+            // txtConfirmarPassword
             // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(75, 19);
-            label7.Name = "label7";
-            label7.Size = new Size(101, 31);
-            label7.TabIndex = 28;
-            label7.Text = "Nombre";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(75, 99);
-            label2.Name = "label2";
-            label2.Size = new Size(94, 31);
-            label2.TabIndex = 30;
-            label2.Text = "Usuario";
-            // 
-            // txtUsuario
-            // 
-            txtUsuario.BackColor = Color.White;
-            txtUsuario.BorderStyle = BorderStyle.FixedSingle;
-            txtUsuario.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtUsuario.Location = new Point(68, 133);
-            txtUsuario.Name = "txtUsuario";
-            txtUsuario.Size = new Size(354, 38);
-            txtUsuario.TabIndex = 29;
-            txtUsuario.TextAlign = HorizontalAlignment.Center;
+            txtConfirmarPassword.BackColor = Color.White;
+            txtConfirmarPassword.BorderStyle = BorderStyle.FixedSingle;
+            txtConfirmarPassword.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtConfirmarPassword.Location = new Point(68, 310);
+            txtConfirmarPassword.Name = "txtConfirmarPassword";
+            txtConfirmarPassword.Size = new Size(354, 38);
+            txtConfirmarPassword.TabIndex = 33;
+            txtConfirmarPassword.TextAlign = HorizontalAlignment.Center;
             // 
             // label3
             // 
@@ -164,52 +149,67 @@
             txtPassword.TabIndex = 31;
             txtPassword.TextAlign = HorizontalAlignment.Center;
             // 
-            // txtConfirmarPassword
+            // label2
             // 
-            txtConfirmarPassword.BackColor = Color.White;
-            txtConfirmarPassword.BorderStyle = BorderStyle.FixedSingle;
-            txtConfirmarPassword.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtConfirmarPassword.Location = new Point(68, 310);
-            txtConfirmarPassword.Name = "txtConfirmarPassword";
-            txtConfirmarPassword.Size = new Size(354, 38);
-            txtConfirmarPassword.TabIndex = 33;
-            txtConfirmarPassword.TextAlign = HorizontalAlignment.Center;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.Location = new Point(75, 99);
+            label2.Name = "label2";
+            label2.Size = new Size(94, 31);
+            label2.TabIndex = 30;
+            label2.Text = "Usuario";
             // 
-            // label5
+            // txtUsuario
             // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(75, 276);
-            label5.Name = "label5";
-            label5.Size = new Size(233, 31);
-            label5.TabIndex = 34;
-            label5.Text = "Confimar Contraseña";
+            txtUsuario.BackColor = Color.White;
+            txtUsuario.BorderStyle = BorderStyle.FixedSingle;
+            txtUsuario.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtUsuario.Location = new Point(68, 133);
+            txtUsuario.Name = "txtUsuario";
+            txtUsuario.Size = new Size(354, 38);
+            txtUsuario.TabIndex = 29;
+            txtUsuario.TextAlign = HorizontalAlignment.Center;
             // 
-            // btnGuardar
+            // label7
             // 
-            btnGuardar.BackColor = SystemColors.MenuHighlight;
-            btnGuardar.FlatStyle = FlatStyle.Flat;
-            btnGuardar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnGuardar.ForeColor = Color.White;
-            btnGuardar.Location = new Point(95, 392);
-            btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new Size(138, 69);
-            btnGuardar.TabIndex = 37;
-            btnGuardar.Text = "Guardar";
-            btnGuardar.UseVisualStyleBackColor = false;
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.Location = new Point(75, 19);
+            label7.Name = "label7";
+            label7.Size = new Size(101, 31);
+            label7.TabIndex = 28;
+            label7.Text = "Nombre";
             // 
-            // btnCancelar
+            // txtNombre
             // 
-            btnCancelar.BackColor = Color.Red;
-            btnCancelar.FlatStyle = FlatStyle.Flat;
-            btnCancelar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnCancelar.ForeColor = Color.White;
-            btnCancelar.Location = new Point(264, 392);
-            btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(138, 69);
-            btnCancelar.TabIndex = 38;
-            btnCancelar.Text = "Salir";
-            btnCancelar.UseVisualStyleBackColor = false;
+            txtNombre.BackColor = Color.White;
+            txtNombre.BorderStyle = BorderStyle.FixedSingle;
+            txtNombre.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtNombre.Location = new Point(68, 53);
+            txtNombre.Name = "txtNombre";
+            txtNombre.Size = new Size(354, 38);
+            txtNombre.TabIndex = 27;
+            txtNombre.TextAlign = HorizontalAlignment.Center;
+            // 
+            // btnVerConfirmPassword
+            // 
+            btnVerConfirmPassword.Image = Properties.Resources.eye_open;
+            btnVerConfirmPassword.Location = new Point(428, 310);
+            btnVerConfirmPassword.Name = "btnVerConfirmPassword";
+            btnVerConfirmPassword.Size = new Size(37, 38);
+            btnVerConfirmPassword.SizeMode = PictureBoxSizeMode.Zoom;
+            btnVerConfirmPassword.TabIndex = 11;
+            btnVerConfirmPassword.TabStop = false;
+            // 
+            // btnVerPassword
+            // 
+            btnVerPassword.Image = Properties.Resources.eye_open;
+            btnVerPassword.Location = new Point(428, 217);
+            btnVerPassword.Name = "btnVerPassword";
+            btnVerPassword.Size = new Size(37, 38);
+            btnVerPassword.SizeMode = PictureBoxSizeMode.Zoom;
+            btnVerPassword.TabIndex = 10;
+            btnVerPassword.TabStop = false;
             // 
             // CrearUsuario
             // 

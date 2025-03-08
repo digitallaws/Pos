@@ -61,7 +61,7 @@ namespace Sopromil.Vista.Productos
         private void ConfigurarFecha()
         {
             txtFecha.Format = DateTimePickerFormat.Custom;
-            txtFecha.CustomFormat = "txtNombre/MM/yyyy";
+            txtFecha.CustomFormat = "dddd, dd MMMM yyyy";
         }
 
         private void ConfigurarEventos()

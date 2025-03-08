@@ -1,26 +1,17 @@
-﻿using Sopromil.Controlador;
-using Sopromil.Modelo;
-using Sopromil.Vista.Caja;
-using Sopromil.Vista.Clientes;
-using Sopromil.Vista.Empresa;
-using Sopromil.Vista.Ventas;
-
-namespace Sopromil.Vista.Dashboard
+﻿namespace Sopromil.Vista.Reportes
 {
-    public partial class FrmInicio : Form
+    public partial class Reportes : Form
     {
         private TableLayoutPanel tableLayoutPanel;
         private Form activeForm = null;
-        private readonly CajaController _cajaController;
-        private readonly Dictionary<string, Panel> panelModulos = new();
+        private readonly Dictionary<string, Panel> panelReportes = new();
 
-        public FrmInicio()
+        public Reportes()
         {
             InitializeComponent();
             ConfigurarTableLayout();
-            CargarModulos();
+            CargarModulosReportes();
             btnVolver.Visible = false;
-
         }
 
         private void ConfigurarTableLayout()
@@ -28,7 +19,7 @@ namespace Sopromil.Vista.Dashboard
             tableLayoutPanel = new TableLayoutPanel
             {
                 AutoSize = true,
-                ColumnCount = 4,
+                ColumnCount = 3,
                 RowCount = 2,
                 BackColor = Color.Transparent,
                 Padding = new Padding(10)
@@ -36,7 +27,7 @@ namespace Sopromil.Vista.Dashboard
 
             for (int i = 0; i < tableLayoutPanel.ColumnCount; i++)
             {
-                tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
+                tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33f));
             }
 
             for (int i = 0; i < tableLayoutPanel.RowCount; i++)
@@ -57,30 +48,70 @@ namespace Sopromil.Vista.Dashboard
             }
         }
 
-        private void CargarModulos()
+        private void CargarModulosReportes()
         {
-            var modulos = new Dictionary<string, Bitmap>
+            var reportes = new Dictionary<string, Bitmap>
             {
-                { "Proveedores", Properties.Resources.administracion_de_empresas },
-                { "Clientes", Properties.Resources.cliente },
                 { "Ventas", Properties.Resources.venta_al_por_mayor },
-                { "Usuarios", Properties.Resources.user },
-                { "Configuracion", Properties.Resources.settings },
-                { "Reportes", Properties.Resources.analisis_de_negocios }
+                { "Inventario", Properties.Resources.inventario },
+                { "Cuentas por Cobrar", Properties.Resources.cliente },
+                { "Compras", Properties.Resources.folder },
+                { "Caja", Properties.Resources.supervision },
+                { "Utilidad", Properties.Resources.supervision }
             };
 
             int index = 0;
-            foreach (var modulo in modulos)
+            foreach (var reporte in reportes)
             {
-                var panelModulo = CrearPanelModulo(modulo.Key, modulo.Value);
-                int fila = index / 4;
-                int columna = index % 4;
+                var panelReporte = CrearPanelReporte(reporte.Key, reporte.Value);
+                int fila = index / 3;
+                int columna = index % 3;
 
-                tableLayoutPanel.Controls.Add(panelModulo, columna, fila);
-                panelModulos[modulo.Key] = panelModulo;
+                tableLayoutPanel.Controls.Add(panelReporte, columna, fila);
+                panelReportes[reporte.Key] = panelReporte;
 
                 index++;
             }
+        }
+
+        private Panel CrearPanelReporte(string nombreReporte, Bitmap icono)
+        {
+            var panel = new Panel
+            {
+                Size = new Size(140, 140),
+                BackColor = Color.White,
+                Cursor = Cursors.Hand,
+                Margin = new Padding(15),
+                Tag = nombreReporte
+            };
+
+            var pictureBox = new PictureBox
+            {
+                Image = icono,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Size = new Size(70, 70),
+                Location = new Point((panel.Width - 70) / 2, 15)
+            };
+
+            var label = new Label
+            {
+                Text = nombreReporte,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Bottom,
+                Font = new Font("Arial", 10, FontStyle.Bold),
+                ForeColor = Color.Black,
+                Height = 30
+            };
+
+            panel.Controls.Add(pictureBox);
+            panel.Controls.Add(label);
+
+            panel.MouseEnter += (s, e) => panel.BackColor = Color.LightSkyBlue;
+            panel.MouseLeave += (s, e) => panel.BackColor = Color.White;
+
+            panel.Click += (s, e) => CargarFormularioReporte(nombreReporte);
+
+            return panel;
         }
 
         private void btnVolver_Click(object sender, EventArgs e)
@@ -97,68 +128,27 @@ namespace Sopromil.Vista.Dashboard
             btnVolver.Visible = false;
         }
 
-        private Panel CrearPanelModulo(string nombreModulo, Bitmap icono)
-        {
-            var panel = new Panel
-            {
-                Size = new Size(140, 140),
-                BackColor = Color.White,
-                Cursor = Cursors.Hand,
-                Margin = new Padding(15),
-                Tag = nombreModulo
-            };
-
-            var pictureBox = new PictureBox
-            {
-                Image = icono,
-                SizeMode = PictureBoxSizeMode.Zoom,
-                Size = new Size(70, 70),
-                Location = new Point((panel.Width - 70) / 2, 15)
-            };
-
-            var label = new Label
-            {
-                Text = nombreModulo,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Dock = DockStyle.Bottom,
-                Font = new Font("Arial", 10, FontStyle.Bold),
-                ForeColor = Color.Black,
-                Height = 30
-            };
-
-            panel.Controls.Add(pictureBox);
-            panel.Controls.Add(label);
-
-            panel.MouseEnter += (s, e) => panel.BackColor = Color.LightSkyBlue;
-            panel.MouseLeave += (s, e) => panel.BackColor = Color.White;
-
-            panel.Click += (s, e) => CargarFormularioModulo(nombreModulo);
-
-            return panel;
-        }
-
-        private async void CargarFormularioModulo(string modulo)
+        private void CargarFormularioReporte(string reporte)
         {
             if (activeForm != null)
             {
                 activeForm.Close();
             }
 
-
-            activeForm = modulo switch
+            activeForm = reporte switch
             {
-                "Proveedores" => new Proveedores(),
-                "Clientes" => new FrmClientes(),
-                "Ventas" => new FrmVentas(),
-                "Usuarios" => new Usuarios.Usuarios(),
-                "Configuracion" => new Configuracion.Configuracion(),
-                "Reportes" => new Reportes.Reportes(),
+                "Ventas" => new FrmReporteVentas(),
+                "Inventario" => new FrmReporteInventario(),
+                "Cuentas por Cobrar" => new FrmReporteCuentasPorCobrar(),
+                "Compras" => new FrmReporteCompras(),
+                "Caja" => new FrmReporteCaja(),
+                "Utilidad" => new FrmReporteUtilidad(),
                 _ => null
             };
 
             if (activeForm == null)
             {
-                MessageBox.Show("Formulario no encontrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Reporte no encontrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -174,22 +164,6 @@ namespace Sopromil.Vista.Dashboard
 
             activeForm.BringToFront();
             activeForm.Show();
-        }
-
-        private async Task<bool> VerificarCajaAbierta()
-        {
-            //var cajaAbierta = await _cajaController.ObtenerCajaAbiertaAsync();
-            //if (cajaAbierta != null) return true;
-
-            var frmApertura = new FrmAperturaCaja();
-            if (frmApertura.ShowDialog() == DialogResult.OK && frmApertura.CajaAbierta)
-            {
-                await _cajaController.AbrirCajaAsync(SesionActual.IDUsuario, frmApertura.SaldoInicial);
-                return true;
-            }
-
-            MessageBox.Show("Debe abrir caja para ingresar a Ventas.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return false;
         }
     }
 }

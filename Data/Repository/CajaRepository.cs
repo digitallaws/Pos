@@ -6,6 +6,13 @@ namespace Sopromil.Data.Repository
 {
     public class CajaRepository
     {
+
+        private async Task<SqlConnection> GetConnectionAsync()
+        {
+            var connection = ConexionBD.ObtenerConexion();
+            await connection.OpenAsync();
+            return connection;
+        }
         public async Task<int> AbrirCajaAsync(int idUsuarioApertura, decimal saldoInicial)
         {
             try
@@ -162,70 +169,6 @@ namespace Sopromil.Data.Repository
             return detalles;
         }
 
-        public async Task<bool> ConfigurarCajaAsync(string descripcion, string impresora, string copiaSeguridad, string estado, int idUsuario)
-        {
-            try
-            {
-                using (var connection = ConexionBD.ObtenerConexion())
-                {
-                    await connection.OpenAsync();
-
-                    using (var command = new SqlCommand("ConfigurarCaja", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@Descripcion", descripcion);
-                        command.Parameters.AddWithValue("@Impresora", impresora);
-                        command.Parameters.AddWithValue("@CopiaSeguridad", copiaSeguridad);
-                        command.Parameters.AddWithValue("@Estado", estado);
-                        command.Parameters.AddWithValue("@IDUsuario", idUsuario);
-
-                        await command.ExecuteNonQueryAsync();
-                        return true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al configurar caja: {ex.Message}");
-                return false;
-            }
-        }
-
-        public async Task<Caja?> ObtenerConfiguracionCajaAsync()
-        {
-            try
-            {
-                using (var connection = ConexionBD.ObtenerConexion())
-                {
-                    await connection.OpenAsync();
-
-                    using (var command = new SqlCommand("ObtenerConfiguracionCaja", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
-
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            if (await reader.ReadAsync())
-                            {
-                                return new Caja
-                                {
-                                    Descripcion = reader.GetString("Descripcion"),
-                                    Impresora = reader.GetString("Impresora"),
-                                    CopiaSeguridad = reader.GetString("CopiaSeguridad"),
-                                    Estado = reader.GetString("Estado")
-                                };
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al obtener configuración caja: {ex.Message}");
-            }
-            return null;
-        }
-
         public async Task<decimal> CalcularVentasDesdeAperturaCajaAsync()
         {
             try
@@ -297,35 +240,68 @@ namespace Sopromil.Data.Repository
                 return 0;
             }
         }
-        public async Task<bool> ActualizarConfiguracionImpresoraYCopiaAsync(string impresora, string copiaSeguridad)
+
+        public async Task<bool> ConfigurarCajaAsync(string descripcion, string impresora, string copiaSeguridad, string estado, int idUsuario)
         {
             try
             {
-                using (var connection = ConexionBD.ObtenerConexion())
+                using (var connection = await GetConnectionAsync())
+                using (var command = new SqlCommand("ConfigurarCaja", connection))
                 {
-                    await connection.OpenAsync();
+                    command.CommandType = CommandType.StoredProcedure;
 
-                    using (var command = new SqlCommand("ConfigurarCaja", connection))
+                    // 🔹 Si algún campo es nulo, enviamos un string vacío para evitar problemas en SQL
+                    command.Parameters.AddWithValue("@Descripcion", string.IsNullOrWhiteSpace(descripcion) ? "" : descripcion);
+                    command.Parameters.AddWithValue("@Impresora", string.IsNullOrWhiteSpace(impresora) ? "" : impresora);
+                    command.Parameters.AddWithValue("@CopiaSeguridad", string.IsNullOrWhiteSpace(copiaSeguridad) ? "" : copiaSeguridad);
+                    command.Parameters.AddWithValue("@Estado", string.IsNullOrWhiteSpace(estado) ? "" : estado);
+                    command.Parameters.AddWithValue("@UltimaConfiguracionPor", idUsuario);
+
+                    await command.ExecuteNonQueryAsync();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al configurar la caja: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Obtiene la configuración actual de la caja desde la base de datos.
+        /// </summary>
+        public async Task<Caja?> ObtenerConfiguracionCajaAsync()
+        {
+            try
+            {
+                using (var connection = await GetConnectionAsync())
+                using (var command = new SqlCommand("ObtenerConfiguracionCaja", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        command.CommandType = CommandType.StoredProcedure;
-
-                        // Mete la info por defecto o actualiza si ya hay algo, pero siempre lo mete
-                        command.Parameters.AddWithValue("@Descripcion", "Caja Principal");
-                        command.Parameters.AddWithValue("@Impresora", impresora);
-                        command.Parameters.AddWithValue("@CopiaSeguridad", copiaSeguridad);
-                        command.Parameters.AddWithValue("@Estado", "Activa");
-                        command.Parameters.AddWithValue("@IDUsuario", 1);  // O el usuario que tengas logueado, si aplica
-
-                        var rowsAffected = await command.ExecuteNonQueryAsync();
-                        return rowsAffected > 0;
+                        if (await reader.ReadAsync())
+                        {
+                            return new Caja
+                            {
+                                IDCaja = reader.GetInt32(reader.GetOrdinal("IDCaja")),
+                                Descripcion = reader.IsDBNull(reader.GetOrdinal("Descripcion")) ? "" : reader.GetString(reader.GetOrdinal("Descripcion")),
+                                Impresora = reader.IsDBNull(reader.GetOrdinal("Impresora")) ? "" : reader.GetString(reader.GetOrdinal("Impresora")),
+                                CopiaSeguridad = reader.IsDBNull(reader.GetOrdinal("CopiaSeguridad")) ? "" : reader.GetString(reader.GetOrdinal("CopiaSeguridad")),
+                                Estado = reader.IsDBNull(reader.GetOrdinal("Estado")) ? "" : reader.GetString(reader.GetOrdinal("Estado")),
+                                UltimaConfiguracionPor = 1
+                            };
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al forzar la configuración de la caja (impresora y copia): {ex.Message}");
-                return false;
+                Console.WriteLine($"❌ Error al obtener la configuración de la caja: {ex.Message}");
             }
+            return null;
         }
     }
 }

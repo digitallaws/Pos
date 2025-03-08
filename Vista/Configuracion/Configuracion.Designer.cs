@@ -29,10 +29,8 @@
         private void InitializeComponent()
         {
             panel2 = new Panel();
-            label6 = new Label();
-            btnCopia = new PictureBox();
-            label2 = new Label();
-            btnTicket = new PictureBox();
+            label5 = new Label();
+            btnUsuarios = new PictureBox();
             panel4 = new Panel();
             btnImpresora = new PictureBox();
             label1 = new Label();
@@ -42,27 +40,19 @@
             panel1 = new Panel();
             pictureBox1 = new PictureBox();
             label3 = new Label();
-            label5 = new Label();
-            pictureBox2 = new PictureBox();
             panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)btnCopia).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)btnTicket).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)btnUsuarios).BeginInit();
             ((System.ComponentModel.ISupportInitialize)btnImpresora).BeginInit();
             ((System.ComponentModel.ISupportInitialize)btnNegocio).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
             // 
             // panel2
             // 
             panel2.BackColor = Color.White;
             panel2.Controls.Add(label5);
-            panel2.Controls.Add(pictureBox2);
-            panel2.Controls.Add(label6);
-            panel2.Controls.Add(btnCopia);
-            panel2.Controls.Add(label2);
-            panel2.Controls.Add(btnTicket);
+            panel2.Controls.Add(btnUsuarios);
             panel2.Controls.Add(panel4);
             panel2.Controls.Add(btnImpresora);
             panel2.Controls.Add(label1);
@@ -75,45 +65,26 @@
             panel2.Size = new Size(1127, 585);
             panel2.TabIndex = 4;
             // 
-            // label6
+            // label5
             // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            label6.Location = new Point(557, 20);
-            label6.Name = "label6";
-            label6.Size = new Size(190, 28);
-            label6.TabIndex = 20;
-            label6.Text = "Copia de Seguridad";
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            label5.Location = new Point(40, 253);
+            label5.Name = "label5";
+            label5.Size = new Size(90, 28);
+            label5.TabIndex = 22;
+            label5.Text = "Usuarios";
             // 
-            // btnCopia
+            // btnUsuarios
             // 
-            btnCopia.Image = Properties.Resources.folder;
-            btnCopia.Location = new Point(578, 74);
-            btnCopia.Name = "btnCopia";
-            btnCopia.Size = new Size(138, 131);
-            btnCopia.SizeMode = PictureBoxSizeMode.Zoom;
-            btnCopia.TabIndex = 19;
-            btnCopia.TabStop = false;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            label2.Location = new Point(429, 20);
-            label2.Name = "label2";
-            label2.Size = new Size(66, 28);
-            label2.TabIndex = 16;
-            label2.Text = "Ticket";
-            // 
-            // btnTicket
-            // 
-            btnTicket.Image = Properties.Resources.ticket;
-            btnTicket.Location = new Point(386, 74);
-            btnTicket.Name = "btnTicket";
-            btnTicket.Size = new Size(147, 131);
-            btnTicket.SizeMode = PictureBoxSizeMode.Zoom;
-            btnTicket.TabIndex = 15;
-            btnTicket.TabStop = false;
+            btnUsuarios.Image = Properties.Resources.agregar_usuario;
+            btnUsuarios.Location = new Point(40, 300);
+            btnUsuarios.Name = "btnUsuarios";
+            btnUsuarios.Size = new Size(138, 131);
+            btnUsuarios.SizeMode = PictureBoxSizeMode.Zoom;
+            btnUsuarios.TabIndex = 21;
+            btnUsuarios.TabStop = false;
+            btnUsuarios.Click += btnUsuarios_Click;
             // 
             // panel4
             // 
@@ -126,18 +97,19 @@
             // btnImpresora
             // 
             btnImpresora.Image = Properties.Resources.impresora;
-            btnImpresora.Location = new Point(212, 74);
+            btnImpresora.Location = new Point(249, 74);
             btnImpresora.Name = "btnImpresora";
             btnImpresora.Size = new Size(138, 131);
             btnImpresora.SizeMode = PictureBoxSizeMode.Zoom;
             btnImpresora.TabIndex = 13;
             btnImpresora.TabStop = false;
+            btnImpresora.Click += btnImpresora_Click;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            label1.Location = new Point(228, 20);
+            label1.Location = new Point(266, 20);
             label1.Name = "label1";
             label1.Size = new Size(104, 28);
             label1.TabIndex = 12;
@@ -185,7 +157,7 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.BackColor = Color.DodgerBlue;
+            pictureBox1.BackColor = Color.CornflowerBlue;
             pictureBox1.Dock = DockStyle.Right;
             pictureBox1.Image = Properties.Resources.settings;
             pictureBox1.Location = new Point(990, 0);
@@ -197,7 +169,7 @@
             // 
             // label3
             // 
-            label3.BackColor = Color.DodgerBlue;
+            label3.BackColor = Color.CornflowerBlue;
             label3.Dock = DockStyle.Fill;
             label3.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.White;
@@ -207,26 +179,6 @@
             label3.TabIndex = 1;
             label3.Text = "Configuraciones";
             label3.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            label5.Location = new Point(67, 244);
-            label5.Name = "label5";
-            label5.Size = new Size(90, 28);
-            label5.TabIndex = 22;
-            label5.Text = "Usuarios";
-            // 
-            // pictureBox2
-            // 
-            pictureBox2.Image = Properties.Resources.agregar_usuario;
-            pictureBox2.Location = new Point(48, 291);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(138, 131);
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.TabIndex = 21;
-            pictureBox2.TabStop = false;
             // 
             // Configuracion
             // 
@@ -239,13 +191,11 @@
             Text = "Configuracion";
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)btnCopia).EndInit();
-            ((System.ComponentModel.ISupportInitialize)btnTicket).EndInit();
+            ((System.ComponentModel.ISupportInitialize)btnUsuarios).EndInit();
             ((System.ComponentModel.ISupportInitialize)btnImpresora).EndInit();
             ((System.ComponentModel.ISupportInitialize)btnNegocio).EndInit();
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ResumeLayout(false);
         }
 
@@ -257,14 +207,10 @@
         private Label label3;
         private Panel panel3;
         private PictureBox btnNegocio;
-        private PictureBox btnCopia;
-        private Label label2;
-        private PictureBox btnTicket;
         private Panel panel4;
         private PictureBox btnImpresora;
         private Label label1;
-        private Label label6;
         private Label label5;
-        private PictureBox pictureBox2;
+        private PictureBox btnUsuarios;
     }
 }

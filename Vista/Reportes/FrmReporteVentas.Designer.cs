@@ -1,6 +1,6 @@
-﻿namespace Sopromil.Vista.Inventario
+﻿namespace Sopromil.Vista.Reportes
 {
-    partial class FrmInventario
+    partial class FrmReporteVentas
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmInventario));
             panel3 = new Panel();
             dtInventario = new DataGridView();
             panel6 = new Panel();
@@ -41,15 +40,13 @@
             panel2 = new Panel();
             panel5 = new Panel();
             btnProductos = new Button();
-            lblTotalInventario = new Label();
-            label12 = new Label();
             panel4 = new Panel();
-            label1 = new Label();
-            cbProveedores = new ComboBox();
-            txtBuscar = new TextBox();
-            dd = new Label();
             panel1 = new Panel();
             label3 = new Label();
+            txtFecha = new DateTimePicker();
+            dateTimePicker1 = new DateTimePicker();
+            dd = new Label();
+            label1 = new Label();
             panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dtInventario).BeginInit();
             panel6.SuspendLayout();
@@ -69,8 +66,8 @@
             panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(0, 114);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1576, 774);
-            panel3.TabIndex = 10;
+            panel3.Size = new Size(1456, 673);
+            panel3.TabIndex = 12;
             // 
             // dtInventario
             // 
@@ -86,7 +83,7 @@
             dtInventario.ReadOnly = true;
             dtInventario.RowHeadersVisible = false;
             dtInventario.RowHeadersWidth = 51;
-            dtInventario.Size = new Size(1143, 555);
+            dtInventario.Size = new Size(1023, 454);
             dtInventario.TabIndex = 9;
             // 
             // panel6
@@ -98,9 +95,9 @@
             panel6.Controls.Add(lblCompra);
             panel6.Controls.Add(label14);
             panel6.Dock = DockStyle.Bottom;
-            panel6.Location = new Point(174, 705);
+            panel6.Location = new Point(174, 604);
             panel6.Name = "panel6";
-            panel6.Size = new Size(1143, 69);
+            panel6.Size = new Size(1023, 69);
             panel6.TabIndex = 8;
             // 
             // lblUtilidad
@@ -108,7 +105,7 @@
             lblUtilidad.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             lblUtilidad.AutoSize = true;
             lblUtilidad.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblUtilidad.Location = new Point(1980, 112);
+            lblUtilidad.Location = new Point(2803, 112);
             lblUtilidad.Name = "lblUtilidad";
             lblUtilidad.Size = new Size(45, 29);
             lblUtilidad.TabIndex = 81;
@@ -119,7 +116,7 @@
             lblVenta.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             lblVenta.AutoSize = true;
             lblVenta.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblVenta.Location = new Point(1982, 72);
+            lblVenta.Location = new Point(2805, 72);
             lblVenta.Name = "lblVenta";
             lblVenta.Size = new Size(45, 29);
             lblVenta.TabIndex = 80;
@@ -130,7 +127,7 @@
             label18.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label18.AutoSize = true;
             label18.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label18.Location = new Point(1816, 110);
+            label18.Location = new Point(2639, 110);
             label18.Name = "label18";
             label18.Size = new Size(158, 31);
             label18.TabIndex = 79;
@@ -141,7 +138,7 @@
             label16.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label16.AutoSize = true;
             label16.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label16.Location = new Point(1816, 70);
+            label16.Location = new Point(2639, 70);
             label16.Name = "label16";
             label16.Size = new Size(136, 31);
             label16.TabIndex = 77;
@@ -152,7 +149,7 @@
             lblCompra.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             lblCompra.AutoSize = true;
             lblCompra.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCompra.Location = new Point(1982, 29);
+            lblCompra.Location = new Point(2805, 29);
             lblCompra.Name = "lblCompra";
             lblCompra.Size = new Size(45, 29);
             lblCompra.TabIndex = 76;
@@ -163,7 +160,7 @@
             label14.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label14.AutoSize = true;
             label14.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label14.Location = new Point(1816, 29);
+            label14.Location = new Point(2639, 29);
             label14.Name = "label14";
             label14.Size = new Size(160, 31);
             label14.TabIndex = 75;
@@ -174,107 +171,42 @@
             panel2.Dock = DockStyle.Left;
             panel2.Location = new Point(0, 150);
             panel2.Name = "panel2";
-            panel2.Size = new Size(174, 624);
+            panel2.Size = new Size(174, 523);
             panel2.TabIndex = 7;
             // 
             // panel5
             // 
             panel5.Controls.Add(btnProductos);
-            panel5.Controls.Add(lblTotalInventario);
-            panel5.Controls.Add(label12);
             panel5.Dock = DockStyle.Right;
-            panel5.Location = new Point(1317, 150);
+            panel5.Location = new Point(1197, 150);
             panel5.Name = "panel5";
-            panel5.Size = new Size(259, 624);
+            panel5.Size = new Size(259, 523);
             panel5.TabIndex = 3;
             // 
             // btnProductos
             // 
-            btnProductos.BackColor = Color.CornflowerBlue;
+            btnProductos.BackColor = Color.LimeGreen;
             btnProductos.FlatStyle = FlatStyle.Flat;
             btnProductos.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnProductos.ForeColor = Color.White;
-            btnProductos.Location = new Point(12, 16);
+            btnProductos.Location = new Point(12, 24);
             btnProductos.Name = "btnProductos";
             btnProductos.Size = new Size(235, 55);
             btnProductos.TabIndex = 85;
-            btnProductos.Text = "Agregar Producto";
+            btnProductos.Text = "Descargar Excel";
             btnProductos.UseVisualStyleBackColor = false;
-            btnProductos.Click += btnProductos_Click;
-            // 
-            // lblTotalInventario
-            // 
-            lblTotalInventario.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            lblTotalInventario.AutoSize = true;
-            lblTotalInventario.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblTotalInventario.Location = new Point(35, 153);
-            lblTotalInventario.Name = "lblTotalInventario";
-            lblTotalInventario.Size = new Size(45, 29);
-            lblTotalInventario.TabIndex = 84;
-            lblTotalInventario.Text = "$ 0";
-            // 
-            // label12
-            // 
-            label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            label12.AutoSize = true;
-            label12.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label12.Location = new Point(17, 113);
-            label12.Name = "label12";
-            label12.Size = new Size(223, 31);
-            label12.TabIndex = 82;
-            label12.Text = "Activo en Inventario";
             // 
             // panel4
             // 
             panel4.Controls.Add(label1);
-            panel4.Controls.Add(cbProveedores);
-            panel4.Controls.Add(txtBuscar);
             panel4.Controls.Add(dd);
+            panel4.Controls.Add(dateTimePicker1);
+            panel4.Controls.Add(txtFecha);
             panel4.Dock = DockStyle.Top;
             panel4.Location = new Point(0, 0);
             panel4.Name = "panel4";
-            panel4.Size = new Size(1576, 150);
+            panel4.Size = new Size(1456, 150);
             panel4.TabIndex = 1;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(819, 45);
-            label1.Name = "label1";
-            label1.Size = new Size(123, 31);
-            label1.TabIndex = 81;
-            label1.Text = "Proveedor";
-            // 
-            // cbProveedores
-            // 
-            cbProveedores.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cbProveedores.FormattingEnabled = true;
-            cbProveedores.Location = new Point(819, 79);
-            cbProveedores.Name = "cbProveedores";
-            cbProveedores.Size = new Size(415, 39);
-            cbProveedores.TabIndex = 80;
-            // 
-            // txtBuscar
-            // 
-            txtBuscar.BackColor = Color.White;
-            txtBuscar.BorderStyle = BorderStyle.FixedSingle;
-            txtBuscar.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtBuscar.Location = new Point(174, 80);
-            txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(587, 38);
-            txtBuscar.TabIndex = 79;
-            txtBuscar.TextAlign = HorizontalAlignment.Center;
-            // 
-            // dd
-            // 
-            dd.AutoSize = true;
-            dd.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dd.Location = new Point(174, 46);
-            dd.Name = "dd";
-            dd.Size = new Size(83, 31);
-            dd.TabIndex = 47;
-            dd.Text = "Buscar";
             // 
             // panel1
             // 
@@ -283,8 +215,8 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1576, 114);
-            panel1.TabIndex = 11;
+            panel1.Size = new Size(1456, 114);
+            panel1.TabIndex = 13;
             // 
             // label3
             // 
@@ -294,29 +226,63 @@
             label3.ForeColor = Color.White;
             label3.Location = new Point(0, 0);
             label3.Name = "label3";
-            label3.Size = new Size(1576, 114);
+            label3.Size = new Size(1456, 114);
             label3.TabIndex = 1;
-            label3.Text = "Inventario";
+            label3.Text = "Reportes de ventas";
             label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // FrmInventario
+            // txtFecha
+            // 
+            txtFecha.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtFecha.Location = new Point(202, 80);
+            txtFecha.Name = "txtFecha";
+            txtFecha.Size = new Size(403, 38);
+            txtFecha.TabIndex = 66;
+            // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dateTimePicker1.Location = new Point(672, 80);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(403, 38);
+            dateTimePicker1.TabIndex = 67;
+            // 
+            // dd
+            // 
+            dd.AutoSize = true;
+            dd.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dd.Location = new Point(217, 46);
+            dd.Name = "dd";
+            dd.Size = new Size(137, 31);
+            dd.TabIndex = 68;
+            dd.Text = "Fecha Inicio";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Location = new Point(683, 46);
+            label1.Name = "label1";
+            label1.Size = new Size(125, 31);
+            label1.TabIndex = 69;
+            label1.Text = "Fecha final";
+            // 
+            // FrmReporteVentas
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1576, 888);
+            ClientSize = new Size(1456, 787);
             Controls.Add(panel3);
             Controls.Add(panel1);
-            Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "FrmInventario";
+            Name = "FrmReporteVentas";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FrmInventario";
+            Text = "FrmReporteVentas";
             WindowState = FormWindowState.Maximized;
             panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dtInventario).EndInit();
             panel6.ResumeLayout(false);
             panel6.PerformLayout();
             panel5.ResumeLayout(false);
-            panel5.PerformLayout();
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
             panel1.ResumeLayout(false);
@@ -336,38 +302,13 @@
         private Label label14;
         private Panel panel2;
         private Panel panel5;
-        private Label lblTotalInventario;
-        private Label label15;
-        private Label label12;
-        private Button btnRegistrar;
-        private TextBox txtGeneral;
-        private Button btnAgregar;
+        private Button btnProductos;
         private Panel panel4;
-        private TextBox txtBuscar;
-        private ComboBox txtCodigo;
-        private Label lbId;
-        private TextBox txtVenta;
-        private Label label13;
-        private TextBox txtUtilidad;
-        private Label label9;
-        private TextBox txtFlete;
-        private Label label7;
-        private TextBox txtCompra;
-        private Label label6;
-        private Label label5;
-        private DateTimePicker txtFecha;
-        private Label label1;
-        private ComboBox cbProveedores;
-        private TextBox txtProveedor;
-        private Label label4;
-        private Label dd;
-        private TextBox txtCantidad;
-        private Label label2;
-        private TextBox txtMarca;
-        private Label label10;
-        private Label label8;
         private Panel panel1;
         private Label label3;
-        private Button btnProductos;
+        private DateTimePicker dateTimePicker1;
+        private DateTimePicker txtFecha;
+        private Label label1;
+        private Label dd;
     }
 }

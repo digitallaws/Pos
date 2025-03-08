@@ -1,5 +1,6 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Utils;
+using Sopromil.Vista.Configuracion;
 using Sopromil.Vista.Login;
 using Sopromil.Vista.Usuarios;
 using System.Globalization;
@@ -11,24 +12,28 @@ namespace Sopromil
         [STAThread]
         static void Main()
         {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
             try
             {
-                ConfigManager.CargarConfiguracion();
+                ConfigManager.CargarConfiguracion(); // Carga la configuración desde el archivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"No se pudo cargar la configuración.\n\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"No se encontró configuración. Debe configurar la conexión.",
+                    "Configuración Requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                Application.Run(new FrmConfiguracion()); // 🔥 Abre FrmConfiguracion si falla
                 return;
             }
 
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("es-CO");
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("es-CO");
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
             RunApplication();
         }
+
 
         private static void RunApplication()
         {

@@ -1,5 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Data;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Sopromil.Data.Repository
 {
@@ -12,55 +15,9 @@ namespace Sopromil.Data.Repository
             return connection;
         }
 
-        // Verificar si existen usuarios
-        public async Task<string> VerificarUsuariosAsync()
-        {
-            using (var connection = await GetConnectionAsync())
-            using (var command = new SqlCommand("dbo.VerificarUsuarios", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                var result = await command.ExecuteScalarAsync();
-                return result?.ToString();
-            }
-        }
-
-        // Crear usuario inicial
-        public async Task<string> CrearUsuarioInicialAsync(string nombre, string login, string password)
-        {
-            using (var connection = await GetConnectionAsync())
-            using (var command = new SqlCommand("dbo.CrearUsuarioInicial", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@Nombre", nombre);
-                command.Parameters.AddWithValue("@Login", login);
-                command.Parameters.AddWithValue("@Password", password);
-
-                var result = await command.ExecuteScalarAsync();
-                return result?.ToString();
-            }
-        }
-
-        // Crear empresa
-        public async Task<string> CrearEmpresaAsync(string nombre, string ruc, string direccion, string telefono, string correo, string moneda, byte[] logo)
-        {
-            using (var connection = await GetConnectionAsync())
-            using (var command = new SqlCommand("dbo.CrearEmpresa", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@Nombre", nombre);
-                command.Parameters.AddWithValue("@RUC", ruc);
-                command.Parameters.AddWithValue("@Direccion", direccion);
-                command.Parameters.AddWithValue("@Telefono", telefono);
-                command.Parameters.AddWithValue("@Correo", correo);
-                command.Parameters.AddWithValue("@Moneda", moneda);
-                command.Parameters.AddWithValue("@Logo", logo);
-
-                var result = await command.ExecuteScalarAsync();
-                return result?.ToString();
-            }
-        }
-
-        // Configuración inicial (ticket, impresora, lector, copia seguridad)
+        /// <summary>
+        /// Guarda la configuración inicial del sistema (ticket, impresora, lector, copia seguridad).
+        /// </summary>
         public async Task<string> ConfiguracionInicialAsync(string agradecimiento, string anuncio, string datosFiscales, string copiaSeguridad, string impresora, string lectorCodigoBarras)
         {
             using (var connection = await GetConnectionAsync())
@@ -72,9 +29,49 @@ namespace Sopromil.Data.Repository
                 command.Parameters.AddWithValue("@DatosFiscales", datosFiscales);
                 command.Parameters.AddWithValue("@CopiaSeguridad", copiaSeguridad);
                 command.Parameters.AddWithValue("@Impresora", impresora);
+                command.Parameters.AddWithValue("@LectorCodigoBarras", lectorCodigoBarras);
 
                 var result = await command.ExecuteScalarAsync();
-                return result?.ToString();
+                return result?.ToString() ?? "Error al guardar configuración.";
+            }
+        }
+
+        /// <summary>
+        /// Crea una copia de seguridad de la base de datos en la ruta especificada.
+        /// </summary>
+        public async Task<string> CrearCopiaSeguridadAsync(string rutaBackup)
+        {
+            try
+            {
+                using (var connection = await GetConnectionAsync())
+                using (var command = new SqlCommand($"BACKUP DATABASE [SopromilDB] TO DISK = @Ruta", connection))
+                {
+                    command.Parameters.AddWithValue("@Ruta", rutaBackup);
+                    await command.ExecuteNonQueryAsync();
+                    return "Copia de seguridad creada correctamente en " + rutaBackup;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError("CrearCopiaSeguridadAsync", ex);
+                return $"Error al crear copia de seguridad: {ex.Message}";
+            }
+        }
+
+        /// <summary>
+        /// Guarda errores en un archivo de log.
+        /// </summary>
+        private void LogError(string metodo, Exception ex)
+        {
+            try
+            {
+                string rutaLog = "LogErrores.txt";
+                string mensaje = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Error en {metodo}: {ex.Message}\n";
+                File.AppendAllText(rutaLog, mensaje);
+            }
+            catch
+            {
+                // Evita que un fallo en el log detenga la ejecución.
             }
         }
     }

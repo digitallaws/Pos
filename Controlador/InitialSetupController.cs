@@ -1,5 +1,5 @@
 ﻿using Sopromil.Data.Repository;
-using Sopromil.Modelo;
+using Sopromil.Utils;
 
 namespace Sopromil.Controlador
 {
@@ -7,16 +7,15 @@ namespace Sopromil.Controlador
     {
         private readonly UsuarioRepository _usuarioRepository;
         private readonly EmpresaRepository _empresaRepository;
+        private readonly InitialSetupRepository _setupRepository;
 
         public InitialSetupController()
         {
             _usuarioRepository = new UsuarioRepository();
             _empresaRepository = new EmpresaRepository();
+            _setupRepository = new InitialSetupRepository();
         }
 
-        /// <summary>
-        /// Verifica si hay usuarios registrados.
-        /// </summary>
         public async Task<string> VerificarUsuariosAsync()
         {
             try
@@ -25,14 +24,10 @@ namespace Sopromil.Controlador
             }
             catch (Exception ex)
             {
-                LogError("VerificarUsuariosAsync", ex);
-                return "Error";
+                return $"❌ Error al verificar usuarios: {ex.Message}";
             }
         }
 
-        /// <summary>
-        /// Crea el primer usuario inicial (admin).
-        /// </summary>
         public async Task<string> CrearUsuarioInicialAsync(string nombre, string login, string password)
         {
             try
@@ -41,51 +36,57 @@ namespace Sopromil.Controlador
             }
             catch (Exception ex)
             {
-                LogError("CrearUsuarioInicialAsync", ex);
-                return "Error";
+                return $"❌ Error al crear usuario inicial: {ex.Message}";
             }
         }
 
-        /// <summary>
-        /// Registra o actualiza la empresa.
-        /// </summary>
-        public async Task<string> GuardarEmpresaAsync(Empresa empresa)
+        public async Task<string> GuardarConfiguracionAsync(string agradecimiento, string anuncio, string datosFiscales, string copiaSeguridad, string impresora, string lectorCodigoBarras)
         {
             try
             {
-                // Verificamos si ya hay empresa registrada.
-                var empresaActual = await _empresaRepository.ObtenerEmpresaAsync();
-                if (empresaActual == null)
-                {
-                    return await _empresaRepository.RegistrarEmpresaAsync(empresa);
-                }
-                else
-                {
-                    empresa.IDEmpresa = empresaActual.IDEmpresa;  // aseguramos el mismo ID.
-                    return await _empresaRepository.ActualizarEmpresaAsync(empresa);
-                }
+                return await _setupRepository.ConfiguracionInicialAsync(agradecimiento, anuncio, datosFiscales, copiaSeguridad, impresora, lectorCodigoBarras);
             }
             catch (Exception ex)
             {
-                LogError("GuardarEmpresaAsync", ex);
-                return "Error";
+                return $"❌ Error al guardar configuración: {ex.Message}";
             }
         }
 
-        /// <summary>
-        /// Loguea errores en archivo de texto.
-        /// </summary>
-        private void LogError(string metodo, Exception ex)
+        public async Task<string> CrearCopiaSeguridadAsync(string rutaBackup)
         {
             try
             {
-                string rutaLog = "LogErrores.txt";
-                string mensaje = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Error en {metodo}: {ex.Message}\n";
-                File.AppendAllText(rutaLog, mensaje);
+                return await _setupRepository.CrearCopiaSeguridadAsync(rutaBackup);
             }
-            catch
+            catch (Exception ex)
             {
-                // Evitar que un fallo en el log detenga la ejecución.
+                return $"❌ Error al crear la copia de seguridad: {ex.Message}";
+            }
+        }
+
+        public string GuardarConfiguracionBD(string servidor, string baseDatos, string tipoAutenticacion, string usuario, string clave)
+        {
+            try
+            {
+                ConfigManager.GuardarConfiguracion(servidor, baseDatos, tipoAutenticacion, usuario, clave);
+                return "✅ Configuración de la base de datos guardada correctamente.";
+            }
+            catch (Exception ex)
+            {
+                return $"❌ Error al guardar configuración de la base de datos: {ex.Message}";
+            }
+        }
+
+        public bool ProbarConexionBD(out string mensaje)
+        {
+            try
+            {
+                return ConfigManager.ProbarConexion(out mensaje);
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"❌ Error al probar la conexión: {ex.Message}";
+                return false;
             }
         }
     }
