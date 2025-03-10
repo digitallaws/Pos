@@ -40,9 +40,9 @@ namespace Sopromil.Data.Repository
             return lista;
         }
 
-        public async Task<List<Producto>> ListarTodosLosProductosAsync(bool soloActivos = true)
+        public async Task<List<Producto>> ListarTodosLosProductosAsync()
         {
-            var lista = new List<Producto>();
+            List<Producto> productos = new List<Producto>();
 
             try
             {
@@ -53,13 +53,38 @@ namespace Sopromil.Data.Repository
                     using (var command = new SqlCommand("ListarTodosLosProductos", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@SoloActivos", soloActivos ? 1 : 0);
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())
                             {
-                                lista.Add(MapearProducto(reader));
+                                var producto = new Producto
+                                {
+                                    IDProducto = reader.GetInt32(reader.GetOrdinal("IDProducto")),
+                                    Descripcion = reader.GetString(reader.GetOrdinal("Descripcion")),
+                                    Marca = reader.IsDBNull(reader.GetOrdinal("Marca")) ? null : reader.GetString(reader.GetOrdinal("Marca")),
+                                    UnidadMedida = reader.GetString(reader.GetOrdinal("UnidadMedida")),
+                                    Stock = reader.GetDecimal(reader.GetOrdinal("Stock")),
+                                    FechaVencimiento = reader.IsDBNull(reader.GetOrdinal("FechaVencimiento"))
+                                        ? (DateTime?)null
+                                        : reader.GetDateTime(reader.GetOrdinal("FechaVencimiento")),
+                                    CodigoBarras = reader.IsDBNull(reader.GetOrdinal("CodigoBarras")) ? null : reader.GetString(reader.GetOrdinal("CodigoBarras")),
+                                    PrecioCompra = reader.GetDecimal(reader.GetOrdinal("PrecioCompra")),
+                                    Flete = reader.GetDecimal(reader.GetOrdinal("Flete")),
+                                    Utilidad = reader.GetDecimal(reader.GetOrdinal("Utilidad")),
+                                    ValorVenta = reader.GetDecimal(reader.GetOrdinal("ValorVenta")),
+                                    Estado = reader.GetString(reader.GetOrdinal("Estado")),
+
+                                    // Relación con Proveedor
+                                    IDProveedor = reader.GetInt32(reader.GetOrdinal("IDProveedor")),
+                                    Proveedor = new Proveedor
+                                    {
+                                        IDProveedor = reader.GetInt32(reader.GetOrdinal("IDProveedor")),
+                                        Nombre = reader.GetString(reader.GetOrdinal("NombreProveedor"))
+                                    }
+                                };
+
+                                productos.Add(producto);
                             }
                         }
                     }
@@ -67,10 +92,10 @@ namespace Sopromil.Data.Repository
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al listar todos los productos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error al obtener productos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            return lista;
+            return productos;
         }
 
         public async Task CrearProductoAsync(Producto producto)
@@ -170,6 +195,68 @@ namespace Sopromil.Data.Repository
             }
         }
 
+        public async Task<bool> UbicarProductoAsync(int idProducto, string estante, string seccion)
+        {
+            try
+            {
+                using (var connection = ConexionBD.ObtenerConexion())
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new SqlCommand("UbicarProducto", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.AddWithValue("@IDProducto", idProducto);
+                        command.Parameters.AddWithValue("@UbicacionEstante", estante);
+                        command.Parameters.AddWithValue("@UbicacionSeccion", seccion);
+
+                        int rowsAffected = await command.ExecuteNonQueryAsync();
+                        return rowsAffected > 0; // Retorna `true` si se actualizó al menos una fila
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al ubicar producto: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<(string Estante, string Seccion)> ObtenerUbicacionProductoAsync(int idProducto)
+        {
+            try
+            {
+                using (var connection = ConexionBD.ObtenerConexion())
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new SqlCommand("ObtenerUbicacionProducto", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@IDProducto", idProducto);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (reader.Read())
+                            {
+                                string estante = reader["UbicacionEstante"]?.ToString() ?? "";
+                                string seccion = reader["UbicacionSeccion"]?.ToString() ?? "";
+                                return (estante, seccion);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al obtener la ubicación: {ex.Message}");
+            }
+
+            return ("", ""); // Retornar vacío si hay un error o no existe
+        }
+
+
         private Producto MapearProducto(SqlDataReader reader)
         {
             var producto = new Producto
@@ -185,7 +272,8 @@ namespace Sopromil.Data.Repository
                 Flete = reader.GetDecimal(reader.GetOrdinal("Flete")),
                 Utilidad = reader.GetDecimal(reader.GetOrdinal("Utilidad")),
                 ValorVenta = reader.GetDecimal(reader.GetOrdinal("ValorVenta")),
-                Estado = reader.GetString(reader.GetOrdinal("Estado"))
+                Estado = reader.GetString(reader.GetOrdinal("Estado")),
+                IDProveedor = reader.GetInt32(reader.GetOrdinal("IDProveedor")),  // ⚠️ Aquí ocurre el error
             };
 
             return producto;

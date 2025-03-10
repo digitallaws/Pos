@@ -32,6 +32,7 @@
             label3 = new Label();
             PnlContenedor = new Panel();
             btnVolver = new Button();
+            button1 = new Button();
             SuspendLayout();
             // 
             // label3
@@ -64,11 +65,23 @@
             btnVolver.UseVisualStyleBackColor = true;
             btnVolver.Click += btnVolver_Click;
             // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button1.Location = new Point(778, 25);
+            button1.Name = "button1";
+            button1.Size = new Size(117, 49);
+            button1.TabIndex = 6;
+            button1.Text = "Cerrar Sesión";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // FrmInicio
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(917, 571);
+            Controls.Add(button1);
             Controls.Add(btnVolver);
             Controls.Add(PnlContenedor);
             Controls.Add(label3);
@@ -85,5 +98,6 @@
         private Label label3;
         private Panel PnlContenedor;
         private Button btnVolver;
+        private Button button1;
     }
 }

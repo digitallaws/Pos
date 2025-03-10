@@ -48,12 +48,10 @@
             btnCrearCliente = new Button();
             cbBuscarProducto = new ComboBox();
             lblStock = new Label();
-            label5 = new Label();
             label4 = new Label();
             txtTelefono = new TextBox();
             label2 = new Label();
             txtDocumento = new TextBox();
-            txtCredito = new Label();
             lbCliente = new Label();
             label1 = new Label();
             lbIdProducto = new Label();
@@ -253,12 +251,10 @@
             panel4.Controls.Add(btnCrearCliente);
             panel4.Controls.Add(cbBuscarProducto);
             panel4.Controls.Add(lblStock);
-            panel4.Controls.Add(label5);
             panel4.Controls.Add(label4);
             panel4.Controls.Add(txtTelefono);
             panel4.Controls.Add(label2);
             panel4.Controls.Add(txtDocumento);
-            panel4.Controls.Add(txtCredito);
             panel4.Controls.Add(lbCliente);
             panel4.Controls.Add(label1);
             panel4.Controls.Add(lbIdProducto);
@@ -304,21 +300,11 @@
             // 
             lblStock.AutoSize = true;
             lblStock.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblStock.Location = new Point(1055, 52);
+            lblStock.Location = new Point(527, 107);
             lblStock.Name = "lblStock";
             lblStock.Size = new Size(27, 31);
             lblStock.TabIndex = 90;
             lblStock.Text = "0";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(971, 52);
-            label5.Name = "label5";
-            label5.Size = new Size(78, 31);
-            label5.TabIndex = 89;
-            label5.Text = "Stock:";
             // 
             // label4
             // 
@@ -362,16 +348,6 @@
             txtDocumento.TabIndex = 85;
             txtDocumento.TextAlign = HorizontalAlignment.Center;
             // 
-            // txtCredito
-            // 
-            txtCredito.AutoSize = true;
-            txtCredito.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtCredito.Location = new Point(26, 305);
-            txtCredito.Name = "txtCredito";
-            txtCredito.Size = new Size(310, 31);
-            txtCredito.TabIndex = 84;
-            txtCredito.Text = "Credito Pendiente: 1.000.000";
-            // 
             // lbCliente
             // 
             lbCliente.AutoSize = true;
@@ -381,6 +357,7 @@
             lbCliente.Size = new Size(37, 31);
             lbCliente.TabIndex = 83;
             lbCliente.Text = "iD";
+            lbCliente.Visible = false;
             // 
             // label1
             // 
@@ -401,6 +378,7 @@
             lbIdProducto.Size = new Size(37, 31);
             lbIdProducto.TabIndex = 80;
             lbIdProducto.Text = "iD";
+            lbIdProducto.Visible = false;
             // 
             // dd
             // 
@@ -479,12 +457,10 @@
         private Label label3;
         private Label label1;
         private Label lbCliente;
-        private Label txtCredito;
         private Label label4;
         private TextBox txtTelefono;
         private Label label2;
         private TextBox txtDocumento;
-        private Label label5;
         private Label lblStock;
         private ComboBox cbBuscarProducto;
         private ComboBox cbBuscarCliente;

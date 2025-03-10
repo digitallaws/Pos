@@ -49,7 +49,6 @@ namespace Sopromil.Vista
 
         private async void CargarProveedores()
         {
-            // Solo activos
             proveedoresOriginales = await _proveedorController.ObtenerProveedoresAsync(true);
             MostrarProveedoresEnGrid(proveedoresOriginales);
         }
@@ -114,7 +113,7 @@ namespace Sopromil.Vista
 
             var proveedor = new Proveedor
             {
-                Nombre = txtNombre.Text.Trim(),
+                Nombre = txtNombre.Text.Trim().ToUpper(),
                 IdentificadorFiscal = txtNit.Text.Trim(),
                 Telefono = txtTelefono.Text.Trim(),
                 Direccion = txtDireccion.Text.Trim(),

@@ -7,6 +7,7 @@ namespace Sopromil.Vista.Clientes
     {
         private readonly PagoController _pagoController;
         private int _idCliente;
+        private decimal saldoPendiente; // ✅ Variable para manejar el saldo pendiente actual
 
         public FrmAbono(int idCliente)
         {
@@ -17,13 +18,16 @@ namespace Sopromil.Vista.Clientes
             ConfigurarDataGridView();
             CargarAbonos();
             CargarSaldoPendiente();
+
+            txtAbono.TextChanged += TxtAbono_TextChanged; // ✅ Evento para actualizar saldo en tiempo real
+            btnConfirmar.Enabled = false; // 🔥 Botón deshabilitado hasta ingresar un monto válido
         }
 
         private void ConfigurarDataGridView()
         {
             dtAbonos.AllowUserToAddRows = false;
             dtAbonos.AllowUserToDeleteRows = false;
-            dtAbonos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dtAbonos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dtAbonos.BackgroundColor = Color.White;
             dtAbonos.ReadOnly = true;
             dtAbonos.RowHeadersVisible = false;
@@ -32,22 +36,31 @@ namespace Sopromil.Vista.Clientes
             dtAbonos.DefaultCellStyle.Font = new Font("Arial", 13, FontStyle.Regular);
             dtAbonos.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 13, FontStyle.Bold);
 
-            // 💠 Cambiar color de selección
             dtAbonos.DefaultCellStyle.SelectionBackColor = Color.CornflowerBlue;
             dtAbonos.DefaultCellStyle.SelectionForeColor = Color.White;
+
+            dtAbonos.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dtAbonos.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
             dtAbonos.Columns.Clear();
             dtAbonos.Columns.Add(new DataGridViewTextBoxColumn { Name = "IDPago", HeaderText = "ID Pago", Visible = false });
             dtAbonos.Columns.Add(new DataGridViewTextBoxColumn { Name = "Fecha", HeaderText = "Fecha", Width = 150 });
-            dtAbonos.Columns.Add(new DataGridViewTextBoxColumn { Name = "Monto", HeaderText = "Monto Abonado", Width = 200, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "C2" } });
+
+            dtAbonos.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Monto",
+                HeaderText = "Monto Abonado",
+                Width = 200,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
+            });
         }
 
         private async void CargarSaldoPendiente()
         {
             try
             {
-                decimal saldoPendiente = await _pagoController.ObtenerSaldoPendienteAsync(_idCliente);
-                lblCredito.Text = $"Saldo Pendiente: {saldoPendiente:C2}";
+                saldoPendiente = await _pagoController.ObtenerSaldoPendienteAsync(_idCliente);
+                ActualizarSaldoEnPantalla(); // ✅ Llamamos la función que actualiza el saldo
             }
             catch (Exception ex)
             {
@@ -70,7 +83,7 @@ namespace Sopromil.Vista.Clientes
                 dtAbonos.Rows.Add(
                     abono.IDPago,
                     abono.FechaPago.ToString("dd/MM/yyyy"),
-                    abono.MontoAbonado
+                    abono.MontoAbonado.ToString("N0") // ✅ Mostrar sin decimales y en unidades de mil
                 );
             }
         }
@@ -83,6 +96,12 @@ namespace Sopromil.Vista.Clientes
                 return;
             }
 
+            if (montoAbonado > saldoPendiente)
+            {
+                MessageBox.Show("No puede abonar más de lo que debe.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             bool pagoExitoso = await _pagoController.AplicarPagoAsync(_idCliente, montoAbonado);
 
             if (pagoExitoso)
@@ -90,7 +109,43 @@ namespace Sopromil.Vista.Clientes
                 MessageBox.Show("✅ Pago registrado con éxito.", "Pago Exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 txtAbono.Clear();
                 CargarAbonos(); // 🔥 Recargar la lista de abonos después de confirmar
+                saldoPendiente -= montoAbonado; // ✅ Restamos el abono al saldo actual
+                ActualizarSaldoEnPantalla(); // ✅ Actualizar en pantalla
+                btnConfirmar.Enabled = false; // 🔥 Deshabilitar botón después del pago
             }
+        }
+
+        private void TxtAbono_TextChanged(object sender, EventArgs e)
+        {
+            if (decimal.TryParse(txtAbono.Text.Trim(), out decimal montoAbonado))
+            {
+                decimal nuevoSaldo = saldoPendiente - montoAbonado;
+
+                if (montoAbonado > saldoPendiente)
+                {
+                    lblCredito.Text = $"⚠️ Monto Mayor al del credito";
+                    lblCredito.ForeColor = Color.Red;
+                    btnConfirmar.Enabled = false;
+                }
+                else
+                {
+                    lblCredito.Text = $"Saldo Pendiente: {nuevoSaldo:N0}";
+                    lblCredito.ForeColor = Color.Black;
+                    btnConfirmar.Enabled = montoAbonado > 0;
+                }
+            }
+            else
+            {
+                lblCredito.Text = $"Saldo Pendiente: {saldoPendiente:N0}";
+                lblCredito.ForeColor = Color.Black;
+                btnConfirmar.Enabled = false;
+            }
+        }
+
+        private void ActualizarSaldoEnPantalla()
+        {
+            lblCredito.Text = $"Saldo Pendiente: {saldoPendiente:N0}";
+            lblCredito.ForeColor = Color.Black;
         }
     }
 }

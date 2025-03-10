@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Proveedores));
             panel3 = new Panel();
             dtProveedores = new DataGridView();
             panel6 = new Panel();
             panel5 = new Panel();
             panel4 = new Panel();
+            btnInventario = new Button();
             label1 = new Label();
             txtBuscar = new TextBox();
             pictureBox2 = new PictureBox();
@@ -55,7 +57,6 @@
             lbIdProveedor = new Label();
             panel1 = new Panel();
             label3 = new Label();
-            btnInventario = new Button();
             panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dtProveedores).BeginInit();
             panel4.SuspendLayout();
@@ -121,6 +122,20 @@
             panel4.Name = "panel4";
             panel4.Size = new Size(944, 117);
             panel4.TabIndex = 1;
+            // 
+            // btnInventario
+            // 
+            btnInventario.BackColor = Color.CornflowerBlue;
+            btnInventario.FlatStyle = FlatStyle.Flat;
+            btnInventario.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnInventario.ForeColor = Color.White;
+            btnInventario.Location = new Point(799, 38);
+            btnInventario.Name = "btnInventario";
+            btnInventario.Size = new Size(114, 55);
+            btnInventario.TabIndex = 59;
+            btnInventario.Text = "Inventario";
+            btnInventario.UseVisualStyleBackColor = false;
+            btnInventario.Click += btnInventario_Click;
             // 
             // label1
             // 
@@ -188,6 +203,7 @@
             lbId.Size = new Size(37, 31);
             lbId.TabIndex = 63;
             lbId.Text = "iD";
+            lbId.Visible = false;
             // 
             // txtCiudad
             // 
@@ -372,20 +388,6 @@
             label3.Text = "Proveedores";
             label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // btnInventario
-            // 
-            btnInventario.BackColor = Color.CornflowerBlue;
-            btnInventario.FlatStyle = FlatStyle.Flat;
-            btnInventario.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnInventario.ForeColor = Color.White;
-            btnInventario.Location = new Point(799, 38);
-            btnInventario.Name = "btnInventario";
-            btnInventario.Size = new Size(114, 55);
-            btnInventario.TabIndex = 59;
-            btnInventario.Text = "Inventario";
-            btnInventario.UseVisualStyleBackColor = false;
-            btnInventario.Click += btnInventario_Click;
-            // 
             // Proveedores
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -394,6 +396,7 @@
             Controls.Add(panel3);
             Controls.Add(panel2);
             Controls.Add(panel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Proveedores";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Proveedores";

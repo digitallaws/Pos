@@ -1,11 +1,6 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Modelo;
 using System.Data;
-using System.Linq;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Sopromil.Vista.Inventario
 {
@@ -30,7 +25,7 @@ namespace Sopromil.Vista.Inventario
 
         private void ConfigurarDataGrid()
         {
-            dtInventario.Dock = DockStyle.Fill; // Hace que el DataGridView ocupe todo el panel
+            dtInventario.Dock = DockStyle.Fill;
             dtInventario.AllowUserToAddRows = false;
             dtInventario.AllowUserToDeleteRows = false;
             dtInventario.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -38,21 +33,22 @@ namespace Sopromil.Vista.Inventario
             dtInventario.ReadOnly = true;
             dtInventario.RowHeadersVisible = false;
             dtInventario.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dtInventario.BorderStyle = BorderStyle.None; // Se elimina el borde para mejorar el diseño
+            dtInventario.BorderStyle = BorderStyle.None;
 
             dtInventario.DefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Regular);
             dtInventario.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold);
             dtInventario.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-            // 🔹 Cambiar color de selección
             dtInventario.DefaultCellStyle.SelectionBackColor = Color.CornflowerBlue;
             dtInventario.DefaultCellStyle.SelectionForeColor = Color.White;
         }
 
         private void ConfigurarEventos()
         {
-            txtBuscar.TextChanged += (s, e) => FiltrarInventario();
-            cbProveedores.SelectedIndexChanged += (s, e) => FiltrarInventario();
+            txtBuscar.TextChanged += (s, e) => FiltrarPorTexto();
+            cbProveedores.SelectedIndexChanged += (s, e) => FiltrarPorProveedor();
+            dtInventario.CellClick += DtInventario_CellClick;
+            btnProductos.Click += btnProductos_Click;
         }
 
         #endregion
@@ -83,23 +79,29 @@ namespace Sopromil.Vista.Inventario
             dtInventario.DataSource = null;
             dtInventario.Columns.Clear();
             dtInventario.AutoGenerateColumns = false;
-
+            var colID = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "IDProducto",
+                HeaderText = "IDProducto",
+                Name = "IDProducto",
+                Visible = false
+            };
+            dtInventario.Columns.Add(colID);
             dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "CodigoBarras", HeaderText = "Código" });
-            dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Descripcion", HeaderText = "Nombre" });
-            dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Marca", HeaderText = "Marca" });
-            dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Stock", HeaderText = "Cantidad" });
-            dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "UnidadMedida", HeaderText = "Unidad" });
+            dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Descripcion", HeaderText = "Nombre", Name = "Descripcion", });
+            dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Marca", HeaderText = "Marca", Name = "Marca" });
+            dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Stock", HeaderText = "Cantidad", Name = "Stock" });
+            dtInventario.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "UnidadMedida", HeaderText = "Unidad", Name = "Unidad" });
 
-            // 🔹 Precio de compra formateado con separador de miles
             var colPrecioCompra = new DataGridViewTextBoxColumn
             {
+                Name = "ValorCompra",
                 DataPropertyName = "PrecioCompra",
                 HeaderText = "Valor Unitario",
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "N0", Alignment = DataGridViewContentAlignment.MiddleRight }
             };
             dtInventario.Columns.Add(colPrecioCompra);
 
-            // 🔹 Nueva columna "Valor Total" (Stock * PrecioCompra) formateada con separadores de miles
             var colValorTotal = new DataGridViewTextBoxColumn
             {
                 HeaderText = "Valor Total",
@@ -109,19 +111,52 @@ namespace Sopromil.Vista.Inventario
             };
             dtInventario.Columns.Add(colValorTotal);
 
-            // 🔹 Precio de venta formateado con separador de miles
             var colValorVenta = new DataGridViewTextBoxColumn
             {
+                Name = "ValorVenta",
                 DataPropertyName = "ValorVenta",
                 HeaderText = "Venta",
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "N0", Alignment = DataGridViewContentAlignment.MiddleRight }
             };
             dtInventario.Columns.Add(colValorVenta);
 
-            // Asignar la lista de productos al DataGridView
-            dtInventario.DataSource = productos;
+            var btnHistorial = new DataGridViewButtonColumn
+            {
+                HeaderText = "Historial",
+                Text = "📜",
+                UseColumnTextForButtonValue = true,
+                Name = "btnHistorial",
+                Width = 80
+            };
+            dtInventario.Columns.Add(btnHistorial);
 
-            // Calcular el valor total por cada fila
+            var btnUbicacion = new DataGridViewButtonColumn
+            {
+                HeaderText = "Ubicación",
+                Text = "📍",
+                UseColumnTextForButtonValue = true,
+                Name = "btnUbicacion",
+                Width = 80
+            };
+            dtInventario.Columns.Add(btnUbicacion);
+
+            var productosProcesados = productos
+                .Select(p => new Producto
+                {
+                    IDProducto = p.IDProducto,
+                    CodigoBarras = p.CodigoBarras,
+                    Descripcion = p.Descripcion.ToUpper(),
+                    Marca = p.Marca.ToUpper(),
+                    Stock = p.Stock,
+                    UnidadMedida = p.UnidadMedida.ToUpper(),
+                    PrecioCompra = p.PrecioCompra,
+                    ValorVenta = p.ValorVenta,
+                    IDProveedor = p.IDProveedor
+                })
+                .ToList();
+
+            dtInventario.DataSource = productosProcesados;
+
             foreach (DataGridViewRow row in dtInventario.Rows)
             {
                 if (row.DataBoundItem is Producto producto)
@@ -139,34 +174,61 @@ namespace Sopromil.Vista.Inventario
             {
                 var proveedores = await _proveedorController.ObtenerProveedoresAsync(true);
 
-                cbProveedores.DataSource = null;
+                if (proveedores == null || proveedores.Count == 0)
+                {
+                    Console.WriteLine("⚠️ No se encontraron proveedores.");
+                    return;
+                }
+
+                proveedores.Insert(0, new Proveedor { IDProveedor = 0, Nombre = "Todos" });
+
                 cbProveedores.DataSource = proveedores;
                 cbProveedores.DisplayMember = "Nombre";
                 cbProveedores.ValueMember = "IDProveedor";
-                cbProveedores.SelectedIndex = -1;
+                cbProveedores.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"❌ Error al cargar proveedores: {ex.Message}");
                 MessageBox.Show($"Error al cargar proveedores: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnProductos_Click(object sender, EventArgs e)
+        {
+            var proveedoresForm = new Proveedores();
+            proveedoresForm.Show();
+            this.Hide();
         }
 
         #endregion
 
         #region Funcionalidad de Búsqueda
 
-        private void FiltrarInventario()
+        private void FiltrarPorProveedor()
+        {
+            if (!(cbProveedores.SelectedValue is int idProveedorSeleccionado))
+            {
+                idProveedorSeleccionado = 0; // Si no hay selección, mostrar todos los productos
+            }
+
+            var productosFiltrados = _productosOriginales
+                .Where(p => idProveedorSeleccionado == 0 || p.IDProveedor == idProveedorSeleccionado)
+                .ToList();
+
+            ActualizarTabla(productosFiltrados);
+        }
+
+        private void FiltrarPorTexto()
         {
             string filtro = txtBuscar.Text.Trim().ToLower();
-            int idProveedorSeleccionado = cbProveedores.SelectedIndex > 0 ? (int)cbProveedores.SelectedValue : 0;
 
             var productosFiltrados = _productosOriginales
                 .Where(p =>
-                    (idProveedorSeleccionado == 0 || p.IDProveedor == idProveedorSeleccionado) &&
-                    (string.IsNullOrEmpty(filtro) ||
-                     p.Descripcion.ToLower().Contains(filtro) ||
-                     p.CodigoBarras.ToLower().Contains(filtro) ||
-                     p.Marca.ToLower().Contains(filtro)))
+                    string.IsNullOrEmpty(filtro) ||
+                    p.Descripcion.ToLower().Contains(filtro) ||
+                    p.CodigoBarras.ToLower().Contains(filtro) ||
+                    p.Marca.ToLower().Contains(filtro))
                 .ToList();
 
             ActualizarTabla(productosFiltrados);
@@ -179,17 +241,55 @@ namespace Sopromil.Vista.Inventario
         private void CalcularResumenInventario()
         {
             decimal totalInventario = _productosOriginales.Sum(p => p.PrecioCompra * p.Stock);
-
             lblTotalInventario.Text = $"$ {totalInventario:N0}";
         }
 
         #endregion
-
-        private void btnProductos_Click(object sender, EventArgs e)
+        private void DtInventario_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            Proveedores proveedores = new Proveedores();
-            proveedores.Show();
-            this.Hide();
+            if (e.RowIndex >= 0)
+            {
+                if (dtInventario.Columns[e.ColumnIndex].Name == "btnHistorial")
+                {
+                    // ✅ Verificar si la columna "IDProducto" existe antes de acceder
+                    if (!dtInventario.Columns.Contains("IDProducto"))
+                    {
+                        MessageBox.Show("No se encontró la columna IDProducto.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // ✅ Obtener el IDProducto de manera segura
+                    int idProducto = Convert.ToInt32(dtInventario.Rows[e.RowIndex].Cells["IDProducto"].Value);
+                    string nombreProducto = dtInventario.Rows[e.RowIndex].Cells["Descripcion"].Value.ToString();
+                    string proveedor = dtInventario.Rows[e.RowIndex].Cells["Marca"].Value.ToString();
+                    decimal stock = Convert.ToDecimal(dtInventario.Rows[e.RowIndex].Cells["Stock"].Value);
+                    decimal precioVenta = Convert.ToDecimal(dtInventario.Rows[e.RowIndex].Cells["ValorVenta"].Value);
+                    decimal precioCompra = Convert.ToDecimal(dtInventario.Rows[e.RowIndex].Cells["ValorCompra"].Value);
+
+                    // ✅ Abrir la ventana del historial de precios
+                    FrmInformePrecio frmHistorial = new FrmInformePrecio(idProducto, nombreProducto, proveedor, stock, precioCompra, precioVenta);
+                    frmHistorial.ShowDialog();
+                }
+                else if (dtInventario.Columns[e.ColumnIndex].Name == "btnUbicacion")
+                {
+                    int idProducto = Convert.ToInt32(dtInventario.Rows[e.RowIndex].Cells["IDProducto"].Value);
+                    string nombreProducto = dtInventario.Rows[e.RowIndex].Cells["Descripcion"].Value.ToString();
+
+                    FrmUbicar frmUbicacion = new FrmUbicar(idProducto, nombreProducto);
+                    frmUbicacion.ShowDialog();
+                }
+            }
+        }
+
+        private void btnReportes_Click(object sender, EventArgs e)
+        {
+            FrmReporteInventario frmReporteInventario = new FrmReporteInventario();
+            frmReporteInventario.Show();
+        }
+
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

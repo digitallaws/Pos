@@ -91,6 +91,7 @@ namespace Sopromil.Controlador
                 impresora = string.IsNullOrWhiteSpace(impresora) ? "" : impresora;
                 copiaSeguridad = string.IsNullOrWhiteSpace(copiaSeguridad) ? "" : copiaSeguridad;
                 estado = string.IsNullOrWhiteSpace(estado) ? "" : estado;
+                idUsuario = 1;
 
                 return await _cajaRepository.ConfigurarCajaAsync(descripcion, impresora, copiaSeguridad, estado, idUsuario);
             }

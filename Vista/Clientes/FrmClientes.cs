@@ -18,7 +18,7 @@ namespace Sopromil.Vista.Clientes
             CargarClientes();
 
             txtBuscar.TextChanged += TxtBuscar_TextChanged;
-            btnGuardar.Click += BtnGuardar_Click;
+            btnGuardar.Click += btnGuardar_Click;
             btnActualizar.Click += BtnActualizar_Click;
             dtClientes.CellClick += DtClientes_CellClick;
 
@@ -30,7 +30,7 @@ namespace Sopromil.Vista.Clientes
         {
             dtClientes.AllowUserToAddRows = false;
             dtClientes.AllowUserToDeleteRows = false;
-            dtClientes.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dtClientes.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             dtClientes.BackgroundColor = Color.White;
             dtClientes.ReadOnly = true;
             dtClientes.RowHeadersVisible = false;
@@ -39,7 +39,6 @@ namespace Sopromil.Vista.Clientes
             dtClientes.DefaultCellStyle.Font = new Font("Arial", 13, FontStyle.Regular);
             dtClientes.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 13, FontStyle.Bold);
 
-            // 💠 Cambiar color de selección
             dtClientes.DefaultCellStyle.SelectionBackColor = Color.CornflowerBlue;
             dtClientes.DefaultCellStyle.SelectionForeColor = Color.White;
         }
@@ -63,9 +62,16 @@ namespace Sopromil.Vista.Clientes
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             });
 
+            dtClientes.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Documento",
+                HeaderText = "Documento",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+            });
+
             dtClientes.Columns.Add(new DataGridViewButtonColumn
             {
-                HeaderText = "Editar",
+                HeaderText = "✏Editar",
                 Text = "✏️",
                 UseColumnTextForButtonValue = true,
                 Width = 100
@@ -81,7 +87,7 @@ namespace Sopromil.Vista.Clientes
 
             dtClientes.Columns.Add(new DataGridViewButtonColumn
             {
-                HeaderText = "Compras",
+                HeaderText = "Facturas",
                 Text = "🛒",
                 UseColumnTextForButtonValue = true,
                 Width = 100
@@ -90,7 +96,7 @@ namespace Sopromil.Vista.Clientes
             dtClientes.DataSource = clientes;
         }
 
-        private async void BtnGuardar_Click(object sender, EventArgs e)
+        private async void btnGuardar_Click(object sender, EventArgs e)
         {
             await GuardarClienteAsync();
         }
@@ -110,7 +116,7 @@ namespace Sopromil.Vista.Clientes
 
             var cliente = new Cliente
             {
-                Nombre = txtNombre.Text.Trim(),
+                Nombre = txtNombre.Text.Trim().ToUpper(),
                 Documento = txtDocumento.Text.Trim(),
                 Telefono = txtTelefono.Text.Trim(),
                 Estado = "Activo"
@@ -158,7 +164,7 @@ namespace Sopromil.Vista.Clientes
                     CargarClientes();
                 }
             }
-            else if (dtClientes.Columns[e.ColumnIndex].HeaderText == "Compras")
+            else if (dtClientes.Columns[e.ColumnIndex].HeaderText == "Facturas")
             {
                 FrmComprasCliente frmCompras = new FrmComprasCliente(cliente.IDCliente, cliente.Nombre);
                 frmCompras.ShowDialog();

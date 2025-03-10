@@ -179,7 +179,7 @@ namespace Sopromil.Vista.Ventas
 
             string tipoPago = frmSeleccionTipoPago.TipoPagoSeleccionado;
             DateTime? fechaPagoCredito = null;
-            decimal pagoTotal = 0;
+            decimal montoAbonado = 0;
             bool ventaConfirmada = false;
 
             if (tipoPago == "Crédito")
@@ -193,9 +193,11 @@ namespace Sopromil.Vista.Ventas
             }
             else if (tipoPago == "Contado")
             {
-                FrmPagoContado frmContado = new FrmPagoContado(decimal.Parse(lblTotal.Text.Replace("Total: $ ", "").Replace(",", "")));
+                decimal totalVenta = decimal.Parse(lblTotal.Text.Replace("Total: $ ", "").Replace(",", ""));
+                FrmPagoContado frmContado = new FrmPagoContado(totalVenta);
                 if (frmContado.ShowDialog() == DialogResult.OK && frmContado.VentaConfirmada)
                 {
+                    montoAbonado = totalVenta;
                     ventaConfirmada = true;
                 }
             }
@@ -207,15 +209,19 @@ namespace Sopromil.Vista.Ventas
             }
 
             List<DetalleVenta> detalles = ObtenerDetallesVenta();
+            decimal totalVentaFinal = detalles.Sum(d => d.Total);
 
             Venta nuevaVenta = new Venta
             {
                 IDCliente = int.Parse(lbCliente.Text),
-                TotalVenta = detalles.Sum(d => d.Total),
+                NombreCliente = cbBuscarCliente.Text,
+                TotalVenta = totalVentaFinal,
                 Estado = tipoPago == "Contado" ? "Pagado" : "Pendiente",
                 TipoVenta = tipoPago,
-                FechaEstimadaPago = tipoPago == "Crédito" ? fechaPagoCredito : null
+                FechaEstimadaPago = tipoPago == "Crédito" ? fechaPagoCredito : null,
+                MontoAbonado = montoAbonado
             };
+
 
             try
             {
@@ -253,6 +259,7 @@ namespace Sopromil.Vista.Ventas
                     DetalleVenta detalle = new()
                     {
                         IDProducto = Convert.ToInt32(row.Cells["IDProducto"].Value),
+                        NombreProducto = row.Cells["Nombre"].Value.ToString(),
                         Cantidad = Convert.ToDecimal(row.Cells["Cantidad"].Value),
                         PrecioUnitario = Convert.ToDecimal(row.Cells["PrecioUnitario"].Value),
                     };

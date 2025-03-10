@@ -250,12 +250,12 @@ namespace Sopromil.Data.Repository
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
-                    // 🔹 Si algún campo es nulo, enviamos un string vacío para evitar problemas en SQL
+                    // 🔹 Aseguramos que los valores nulos sean cadenas vacías
                     command.Parameters.AddWithValue("@Descripcion", string.IsNullOrWhiteSpace(descripcion) ? "" : descripcion);
                     command.Parameters.AddWithValue("@Impresora", string.IsNullOrWhiteSpace(impresora) ? "" : impresora);
                     command.Parameters.AddWithValue("@CopiaSeguridad", string.IsNullOrWhiteSpace(copiaSeguridad) ? "" : copiaSeguridad);
                     command.Parameters.AddWithValue("@Estado", string.IsNullOrWhiteSpace(estado) ? "" : estado);
-                    command.Parameters.AddWithValue("@UltimaConfiguracionPor", idUsuario);
+                    command.Parameters.AddWithValue("@IDUsuario", idUsuario); // ✅ CAMBIO AQUÍ: Usar el nombre correcto
 
                     await command.ExecuteNonQueryAsync();
                     return true;
@@ -263,10 +263,11 @@ namespace Sopromil.Data.Repository
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error al configurar la caja: {ex.Message}");
+                MessageBox.Show($"Error al configurar la caja: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
+
 
         /// <summary>
         /// Obtiene la configuración actual de la caja desde la base de datos.

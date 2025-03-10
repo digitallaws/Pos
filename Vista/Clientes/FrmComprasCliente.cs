@@ -1,6 +1,5 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Modelo;
-using System.Drawing;
 
 namespace Sopromil.Vista.Clientes
 {
@@ -26,7 +25,7 @@ namespace Sopromil.Vista.Clientes
 
             txtBuscar.TextChanged += TxtBuscar_TextChanged;
             cbTipoPago.SelectedIndexChanged += CbTipoVenta_SelectedIndexChanged;
-            btnAbonar.Click += BtnAbonar_Click; // 🔥 Evento para abrir FrmAbono
+            btnAbonar.Click += BtnAbonar_Click;
         }
 
         private void ConfigurarDataGridView()
@@ -42,7 +41,6 @@ namespace Sopromil.Vista.Clientes
             dtVentas.DefaultCellStyle.Font = new Font("Arial", 13, FontStyle.Regular);
             dtVentas.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 13, FontStyle.Bold);
 
-            // 💠 Cambiar color de selección
             dtVentas.DefaultCellStyle.SelectionBackColor = Color.CornflowerBlue;
             dtVentas.DefaultCellStyle.SelectionForeColor = Color.White;
 
@@ -57,6 +55,25 @@ namespace Sopromil.Vista.Clientes
                 Width = 100,
                 DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
             });
+
+            // 🔥 Nueva columna Monto Abonado
+            dtVentas.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "MontoAbonado",
+                HeaderText = "Abonado",
+                Width = 100,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
+            });
+
+            // 🔥 Nueva columna Saldo Pendiente
+            dtVentas.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "SaldoPendiente",
+                HeaderText = "Saldo Pendiente",
+                Width = 100,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
+            });
+
             dtVentas.Columns.Add(new DataGridViewTextBoxColumn { Name = "Estado", HeaderText = "Estado", Width = 100 });
 
             DataGridViewButtonColumn btnDetalles = new DataGridViewButtonColumn
@@ -70,7 +87,7 @@ namespace Sopromil.Vista.Clientes
             dtVentas.Columns.Add(btnDetalles);
 
             dtVentas.CellClick += DtVentas_CellClick;
-            dtVentas.CellFormatting += DtVentas_CellFormatting; // 🔥 Evento para cambiar color de fila
+            dtVentas.CellFormatting += DtVentas_CellFormatting;
         }
 
         private void ConfigurarComboBox()
@@ -78,14 +95,15 @@ namespace Sopromil.Vista.Clientes
             cbTipoPago.Items.Add("Todos");
             cbTipoPago.Items.Add("Contado");
             cbTipoPago.Items.Add("Crédito");
-            cbTipoPago.SelectedIndex = 0; // Selecciona "Todos" por defecto
+            cbTipoPago.SelectedIndex = 0;
         }
 
         private async void CargarVentas()
         {
             List<Venta> ventas = await _ventaController.ObtenerVentasPorClienteAsync(_idCliente);
             MostrarVentasEnGrid(ventas);
-            FiltrarVentasPorTipo(); // Aplica el filtro después de cargar los datos
+            FiltrarVentasPorTipo();
+            CalcularEstadisticasCompras();
         }
 
         private void MostrarVentasEnGrid(List<Venta> ventas)
@@ -99,11 +117,13 @@ namespace Sopromil.Vista.Clientes
                     venta.FechaVenta.ToString("dd/MM/yyyy"),
                     venta.TipoVenta,
                     venta.TotalVenta,
+                    venta.MontoAbonado,
+                    venta.SaldoPendiente,
                     venta.Estado
                 );
             }
 
-            CalcularTotalCredito(); // 🔥 Llamamos a esta función para actualizar lblCredito
+            CalcularTotalCredito();
         }
 
         private void TxtBuscar_TextChanged(object sender, EventArgs e)
@@ -127,7 +147,7 @@ namespace Sopromil.Vista.Clientes
 
         private void CbTipoVenta_SelectedIndexChanged(object sender, EventArgs e)
         {
-            FiltrarVentasPorTipo(); // Filtra sin recargar datos
+            FiltrarVentasPorTipo();
         }
 
         private void FiltrarVentasPorTipo()
@@ -152,7 +172,6 @@ namespace Sopromil.Vista.Clientes
                 }
             }
         }
-
         private void DtVentas_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
@@ -160,27 +179,21 @@ namespace Sopromil.Vista.Clientes
             if (dtVentas.Columns[e.ColumnIndex].Name == "Detalles")
             {
                 int idVenta = Convert.ToInt32(dtVentas.Rows[e.RowIndex].Cells["IDVenta"].Value);
-                FrmDetallesVenta detallesVenta = new FrmDetallesVenta(idVenta);
+                FrmDetallesVenta detallesVenta = new FrmDetallesVenta(idVenta, _nombreCliente);
                 detallesVenta.ShowDialog();
             }
         }
 
-        /// <summary>
-        /// Abre el formulario de abonos y actualiza las ventas.
-        /// </summary>
         private void BtnAbonar_Click(object sender, EventArgs e)
         {
             FrmAbono frmAbono = new FrmAbono(_idCliente);
             frmAbono.ShowDialog();
 
-            // Recargar la vista después de abonar
             CargarVentas();
             CalcularTotalCredito();
+            CalcularEstadisticasCompras();
         }
 
-        /// <summary>
-        /// Calcula el total de compras a crédito y lo muestra en lblCredito.
-        /// </summary>
         private void CalcularTotalCredito()
         {
             decimal totalCredito = 0;
@@ -194,9 +207,6 @@ namespace Sopromil.Vista.Clientes
             }
         }
 
-        /// <summary>
-        /// 🔥 Cambia el color de las facturas pagadas a verde.
-        /// </summary>
         private void DtVentas_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.RowIndex >= 0 && dtVentas.Columns[e.ColumnIndex].Name == "Estado")
@@ -217,6 +227,52 @@ namespace Sopromil.Vista.Clientes
                     }
                 }
             }
+        }
+
+        private void CalcularEstadisticasCompras()
+        {
+            decimal totalCreditoPendiente = 0;
+            decimal totalCompraContado = 0;
+            decimal totalCompraCredito = 0;
+            decimal totalCompras = 0;
+
+            foreach (DataGridViewRow row in dtVentas.Rows)
+            {
+                if (row.Cells["TotalVenta"].Value == null || row.Cells["TipoVenta"].Value == null || row.Cells["Estado"].Value == null)
+                    continue;
+
+                decimal totalVenta = Convert.ToDecimal(row.Cells["TotalVenta"].Value);
+                decimal saldoPendiente = Convert.ToDecimal(row.Cells["SaldoPendiente"].Value);
+                string tipoVenta = row.Cells["TipoVenta"].Value.ToString();
+                string estado = row.Cells["Estado"].Value.ToString();
+
+                totalCompras += totalVenta;
+
+                if (tipoVenta == "Contado")
+                {
+                    totalCompraContado += totalVenta;
+                }
+                else if (tipoVenta == "Crédito")
+                {
+                    totalCompraCredito += totalVenta;
+
+                    if (estado == "Pendiente")
+                    {
+                        totalCreditoPendiente += saldoPendiente;
+                    }
+                }
+            }
+
+            lblTotalCreditoPendiente.Text = $"$ {totalCreditoPendiente:N0}";
+            lblCompraDecontado.Text = $"$ {totalCompraContado:N0}";
+            lblCompraCredito.Text = $"$ {totalCompraCredito:N0}";
+            lblTotalCompras.Text = $"$ {totalCompras:N0}";
+        }
+
+
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

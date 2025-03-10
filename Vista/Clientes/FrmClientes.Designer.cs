@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClientes));
             panel3 = new Panel();
             dtClientes = new DataGridView();
             panel6 = new Panel();
@@ -329,6 +330,7 @@
             Controls.Add(panel3);
             Controls.Add(panel2);
             Controls.Add(panel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmClientes";
             Text = "FrmClientes";
             panel3.ResumeLayout(false);

@@ -31,14 +31,12 @@
             panel1 = new Panel();
             label3 = new Label();
             PnlContenedor = new Panel();
-            btnVolver = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
             panel1.BackColor = Color.White;
-            panel1.Controls.Add(btnVolver);
             panel1.Controls.Add(label3);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
@@ -68,15 +66,6 @@
             PnlContenedor.Size = new Size(1159, 525);
             PnlContenedor.TabIndex = 14;
             // 
-            // btnVolver
-            // 
-            btnVolver.Location = new Point(33, 40);
-            btnVolver.Name = "btnVolver";
-            btnVolver.Size = new Size(97, 49);
-            btnVolver.TabIndex = 6;
-            btnVolver.Text = "Atras";
-            btnVolver.UseVisualStyleBackColor = true;
-            // 
             // Reportes
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -94,6 +83,5 @@
         private Panel panel1;
         private Label label3;
         private Panel PnlContenedor;
-        private Button btnVolver;
     }
 }

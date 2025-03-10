@@ -11,7 +11,6 @@
             InitializeComponent();
             ConfigurarTableLayout();
             CargarModulosReportes();
-            btnVolver.Visible = false;
         }
 
         private void ConfigurarTableLayout()
@@ -53,11 +52,7 @@
             var reportes = new Dictionary<string, Bitmap>
             {
                 { "Ventas", Properties.Resources.venta_al_por_mayor },
-                { "Inventario", Properties.Resources.inventario },
-                { "Cuentas por Cobrar", Properties.Resources.cliente },
                 { "Compras", Properties.Resources.folder },
-                { "Caja", Properties.Resources.supervision },
-                { "Utilidad", Properties.Resources.supervision }
             };
 
             int index = 0;
@@ -125,7 +120,6 @@
             PnlContenedor.Controls.Clear();
             PnlContenedor.Controls.Add(tableLayoutPanel);
 
-            btnVolver.Visible = false;
         }
 
         private void CargarFormularioReporte(string reporte)
@@ -138,11 +132,7 @@
             activeForm = reporte switch
             {
                 "Ventas" => new FrmReporteVentas(),
-                "Inventario" => new FrmReporteInventario(),
-                "Cuentas por Cobrar" => new FrmReporteCuentasPorCobrar(),
                 "Compras" => new FrmReporteCompras(),
-                "Caja" => new FrmReporteCaja(),
-                "Utilidad" => new FrmReporteUtilidad(),
                 _ => null
             };
 
@@ -156,7 +146,6 @@
             activeForm.FormBorderStyle = FormBorderStyle.None;
             activeForm.Dock = DockStyle.Fill;
 
-            btnVolver.Visible = true;
 
             PnlContenedor.Controls.Clear();
             PnlContenedor.Controls.Add(tableLayoutPanel);

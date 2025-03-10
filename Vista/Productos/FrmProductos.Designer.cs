@@ -31,21 +31,22 @@
             panel3 = new Panel();
             dtCompra = new DataGridView();
             panel6 = new Panel();
+            lblFlete = new Label();
             lblUtilidad = new Label();
             lblVenta = new Label();
+            label12 = new Label();
             label18 = new Label();
             label16 = new Label();
             lblCompra = new Label();
             label14 = new Label();
             panel2 = new Panel();
             panel5 = new Panel();
-            lblFlete = new Label();
-            label15 = new Label();
-            label12 = new Label();
             btnRegistrar = new Button();
-            txtGeneral = new TextBox();
             btnAgregar = new Button();
             panel4 = new Panel();
+            lblPrecioVenta = new Label();
+            btnLimpiar = new Button();
+            lbPrecioCompraAnterior = new Label();
             lbIdProducto = new Label();
             txtNombre = new TextBox();
             lstResultados = new ListBox();
@@ -72,8 +73,8 @@
             label10 = new Label();
             label8 = new Label();
             panel1 = new Panel();
+            btnVolver = new Button();
             label3 = new Label();
-            lbPrecioCompraAnterior = new Label();
             panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dtCompra).BeginInit();
             panel6.SuspendLayout();
@@ -93,7 +94,7 @@
             panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(0, 114);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1590, 758);
+            panel3.Size = new Size(1655, 773);
             panel3.TabIndex = 8;
             // 
             // dtCompra
@@ -110,29 +111,42 @@
             dtCompra.ReadOnly = true;
             dtCompra.RowHeadersVisible = false;
             dtCompra.RowHeadersWidth = 51;
-            dtCompra.Size = new Size(1205, 363);
+            dtCompra.Size = new Size(1270, 378);
             dtCompra.TabIndex = 9;
             // 
             // panel6
             // 
+            panel6.Controls.Add(lblFlete);
             panel6.Controls.Add(lblUtilidad);
             panel6.Controls.Add(lblVenta);
+            panel6.Controls.Add(label12);
             panel6.Controls.Add(label18);
             panel6.Controls.Add(label16);
             panel6.Controls.Add(lblCompra);
             panel6.Controls.Add(label14);
             panel6.Dock = DockStyle.Bottom;
-            panel6.Location = new Point(174, 601);
+            panel6.Location = new Point(174, 616);
             panel6.Name = "panel6";
-            panel6.Size = new Size(1205, 157);
+            panel6.Size = new Size(1270, 157);
             panel6.TabIndex = 8;
+            // 
+            // lblFlete
+            // 
+            lblFlete.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            lblFlete.AutoSize = true;
+            lblFlete.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFlete.Location = new Point(792, 60);
+            lblFlete.Name = "lblFlete";
+            lblFlete.Size = new Size(45, 29);
+            lblFlete.TabIndex = 83;
+            lblFlete.Text = "$ 0";
             // 
             // lblUtilidad
             // 
             lblUtilidad.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             lblUtilidad.AutoSize = true;
             lblUtilidad.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblUtilidad.Location = new Point(1037, 112);
+            lblUtilidad.Location = new Point(1102, 112);
             lblUtilidad.Name = "lblUtilidad";
             lblUtilidad.Size = new Size(45, 29);
             lblUtilidad.TabIndex = 81;
@@ -143,18 +157,29 @@
             lblVenta.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             lblVenta.AutoSize = true;
             lblVenta.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblVenta.Location = new Point(1039, 72);
+            lblVenta.Location = new Point(1104, 72);
             lblVenta.Name = "lblVenta";
             lblVenta.Size = new Size(45, 29);
             lblVenta.TabIndex = 80;
             lblVenta.Text = "$ 0";
+            // 
+            // label12
+            // 
+            label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            label12.AutoSize = true;
+            label12.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label12.Location = new Point(752, 29);
+            label12.Name = "label12";
+            label12.Size = new Size(127, 31);
+            label12.TabIndex = 82;
+            label12.Text = "Flete Total:";
             // 
             // label18
             // 
             label18.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label18.AutoSize = true;
             label18.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label18.Location = new Point(873, 110);
+            label18.Location = new Point(938, 110);
             label18.Name = "label18";
             label18.Size = new Size(158, 31);
             label18.TabIndex = 79;
@@ -165,7 +190,7 @@
             label16.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label16.AutoSize = true;
             label16.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label16.Location = new Point(873, 70);
+            label16.Location = new Point(938, 70);
             label16.Name = "label16";
             label16.Size = new Size(136, 31);
             label16.TabIndex = 77;
@@ -176,7 +201,7 @@
             lblCompra.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             lblCompra.AutoSize = true;
             lblCompra.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCompra.Location = new Point(1039, 29);
+            lblCompra.Location = new Point(1104, 29);
             lblCompra.Name = "lblCompra";
             lblCompra.Size = new Size(45, 29);
             lblCompra.TabIndex = 76;
@@ -187,7 +212,7 @@
             label14.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label14.AutoSize = true;
             label14.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label14.Location = new Point(873, 29);
+            label14.Location = new Point(938, 29);
             label14.Name = "label14";
             label14.Size = new Size(160, 31);
             label14.TabIndex = 75;
@@ -198,54 +223,18 @@
             panel2.Dock = DockStyle.Left;
             panel2.Location = new Point(0, 238);
             panel2.Name = "panel2";
-            panel2.Size = new Size(174, 520);
+            panel2.Size = new Size(174, 535);
             panel2.TabIndex = 7;
             // 
             // panel5
             // 
-            panel5.Controls.Add(lblFlete);
-            panel5.Controls.Add(label15);
-            panel5.Controls.Add(label12);
             panel5.Controls.Add(btnRegistrar);
-            panel5.Controls.Add(txtGeneral);
             panel5.Controls.Add(btnAgregar);
             panel5.Dock = DockStyle.Right;
-            panel5.Location = new Point(1379, 238);
+            panel5.Location = new Point(1444, 238);
             panel5.Name = "panel5";
-            panel5.Size = new Size(211, 520);
+            panel5.Size = new Size(211, 535);
             panel5.TabIndex = 3;
-            // 
-            // lblFlete
-            // 
-            lblFlete.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            lblFlete.AutoSize = true;
-            lblFlete.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFlete.Location = new Point(55, 238);
-            lblFlete.Name = "lblFlete";
-            lblFlete.Size = new Size(45, 29);
-            lblFlete.TabIndex = 83;
-            lblFlete.Text = "$ 0";
-            // 
-            // label15
-            // 
-            label15.AutoSize = true;
-            label15.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label15.Location = new Point(30, 109);
-            label15.Name = "label15";
-            label15.Size = new Size(156, 31);
-            label15.TabIndex = 78;
-            label15.Text = "Flete General:";
-            // 
-            // label12
-            // 
-            label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            label12.AutoSize = true;
-            label12.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label12.Location = new Point(20, 197);
-            label12.Name = "label12";
-            label12.Size = new Size(179, 31);
-            label12.TabIndex = 82;
-            label12.Text = "Flete Individual:";
             // 
             // btnRegistrar
             // 
@@ -260,24 +249,13 @@
             btnRegistrar.Text = "Finalizar Registro";
             btnRegistrar.UseVisualStyleBackColor = false;
             // 
-            // txtGeneral
-            // 
-            txtGeneral.BackColor = Color.White;
-            txtGeneral.BorderStyle = BorderStyle.FixedSingle;
-            txtGeneral.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtGeneral.Location = new Point(6, 143);
-            txtGeneral.Name = "txtGeneral";
-            txtGeneral.Size = new Size(193, 38);
-            txtGeneral.TabIndex = 78;
-            txtGeneral.TextAlign = HorizontalAlignment.Center;
-            // 
             // btnAgregar
             // 
             btnAgregar.BackColor = Color.CornflowerBlue;
             btnAgregar.FlatStyle = FlatStyle.Flat;
             btnAgregar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnAgregar.ForeColor = Color.White;
-            btnAgregar.Location = new Point(32, 30);
+            btnAgregar.Location = new Point(30, 21);
             btnAgregar.Name = "btnAgregar";
             btnAgregar.Size = new Size(154, 55);
             btnAgregar.TabIndex = 56;
@@ -286,6 +264,8 @@
             // 
             // panel4
             // 
+            panel4.Controls.Add(lblPrecioVenta);
+            panel4.Controls.Add(btnLimpiar);
             panel4.Controls.Add(lbPrecioCompraAnterior);
             panel4.Controls.Add(lbIdProducto);
             panel4.Controls.Add(txtNombre);
@@ -315,8 +295,43 @@
             panel4.Dock = DockStyle.Top;
             panel4.Location = new Point(0, 0);
             panel4.Name = "panel4";
-            panel4.Size = new Size(1590, 238);
+            panel4.Size = new Size(1655, 238);
             panel4.TabIndex = 1;
+            // 
+            // lblPrecioVenta
+            // 
+            lblPrecioVenta.AutoSize = true;
+            lblPrecioVenta.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblPrecioVenta.Location = new Point(1274, 95);
+            lblPrecioVenta.Name = "lblPrecioVenta";
+            lblPrecioVenta.Size = new Size(37, 31);
+            lblPrecioVenta.TabIndex = 83;
+            lblPrecioVenta.Text = "iD";
+            lblPrecioVenta.Visible = false;
+            // 
+            // btnLimpiar
+            // 
+            btnLimpiar.BackColor = Color.CornflowerBlue;
+            btnLimpiar.FlatStyle = FlatStyle.Flat;
+            btnLimpiar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnLimpiar.ForeColor = Color.White;
+            btnLimpiar.Location = new Point(1541, 41);
+            btnLimpiar.Name = "btnLimpiar";
+            btnLimpiar.Size = new Size(89, 51);
+            btnLimpiar.TabIndex = 82;
+            btnLimpiar.Text = "Limpiar";
+            btnLimpiar.UseVisualStyleBackColor = false;
+            // 
+            // lbPrecioCompraAnterior
+            // 
+            lbPrecioCompraAnterior.AutoSize = true;
+            lbPrecioCompraAnterior.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbPrecioCompraAnterior.Location = new Point(515, 20);
+            lbPrecioCompraAnterior.Name = "lbPrecioCompraAnterior";
+            lbPrecioCompraAnterior.Size = new Size(37, 31);
+            lbPrecioCompraAnterior.TabIndex = 81;
+            lbPrecioCompraAnterior.Text = "iD";
+            lbPrecioCompraAnterior.Visible = false;
             // 
             // lbIdProducto
             // 
@@ -577,12 +592,23 @@
             // panel1
             // 
             panel1.BackColor = Color.White;
+            panel1.Controls.Add(btnVolver);
             panel1.Controls.Add(label3);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1590, 114);
+            panel1.Size = new Size(1655, 114);
             panel1.TabIndex = 9;
+            // 
+            // btnVolver
+            // 
+            btnVolver.Location = new Point(58, 40);
+            btnVolver.Name = "btnVolver";
+            btnVolver.Size = new Size(97, 49);
+            btnVolver.TabIndex = 7;
+            btnVolver.Text = "Atras";
+            btnVolver.UseVisualStyleBackColor = true;
+            btnVolver.Click += btnVolver_Click;
             // 
             // label3
             // 
@@ -592,27 +618,16 @@
             label3.ForeColor = Color.White;
             label3.Location = new Point(0, 0);
             label3.Name = "label3";
-            label3.Size = new Size(1590, 114);
+            label3.Size = new Size(1655, 114);
             label3.TabIndex = 1;
             label3.Text = "Registrar Productos";
             label3.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbPrecioCompraAnterior
-            // 
-            lbPrecioCompraAnterior.AutoSize = true;
-            lbPrecioCompraAnterior.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbPrecioCompraAnterior.Location = new Point(536, 18);
-            lbPrecioCompraAnterior.Name = "lbPrecioCompraAnterior";
-            lbPrecioCompraAnterior.Size = new Size(37, 31);
-            lbPrecioCompraAnterior.TabIndex = 81;
-            lbPrecioCompraAnterior.Text = "iD";
-            lbPrecioCompraAnterior.Visible = false;
             // 
             // FrmProductos
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1590, 872);
+            ClientSize = new Size(1655, 887);
             Controls.Add(panel3);
             Controls.Add(panel1);
             Name = "FrmProductos";
@@ -624,7 +639,6 @@
             panel6.ResumeLayout(false);
             panel6.PerformLayout();
             panel5.ResumeLayout(false);
-            panel5.PerformLayout();
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
             panel1.ResumeLayout(false);
@@ -673,11 +687,12 @@
         private ComboBox txtCodigo;
         private Label label12;
         private Label lblFlete;
-        private Label label15;
-        private TextBox txtGeneral;
         private ListBox lstResultados;
         private TextBox txtNombre;
         private Label lbIdProducto;
         private Label lbPrecioCompraAnterior;
+        private Button btnLimpiar;
+        private Label lblPrecioVenta;
+        private Button btnVolver;
     }
 }

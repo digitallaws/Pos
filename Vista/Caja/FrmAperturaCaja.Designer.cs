@@ -43,7 +43,7 @@
             // 
             // label3
             // 
-            label3.BackColor = Color.DodgerBlue;
+            label3.BackColor = Color.CornflowerBlue;
             label3.Dock = DockStyle.Top;
             label3.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.White;
@@ -85,7 +85,7 @@
             // 
             // btnActualizar
             // 
-            btnActualizar.BackColor = Color.DodgerBlue;
+            btnActualizar.BackColor = Color.CornflowerBlue;
             btnActualizar.FlatStyle = FlatStyle.Popup;
             btnActualizar.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnActualizar.ForeColor = Color.White;

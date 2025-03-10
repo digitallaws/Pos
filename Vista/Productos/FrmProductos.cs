@@ -38,7 +38,6 @@ namespace Sopromil.Vista.Productos
             lstResultados.Width = txtNombre.Width;
         }
 
-
         #region Configuración Inicial
 
         private void ConfigurarDataGrid()
@@ -61,11 +60,20 @@ namespace Sopromil.Vista.Productos
         private void ConfigurarFecha()
         {
             txtFecha.Format = DateTimePickerFormat.Custom;
+            txtFecha.CustomFormat = " "; // Inicialmente vacío
+            txtFecha.ValueChanged += TxtFecha_ValueChanged; // Manejar cambios de valor
+        }
+
+        private void TxtFecha_ValueChanged(object sender, EventArgs e)
+        {
+            // Establecer el formato correcto cuando el usuario selecciona una fecha
             txtFecha.CustomFormat = "dddd, dd MMMM yyyy";
         }
 
         private void ConfigurarEventos()
         {
+            txtNombre.Click += (s, e) => lstResultados.Visible = false;
+
             txtNombre.TextChanged += BuscarProductos;
             txtCodigo.TextChanged += BuscarProductos;
 
@@ -75,11 +83,13 @@ namespace Sopromil.Vista.Productos
             btnAgregar.Click += btnAgregar_Click;
             btnRegistrar.Click += btnRegistrar_Click;
             dtCompra.CellClick += DtCompra_CellClick;
+            btnLimpiar.Click += BtnLimpiar_Click;
 
             txtCompra.TextChanged += (s, e) => CalcularValorVenta();
             txtFlete.TextChanged += (s, e) => CalcularValorVenta();
             txtUtilidad.TextChanged += (s, e) => CalcularValorVenta();
             txtCantidad.TextChanged += (s, e) => CalcularValorVenta();
+
         }
 
         private void CargarProductoEnFormulario(Producto producto)
@@ -87,6 +97,7 @@ namespace Sopromil.Vista.Productos
             lbIdProducto.Text = producto.IDProducto.ToString();
 
             lbPrecioCompraAnterior.Text = producto.PrecioCompra.ToString("N2");
+            lblPrecioVenta.Text = producto.ValorVenta.ToString("N2");
 
             txtNombre.Text = producto.Descripcion;
             txtMarca.Text = producto.Marca;
@@ -101,7 +112,6 @@ namespace Sopromil.Vista.Productos
             }
 
             txtCodigo.Text = producto.CodigoBarras;
-            txtFecha.Value = producto.FechaVencimiento ?? DateTime.Today;
             txtCompra.Text = producto.PrecioCompra.ToString("N0");
             txtFlete.Text = producto.Flete.ToString("N0");
             txtUtilidad.Text = producto.Utilidad.ToString("N0");
@@ -121,6 +131,10 @@ namespace Sopromil.Vista.Productos
         #endregion
 
         #region Eventos
+        private void BtnLimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarCamposProducto();
+        }
 
         private void LstResultados_Click(object sender, EventArgs e)
         {
@@ -149,7 +163,7 @@ namespace Sopromil.Vista.Productos
                 // Crear objeto de compra
                 var compra = new Compra
                 {
-                    IDProveedor = _idProveedor,
+                    IDProveedor = int.Parse(lbId.Text),
                     TotalCompra = totalCompra,
                     Flete = fleteTotal,
                     Estado = "Finalizada"
@@ -168,7 +182,13 @@ namespace Sopromil.Vista.Productos
 
                 foreach (var producto in _productosSeleccionados)
                 {
-                    producto.IDProveedor = _idProveedor;
+                    producto.IDProveedor = int.Parse(lbId.Text);
+
+                    // 🔥 Ajustar Código de Barras a NULL si está vacío o tiene solo espacios
+                    if (string.IsNullOrWhiteSpace(producto.CodigoBarras))
+                    {
+                        producto.CodigoBarras = null;
+                    }
 
                     if (producto.IDProducto == 0)
                     {
@@ -186,6 +206,7 @@ namespace Sopromil.Vista.Productos
                 _productosSeleccionados.Clear();
                 MostrarProductosSeleccionados();
                 CalcularTotales();
+                LimpiarCamposProducto();
             }
             catch (Exception ex)
             {
@@ -193,12 +214,19 @@ namespace Sopromil.Vista.Productos
             }
         }
 
+
         private void BuscarProductos(object sender, EventArgs e)
         {
             AjustarPosicionListBox();
 
             string filtroNombre = txtNombre.Text.Trim().ToLower();
             string filtroCodigo = txtCodigo.Text.Trim().ToLower();
+
+            if (filtroNombre.Length < 3 && filtroCodigo.Length < 3)
+            {
+                lstResultados.Visible = false;
+                return;
+            }
 
             var productosFiltrados = _productosOriginales
                 .Where(p =>
@@ -220,7 +248,7 @@ namespace Sopromil.Vista.Productos
             }
         }
 
-        private void btnAgregar_Click(object sender, EventArgs e)
+        private async void btnAgregar_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtNombre.Text))
             {
@@ -245,6 +273,11 @@ namespace Sopromil.Vista.Productos
 
             decimal valorVenta = precioCompra + flete + utilidad;
 
+            // Claves de identificación: Nombre, Marca, Código
+            string nombre = txtNombre.Text.Trim().ToUpper();
+            string marca = txtMarca.Text.Trim().ToUpper();
+            string codigo = txtCodigo.Text.Trim().ToUpper();
+
             // Verificamos si hay un ID de producto en lbIdProducto
             int idProducto = 0;
             if (int.TryParse(lbIdProducto.Text, out int id) && id > 0)
@@ -253,22 +286,38 @@ namespace Sopromil.Vista.Productos
             }
 
             // ✅ Verificar si el producto ya está en la lista
-            var productoExistente = _productosSeleccionados.FirstOrDefault(p => p.IDProducto == idProducto);
+            var productoExistente = _productosSeleccionados.FirstOrDefault(p =>
+                p.Descripcion.ToUpper() == nombre &&
+                p.Marca.ToUpper() == marca &&
+                p.CodigoBarras.ToUpper() == codigo);
+
+            // ✅ Validar la fecha antes de asignarla
+            DateTime? fechaVencimiento = null;
+            if (txtFecha.CustomFormat != " " && txtFecha.Value != DateTime.Today)
+            {
+                fechaVencimiento = txtFecha.Value; // Solo se asigna si fue modificada
+            }
+
             if (productoExistente != null)
             {
-                productoExistente.Stock += cantidad; // Solo sumamos stock
+                // Si ya existe, actualizar los valores
+                productoExistente.Stock = cantidad;
+                productoExistente.PrecioCompra = precioCompra;
+                productoExistente.Flete = flete;
+                productoExistente.Utilidad = utilidad;
+                productoExistente.ValorVenta = valorVenta;
+                productoExistente.FechaVencimiento = fechaVencimiento;
             }
             else
             {
-                // Si no existe, lo agregamos como nuevo
-                var productoSeleccionado = new Producto
+                var nuevoProducto = new Producto
                 {
                     IDProducto = idProducto,
-                    Descripcion = txtNombre.Text.Trim(),
-                    Marca = txtMarca.Text.Trim(),
+                    Descripcion = nombre,
+                    Marca = marca,
                     UnidadMedida = txtUnMedida.SelectedItem?.ToString(),
-                    CodigoBarras = txtCodigo.Text.Trim(),
-                    FechaVencimiento = txtFecha.Value,
+                    CodigoBarras = codigo,
+                    FechaVencimiento = fechaVencimiento,
                     PrecioCompra = precioCompra,
                     Flete = flete,
                     Utilidad = utilidad,
@@ -277,29 +326,57 @@ namespace Sopromil.Vista.Productos
                     Estado = "Activo"
                 };
 
-                _productosSeleccionados.Add(productoSeleccionado);
-            }
-
-            // 🔍 Verificar si hubo cambio de precio y registrar en historial
-            if (idProducto > 0 && decimal.TryParse(lbPrecioCompraAnterior.Text, out decimal precioCompraAnterior))
-            {
-                if (precioCompraAnterior != precioCompra)
+                if (decimal.TryParse(lbPrecioCompraAnterior.Text, out decimal precioCompraAnterior) &&
+                    decimal.TryParse(lblPrecioVenta.Text, out decimal precioVentaAnterior))
                 {
-                    RegistrarCambioPrecio(idProducto, precioCompraAnterior, precioCompra, "Cambio de precio al agregar al inventario");
+                    if (lbIdProducto.Text != "0" && (precioCompraAnterior != precioCompra || precioVentaAnterior != valorVenta))
+                    {
+                        await RegistrarCambioPrecio(idProducto, precioCompraAnterior, precioCompra, precioVentaAnterior, valorVenta, "Nuevo producto agregado al inventario");
+                    }
                 }
+
+
+                _productosSeleccionados.Add(nuevoProducto);
             }
 
             MostrarProductosSeleccionados();
             CalcularTotales();
             LimpiarCamposProducto();
         }
+
         private void DtCompra_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && dtCompra.Columns[e.ColumnIndex].HeaderText == "Eliminar")
+            if (e.RowIndex < 0) return; // Evitar errores si se hace clic en el encabezado
+
+            // Si el usuario hace clic en el botón "Editar"
+            if (dtCompra.Columns[e.ColumnIndex].Name == "Editar")
             {
-                _productosSeleccionados.RemoveAt(e.RowIndex);
-                MostrarProductosSeleccionados();
-                CalcularTotales();
+                var productoSeleccionado = _productosSeleccionados[e.RowIndex];
+
+                lbIdProducto.Text = productoSeleccionado.IDProducto.ToString();
+                txtNombre.Text = productoSeleccionado.Descripcion;
+                txtMarca.Text = productoSeleccionado.Marca;
+                txtUnMedida.Text = productoSeleccionado.UnidadMedida;
+                txtCodigo.Text = productoSeleccionado.CodigoBarras;
+                txtCompra.Text = productoSeleccionado.PrecioCompra.ToString("N0");
+                txtFlete.Text = productoSeleccionado.Flete.ToString("N0");
+                txtUtilidad.Text = productoSeleccionado.Utilidad.ToString("N0");
+
+                CalcularValorVenta();
+            }
+
+            // Si el usuario hace clic en el botón "Eliminar"
+            else if (dtCompra.Columns[e.ColumnIndex].Name == "Eliminar")
+            {
+                var confirmacion = MessageBox.Show("¿Está seguro de eliminar este producto?", "Confirmar eliminación",
+                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (confirmacion == DialogResult.Yes)
+                {
+                    _productosSeleccionados.RemoveAt(e.RowIndex);
+                    MostrarProductosSeleccionados();
+                    CalcularTotales();
+                }
             }
         }
 
@@ -369,17 +446,52 @@ namespace Sopromil.Vista.Productos
             dtCompra.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Marca", HeaderText = "Marca" });
             dtCompra.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "UnidadMedida", HeaderText = "Unidad" });
             dtCompra.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "CodigoBarras", HeaderText = "Código" });
-            dtCompra.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Stock", HeaderText = "Cantidad" });
-            dtCompra.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "PrecioCompra", HeaderText = "Compra" });
-            dtCompra.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "ValorVenta", HeaderText = "Venta" });
 
-            dtCompra.Columns.Add(new DataGridViewButtonColumn
+            var colCantidad = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Stock",
+                HeaderText = "Cantidad",
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "N0", Alignment = DataGridViewContentAlignment.MiddleRight }
+            };
+            dtCompra.Columns.Add(colCantidad);
+
+            var colCompra = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "PrecioCompra",
+                HeaderText = "Compra",
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "N0", Alignment = DataGridViewContentAlignment.MiddleRight }
+            };
+            dtCompra.Columns.Add(colCompra);
+
+            var colVenta = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "ValorVenta",
+                HeaderText = "Venta",
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "N0", Alignment = DataGridViewContentAlignment.MiddleRight }
+            };
+            dtCompra.Columns.Add(colVenta);
+
+            // 🔹 Botón Editar
+            var btnEditar = new DataGridViewButtonColumn
+            {
+                HeaderText = "Editar",
+                Name = "Editar",
+                Text = "✏️",
+                UseColumnTextForButtonValue = true,
+                Width = 80
+            };
+            dtCompra.Columns.Add(btnEditar);
+
+            // 🔹 Botón Eliminar
+            var btnEliminar = new DataGridViewButtonColumn
             {
                 HeaderText = "Eliminar",
+                Name = "Eliminar",
                 Text = "❌",
                 UseColumnTextForButtonValue = true,
                 Width = 80
-            });
+            };
+            dtCompra.Columns.Add(btnEliminar);
 
             dtCompra.DataSource = _productosSeleccionados;
         }
@@ -388,7 +500,29 @@ namespace Sopromil.Vista.Productos
 
         #region Utilidades
 
-        private async Task RegistrarCambioPrecio(int idProducto, decimal precioAnterior, decimal precioNuevo, string motivo)
+        private void LimpiarCamposProducto()
+        {
+            lbIdProducto.Text = "0";
+            txtNombre.Clear();
+            txtMarca.Clear();
+            txtCodigo.SelectedIndex = -1;
+            txtCodigo.Text = "";
+            txtCantidad.Clear();
+            txtCompra.Clear();
+            txtFlete.Clear();
+            txtUtilidad.Clear();
+            txtVenta.Clear();
+
+            // Limpiar DateTimePicker (dejándolo visualmente vacío)
+            txtFecha.CustomFormat = " ";
+            txtFecha.Format = DateTimePickerFormat.Custom;
+
+            txtUnMedida.SelectedIndex = -1;
+            lbPrecioCompraAnterior.Text = "0";
+        }
+
+
+        private async Task RegistrarCambioPrecio(int idProducto, decimal precioAnterior, decimal precioNuevo, decimal PrecioVentaAnterior, decimal PrecioVentaNuevo, string motivo)
         {
             var historialController = new HistorialPreciosController();
 
@@ -397,8 +531,8 @@ namespace Sopromil.Vista.Productos
                 IDProducto = idProducto,
                 PrecioCompraAnterior = precioAnterior,
                 PrecioCompraNuevo = precioNuevo,
-                PrecioVentaAnterior = 0, // No lo usamos aquí
-                PrecioVentaNuevo = 0, // No lo usamos aquí
+                PrecioVentaAnterior = PrecioVentaAnterior,
+                PrecioVentaNuevo = PrecioVentaNuevo,
                 Motivo = motivo
             };
 
@@ -411,20 +545,12 @@ namespace Sopromil.Vista.Productos
             decimal totalVenta = _productosSeleccionados.Sum(p => p.ValorVenta * p.Stock);
             decimal totalFlete = _productosSeleccionados.Sum(p => p.Flete * p.Stock);
 
-            // Asegurarnos de que txtGeneral siempre sea un número válido
-            if (!decimal.TryParse(txtGeneral.Text, out decimal generalFlete))
-            {
-                generalFlete = 0;
-                txtGeneral.Text = "0";  // Si está vacío o no es un número, lo establecemos en 0
-            }
+            decimal totalUtilidad = totalVenta - totalCompra - totalFlete;
 
-            // Cálculo de la utilidad neta: totalVenta - totalCompra - generalFlete
-            decimal totalUtilidad = totalVenta - totalCompra - generalFlete;
-
-            lblCompra.Text = totalCompra.ToString("N0");
-            lblVenta.Text = totalVenta.ToString("N0");
-            lblUtilidad.Text = totalUtilidad.ToString("N0");
-            lblFlete.Text = totalFlete.ToString("N0");
+            lblCompra.Text = $"$ {totalCompra.ToString("N0")}";
+            lblVenta.Text = $"$ {totalVenta.ToString("N0")}";
+            lblUtilidad.Text = $"$ {totalUtilidad.ToString("N0")}";
+            lblFlete.Text = $"$ {totalFlete.ToString("N0")}";
         }
 
         private void CalcularValorVenta()
@@ -442,19 +568,11 @@ namespace Sopromil.Vista.Productos
             }
         }
 
-        private void LimpiarCamposProducto()
-        {
-            txtNombre.Clear();
-            txtMarca.Clear();
-            txtCodigo.SelectedIndex = -1;
-            txtCantidad.Clear();
-            txtCompra.Clear();
-            txtFlete.Clear();
-            txtUtilidad.Clear();
-            txtVenta.Clear();
-            txtFecha.Value = DateTime.Today;
-        }
-
         #endregion
+
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

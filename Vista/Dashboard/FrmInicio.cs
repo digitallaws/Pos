@@ -1,8 +1,5 @@
 ﻿using Sopromil.Controlador;
-using Sopromil.Modelo;
-using Sopromil.Vista.Caja;
 using Sopromil.Vista.Clientes;
-using Sopromil.Vista.Empresa;
 using Sopromil.Vista.Ventas;
 
 namespace Sopromil.Vista.Dashboard
@@ -66,7 +63,8 @@ namespace Sopromil.Vista.Dashboard
                 { "Ventas", Properties.Resources.venta_al_por_mayor },
                 { "Usuarios", Properties.Resources.user },
                 { "Configuracion", Properties.Resources.settings },
-                { "Reportes", Properties.Resources.analisis_de_negocios }
+                { "Reportes", Properties.Resources.analisis_de_negocios },
+                { "Pedido", Properties.Resources.supervision },
             };
 
             int index = 0;
@@ -153,6 +151,7 @@ namespace Sopromil.Vista.Dashboard
                 "Usuarios" => new Usuarios.Usuarios(),
                 "Configuracion" => new Configuracion.Configuracion(),
                 "Reportes" => new Reportes.Reportes(),
+                "Pedido" => new Pedidos.FrmPedidoCompra(),
                 _ => null
             };
 
@@ -176,20 +175,9 @@ namespace Sopromil.Vista.Dashboard
             activeForm.Show();
         }
 
-        private async Task<bool> VerificarCajaAbierta()
+        private void button1_Click(object sender, EventArgs e)
         {
-            //var cajaAbierta = await _cajaController.ObtenerCajaAbiertaAsync();
-            //if (cajaAbierta != null) return true;
-
-            var frmApertura = new FrmAperturaCaja();
-            if (frmApertura.ShowDialog() == DialogResult.OK && frmApertura.CajaAbierta)
-            {
-                await _cajaController.AbrirCajaAsync(SesionActual.IDUsuario, frmApertura.SaldoInicial);
-                return true;
-            }
-
-            MessageBox.Show("Debe abrir caja para ingresar a Ventas.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return false;
+            this.Close();
         }
     }
 }

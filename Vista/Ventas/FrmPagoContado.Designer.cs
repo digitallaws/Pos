@@ -35,12 +35,14 @@
             btnCredito = new Button();
             btnConfirmar = new Button();
             label1 = new Label();
+            lblVueltos = new Label();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
             panel1.BackColor = Color.White;
+            panel1.Controls.Add(lblVueltos);
             panel1.Controls.Add(label2);
             panel1.Controls.Add(txtPagoCon);
             panel1.Controls.Add(lblTotalVenta);
@@ -122,6 +124,16 @@
             label1.Text = "Contado";
             label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // lblVueltos
+            // 
+            lblVueltos.AutoSize = true;
+            lblVueltos.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            lblVueltos.Location = new Point(190, 190);
+            lblVueltos.Name = "lblVueltos";
+            lblVueltos.Size = new Size(102, 28);
+            lblVueltos.TabIndex = 88;
+            lblVueltos.Text = "Paga Con:";
+            // 
             // FrmPagoContado
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -146,5 +158,6 @@
         private Label lblTotalVenta;
         private Label label2;
         private TextBox txtPagoCon;
+        private Label lblVueltos;
     }
 }

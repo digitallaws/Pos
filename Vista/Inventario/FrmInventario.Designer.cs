@@ -40,6 +40,7 @@
             label14 = new Label();
             panel2 = new Panel();
             panel5 = new Panel();
+            btnReportes = new Button();
             btnProductos = new Button();
             lblTotalInventario = new Label();
             label12 = new Label();
@@ -50,6 +51,7 @@
             dd = new Label();
             panel1 = new Panel();
             label3 = new Label();
+            btnVolver = new Button();
             panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dtInventario).BeginInit();
             panel6.SuspendLayout();
@@ -179,6 +181,7 @@
             // 
             // panel5
             // 
+            panel5.Controls.Add(btnReportes);
             panel5.Controls.Add(btnProductos);
             panel5.Controls.Add(lblTotalInventario);
             panel5.Controls.Add(label12);
@@ -188,26 +191,39 @@
             panel5.Size = new Size(259, 624);
             panel5.TabIndex = 3;
             // 
+            // btnReportes
+            // 
+            btnReportes.BackColor = Color.DarkTurquoise;
+            btnReportes.FlatStyle = FlatStyle.Flat;
+            btnReportes.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnReportes.ForeColor = Color.White;
+            btnReportes.Location = new Point(12, 220);
+            btnReportes.Name = "btnReportes";
+            btnReportes.Size = new Size(235, 55);
+            btnReportes.TabIndex = 86;
+            btnReportes.Text = "Reportes";
+            btnReportes.UseVisualStyleBackColor = false;
+            btnReportes.Click += btnReportes_Click;
+            // 
             // btnProductos
             // 
             btnProductos.BackColor = Color.CornflowerBlue;
             btnProductos.FlatStyle = FlatStyle.Flat;
             btnProductos.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnProductos.ForeColor = Color.White;
-            btnProductos.Location = new Point(12, 16);
+            btnProductos.Location = new Point(12, 150);
             btnProductos.Name = "btnProductos";
             btnProductos.Size = new Size(235, 55);
             btnProductos.TabIndex = 85;
             btnProductos.Text = "Agregar Producto";
             btnProductos.UseVisualStyleBackColor = false;
-            btnProductos.Click += btnProductos_Click;
             // 
             // lblTotalInventario
             // 
             lblTotalInventario.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             lblTotalInventario.AutoSize = true;
             lblTotalInventario.Font = new Font("Microsoft Sans Serif", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblTotalInventario.Location = new Point(35, 153);
+            lblTotalInventario.Location = new Point(35, 79);
             lblTotalInventario.Name = "lblTotalInventario";
             lblTotalInventario.Size = new Size(45, 29);
             lblTotalInventario.TabIndex = 84;
@@ -218,7 +234,7 @@
             label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label12.AutoSize = true;
             label12.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label12.Location = new Point(17, 113);
+            label12.Location = new Point(17, 30);
             label12.Name = "label12";
             label12.Size = new Size(223, 31);
             label12.TabIndex = 82;
@@ -279,6 +295,7 @@
             // panel1
             // 
             panel1.BackColor = Color.White;
+            panel1.Controls.Add(btnVolver);
             panel1.Controls.Add(label3);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
@@ -298,6 +315,16 @@
             label3.TabIndex = 1;
             label3.Text = "Inventario";
             label3.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnVolver
+            // 
+            btnVolver.Location = new Point(32, 40);
+            btnVolver.Name = "btnVolver";
+            btnVolver.Size = new Size(97, 49);
+            btnVolver.TabIndex = 6;
+            btnVolver.Text = "Atras";
+            btnVolver.UseVisualStyleBackColor = true;
+            btnVolver.Click += btnVolver_Click;
             // 
             // FrmInventario
             // 
@@ -369,5 +396,7 @@
         private Panel panel1;
         private Label label3;
         private Button btnProductos;
+        private Button btnReportes;
+        private Button btnVolver;
     }
 }

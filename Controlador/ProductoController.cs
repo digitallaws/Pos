@@ -29,7 +29,7 @@ namespace Sopromil.Controlador
         {
             try
             {
-                return await _productoRepository.ListarTodosLosProductosAsync(soloActivos);
+                return await _productoRepository.ListarTodosLosProductosAsync();
             }
             catch (Exception ex)
             {
@@ -50,6 +50,11 @@ namespace Sopromil.Controlador
             {
                 MessageBox.Show($"Error al crear producto: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        public async Task<bool> UbicarProductoAsync(int idProducto, string estante, string seccion)
+        {
+            return await _productoRepository.UbicarProductoAsync(idProducto, estante, seccion);
         }
 
         public async Task ActualizarProductoAsync(Producto producto)
@@ -76,6 +81,11 @@ namespace Sopromil.Controlador
             {
                 MessageBox.Show($"Error al cambiar estado del producto: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        public async Task<(string Estante, string Seccion)> ObtenerUbicacionProductoAsync(int idProducto)
+        {
+            return await _productoRepository.ObtenerUbicacionProductoAsync(idProducto);
         }
 
         private bool ValidarProducto(Producto producto)

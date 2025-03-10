@@ -1,9 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Sopromil.Modelo;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
 
 namespace Sopromil.Data.Repository
 {
@@ -41,7 +38,7 @@ namespace Sopromil.Data.Repository
 
                         command.Parameters.AddWithValue("@IDProveedor", compra.IDProveedor);
                         command.Parameters.AddWithValue("@TotalCompra", compra.TotalCompra);
-                        command.Parameters.AddWithValue("@FleteTotal", compra.Flete);
+                        command.Parameters.AddWithValue("@Flete", compra.Flete);
                         command.Parameters.AddWithValue("@Estado", compra.Estado ?? "Finalizada");
 
                         var idCompraParam = new SqlParameter("@IDCompra", SqlDbType.Int)
@@ -124,9 +121,10 @@ namespace Sopromil.Data.Repository
                                 {
                                     IDCompra = reader.GetInt32(reader.GetOrdinal("IDCompra")),
                                     IDProveedor = reader.GetInt32(reader.GetOrdinal("IDProveedor")),
+                                    NombreProveedor = reader.GetString(reader.GetOrdinal("NombreProveedor")),
                                     FechaCompra = reader.GetDateTime(reader.GetOrdinal("FechaCompra")),
                                     TotalCompra = reader.GetDecimal(reader.GetOrdinal("TotalCompra")),
-                                    Flete = reader.GetDecimal(reader.GetOrdinal("FleteTotal")),
+                                    Flete = reader.GetDecimal(reader.GetOrdinal("Flete")), // Ajuste de alias correcto
                                     Estado = reader.GetString(reader.GetOrdinal("Estado"))
                                 });
                             }
@@ -136,7 +134,8 @@ namespace Sopromil.Data.Repository
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error al obtener las compras: {ex.Message}");
+                MessageBox.Show($"❌ Error al obtener las compras: {ex.Message}",
+                                "Error de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return compras;

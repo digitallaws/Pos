@@ -1,10 +1,5 @@
 ﻿using Sopromil.Controlador;
 using Sopromil.Modelo;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sopromil.Vista.Login
 {

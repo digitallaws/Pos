@@ -38,11 +38,11 @@
             txtBuscar = new TextBox();
             pictureBox2 = new PictureBox();
             panel2 = new Panel();
+            lblCredito = new Label();
             txtAbono = new TextBox();
             btnConfirmar = new Button();
             label2 = new Label();
             panel5 = new Panel();
-            lblCredito = new Label();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dtAbonos).BeginInit();
             ed.SuspendLayout();
@@ -169,6 +169,16 @@
             panel2.Size = new Size(499, 544);
             panel2.TabIndex = 15;
             // 
+            // lblCredito
+            // 
+            lblCredito.AutoSize = true;
+            lblCredito.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            lblCredito.Location = new Point(198, 89);
+            lblCredito.Name = "lblCredito";
+            lblCredito.Size = new Size(23, 28);
+            lblCredito.TabIndex = 92;
+            lblCredito.Text = "0";
+            // 
             // txtAbono
             // 
             txtAbono.BackColor = Color.White;
@@ -198,7 +208,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            label2.Location = new Point(89, 174);
+            label2.Location = new Point(100, 175);
             label2.Name = "label2";
             label2.Size = new Size(186, 28);
             label2.TabIndex = 91;
@@ -212,16 +222,6 @@
             panel5.Size = new Size(70, 544);
             panel5.TabIndex = 12;
             // 
-            // lblCredito
-            // 
-            lblCredito.AutoSize = true;
-            lblCredito.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            lblCredito.Location = new Point(198, 89);
-            lblCredito.Name = "lblCredito";
-            lblCredito.Size = new Size(23, 28);
-            lblCredito.TabIndex = 92;
-            lblCredito.Text = "0";
-            // 
             // FrmAbono
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -230,7 +230,9 @@
             Controls.Add(panel1);
             Controls.Add(label1);
             Name = "FrmAbono";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmAbono";
+            WindowState = FormWindowState.Maximized;
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dtAbonos).EndInit();
             ed.ResumeLayout(false);
